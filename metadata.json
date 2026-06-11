@@ -1,0 +1,6 @@
+{
+  "name": "LokerLens AI",
+  "description": "AI-powered work readiness advisor for vocational, bootcamp, self-taught, and career switching job seekers in Indonesia.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
