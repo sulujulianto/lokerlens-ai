@@ -69,6 +69,51 @@ describe("analyzeJobReadiness", () => {
     });
   });
 
+  it("rejects an inconsistent normalized response", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      jsonResponse({
+        ...analysis,
+        matchScore: 40,
+        verdict: "APPLY_NOW",
+      }),
+    );
+
+    await expect(analyzeJobReadiness(request, fetchMock)).rejects.toMatchObject({
+      message: "Hasil analisis tidak sesuai format yang diharapkan.",
+      code: "INVALID_RESPONSE",
+    });
+  });
+
+  it("rejects invalid JSON with a safe frontend error", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response("{not-json", {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
+    await expect(analyzeJobReadiness(request, fetchMock)).rejects.toMatchObject({
+      message: "Server mengembalikan respons yang tidak dapat dibaca.",
+      code: "INVALID_RESPONSE",
+    });
+  });
+
+  it("sanitizes network failures", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockRejectedValue(new Error("provider socket secret"));
+
+    const promise = analyzeJobReadiness(request, fetchMock);
+    await expect(promise).rejects.toMatchObject({
+      message:
+        "Tidak dapat terhubung ke layanan analisis. Periksa koneksi dan coba lagi.",
+      code: "NETWORK_ERROR",
+    });
+    await expect(promise).rejects.not.toMatchObject({
+      message: expect.stringContaining("provider"),
+    });
+  });
+
   it("exposes only safe API error information", async () => {
     const fetchMock = vi.fn().mockResolvedValue(
       jsonResponse(

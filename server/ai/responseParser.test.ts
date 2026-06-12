@@ -31,6 +31,8 @@ function expectInvalidProviderResponse(input: string): void {
   } catch (error: unknown) {
     expect(error).toBeInstanceOf(AppError);
     expect((error as AppError).code).toBe("PROVIDER_RESPONSE_INVALID");
+    expect((error as AppError).publicMessage).not.toContain("verdict");
+    expect((error as AppError).publicMessage).not.toContain(input);
   }
 }
 
@@ -45,6 +47,21 @@ describe("parseJobReadinessResponse", () => {
     const fenced = `\`\`\`json\n${JSON.stringify(validAnalysis)}\n\`\`\``;
 
     expect(parseJobReadinessResponse(fenced)).toEqual(validAnalysis);
+  });
+
+  it.each([
+    [0, "NOT_READY_YET"],
+    [49, "NOT_READY_YET"],
+    [50, "APPLY_WITH_IMPROVEMENTS"],
+    [74, "APPLY_WITH_IMPROVEMENTS"],
+    [75, "APPLY_NOW"],
+    [100, "APPLY_NOW"],
+  ] as const)("accepts boundary score %i with verdict %s", (matchScore, verdict) => {
+    const boundaryAnalysis = { ...validAnalysis, matchScore, verdict };
+
+    expect(
+      parseJobReadinessResponse(JSON.stringify(boundaryAnalysis)),
+    ).toEqual(boundaryAnalysis);
   });
 
   it("rejects malformed JSON", () => {
@@ -66,6 +83,16 @@ describe("parseJobReadinessResponse", () => {
   it("rejects invalid verdict identifiers", () => {
     expectInvalidProviderResponse(
       JSON.stringify({ ...validAnalysis, verdict: "Apply now" }),
+    );
+  });
+
+  it("rejects an inconsistent score and verdict", () => {
+    expectInvalidProviderResponse(
+      JSON.stringify({
+        ...validAnalysis,
+        matchScore: 40,
+        verdict: "APPLY_NOW",
+      }),
     );
   });
 

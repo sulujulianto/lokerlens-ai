@@ -57,13 +57,11 @@ export function AnalysisResults({
         />
       </div>
 
-      {analysis.riskFactors.length > 0 && (
-        <ListCard
-          title="Risiko dan Hal yang Perlu Dipastikan"
-          items={analysis.riskFactors}
-          emptyMessage=""
-        />
-      )}
+      <ListCard
+        title="Risiko dan Hal yang Perlu Dipastikan"
+        items={analysis.riskFactors}
+        emptyMessage="Tidak ada risiko material yang teridentifikasi."
+      />
 
       <Roadmap roadmap={analysis.roadmap30Days} language={language} />
 

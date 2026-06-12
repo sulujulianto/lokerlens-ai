@@ -126,7 +126,23 @@ export const JobReadinessAnalysisSchema = z
     possibleInterviewQuestions: analysisList("Possible interview questions"),
     disclaimer: requiredText("Disclaimer", 2_000),
   })
-  .strict();
+  .strict()
+  .superRefine((analysis, context) => {
+    const expectedVerdict =
+      analysis.matchScore >= 75
+        ? "APPLY_NOW"
+        : analysis.matchScore >= 50
+          ? "APPLY_WITH_IMPROVEMENTS"
+          : "NOT_READY_YET";
+
+    if (analysis.verdict !== expectedVerdict) {
+      context.addIssue({
+        code: "custom",
+        path: ["verdict"],
+        message: "Verdict must match the match score range",
+      });
+    }
+  });
 
 export type JobField = z.infer<typeof JobFieldSchema>;
 export type OutputLanguage = z.infer<typeof OutputLanguageSchema>;

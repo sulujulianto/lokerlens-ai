@@ -42,7 +42,7 @@ const validRequest = {
 };
 
 const validAnalysis = {
-  matchScore: 76,
+  matchScore: 74,
   verdict: "APPLY_WITH_IMPROVEMENTS",
   readinessSummary: "The candidate meets most entry-level requirements.",
   candidateStrengths: ["Relevant document-handling experience"],
@@ -277,6 +277,54 @@ describe("JobReadinessAnalysisSchema", () => {
       JobReadinessAnalysisSchema.safeParse({
         ...validAnalysis,
         provider: "gemini",
+      }).success,
+    ).toBe(false);
+  });
+
+  it.each([
+    [0, "NOT_READY_YET"],
+    [49, "NOT_READY_YET"],
+    [50, "APPLY_WITH_IMPROVEMENTS"],
+    [74, "APPLY_WITH_IMPROVEMENTS"],
+    [75, "APPLY_NOW"],
+    [100, "APPLY_NOW"],
+  ] as const)("accepts score %i with verdict %s", (matchScore, verdict) => {
+    expect(
+      JobReadinessAnalysisSchema.safeParse({
+        ...validAnalysis,
+        matchScore,
+        verdict,
+      }).success,
+    ).toBe(true);
+  });
+
+  it.each(
+    (
+      [
+        [0, "NOT_READY_YET"],
+        [49, "NOT_READY_YET"],
+        [50, "APPLY_WITH_IMPROVEMENTS"],
+        [74, "APPLY_WITH_IMPROVEMENTS"],
+        [75, "APPLY_NOW"],
+        [100, "APPLY_NOW"],
+      ] as const
+    ).flatMap(([matchScore, validVerdict]) =>
+      (
+        [
+          "APPLY_NOW",
+          "APPLY_WITH_IMPROVEMENTS",
+          "NOT_READY_YET",
+        ] as const
+      )
+        .filter((verdict) => verdict !== validVerdict)
+        .map((verdict) => [matchScore, verdict] as const),
+    ),
+  )("rejects mismatched score %i with verdict %s", (matchScore, verdict) => {
+    expect(
+      JobReadinessAnalysisSchema.safeParse({
+        ...validAnalysis,
+        matchScore,
+        verdict,
       }).success,
     ).toBe(false);
   });

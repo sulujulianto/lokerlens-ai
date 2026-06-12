@@ -29,11 +29,19 @@ export async function analyzeJobReadiness(
   request: AnalyzeJobReadinessRequest,
   fetchImplementation: typeof fetch = fetch,
 ): Promise<JobReadinessAnalysis> {
-  const response = await fetchImplementation("/api/analyze", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(request),
-  });
+  let response: Response;
+  try {
+    response = await fetchImplementation("/api/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(request),
+    });
+  } catch {
+    throw new AnalysisClientError(
+      "Tidak dapat terhubung ke layanan analisis. Periksa koneksi dan coba lagi.",
+      "NETWORK_ERROR",
+    );
+  }
   const payload = await readJson(response);
 
   if (!response.ok) {

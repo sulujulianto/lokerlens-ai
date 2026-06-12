@@ -10,7 +10,7 @@ const verdictLabels: Record<
   id: {
     APPLY_NOW: "Layak Melamar Sekarang",
     APPLY_WITH_IMPROVEMENTS: "Melamar Sambil Melakukan Perbaikan",
-    NOT_READY_YET: "Belum Siap - Perkuat Fondasi Dahulu",
+    NOT_READY_YET: "Belum Siap — Perkuat Fondasi Dahulu",
   },
   en: {
     APPLY_NOW: "Ready to Apply Now",
