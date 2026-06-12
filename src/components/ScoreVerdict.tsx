@@ -45,7 +45,10 @@ export function ScoreVerdict({
         : "border-rose-200 bg-rose-50 text-rose-950";
 
   return (
-    <section className="grid gap-3 sm:grid-cols-[180px_1fr]">
+    <section
+      aria-label="Skor dan kesimpulan kesiapan"
+      className="grid min-w-0 gap-3 sm:grid-cols-[180px_minmax(0,1fr)]"
+    >
       <div className="flex flex-col items-center justify-center rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
         <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
           Skor keselarasan
@@ -58,14 +61,18 @@ export function ScoreVerdict({
           Estimasi panduan, bukan peluang diterima
         </span>
       </div>
-      <div className={`rounded-lg border p-5 shadow-sm ${tone}`}>
+      <div
+        className={`min-w-0 rounded-lg border p-5 shadow-sm ${tone}`}
+      >
         <span className="text-xs font-bold uppercase tracking-wider opacity-70">
           Kesimpulan kesiapan
         </span>
         <h2 className="mt-1 text-lg font-black">
           {getVerdictLabel(verdict, language)}
         </h2>
-        <p className="mt-2 text-sm leading-relaxed">{summary}</p>
+        <p className="mt-2 break-words text-sm leading-relaxed [overflow-wrap:anywhere]">
+          {summary}
+        </p>
       </div>
     </section>
   );

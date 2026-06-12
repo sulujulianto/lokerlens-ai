@@ -17,7 +17,6 @@ describe("AnalysisActions", () => {
         analysisAvailable={false}
         healthChecked
         isLoading={false}
-        onLiveAnalysis={() => undefined}
         onDemo={() => undefined}
       />,
     );
@@ -30,6 +29,45 @@ describe("AnalysisActions", () => {
     );
     expect(html).toContain("Analisis langsung belum dikonfigurasi");
     expect(html).toContain("empat demo offline");
+    expect(html).toContain(
+      'aria-describedby="analysis-unavailable-description"',
+    );
     expect(html).not.toMatch(/Gemini|model/i);
+  });
+
+  it("prevents duplicate live and demo actions while loading", () => {
+    const html = renderToStaticMarkup(
+      <AnalysisActions
+        analysisAvailable
+        healthChecked
+        isLoading
+        onDemo={() => undefined}
+      />,
+    );
+
+    expect(buttonTag(html, "live-analysis-button")).toMatch(
+      /\sdisabled(?:=""|(?=\s|>))/,
+    );
+    expect(buttonTag(html, "demo-analysis-button")).toMatch(
+      /\sdisabled(?:=""|(?=\s|>))/,
+    );
+    expect(html).toContain("Analisis sedang diproses");
+  });
+
+  it("asks for a demo selection without disabling scenario access", () => {
+    const html = renderToStaticMarkup(
+      <AnalysisActions
+        analysisAvailable={false}
+        healthChecked
+        isLoading={false}
+        demoAvailable={false}
+        onDemo={() => undefined}
+      />,
+    );
+
+    expect(html).toContain("Pilih skenario demo dahulu");
+    expect(buttonTag(html, "demo-analysis-button")).toMatch(
+      /\sdisabled(?:=""|(?=\s|>))/,
+    );
   });
 });

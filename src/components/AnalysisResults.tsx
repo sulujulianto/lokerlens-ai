@@ -1,3 +1,4 @@
+import type { Ref } from "react";
 import type {
   JobReadinessAnalysis,
   OutputLanguage,
@@ -10,15 +11,32 @@ export function AnalysisResults({
   analysis,
   language,
   isDemo,
+  headingRef,
 }: {
   analysis: JobReadinessAnalysis;
   language: OutputLanguage;
   isDemo: boolean;
+  headingRef?: Ref<HTMLHeadingElement>;
 }) {
   return (
-    <div className="space-y-4" data-testid="analysis-results">
+    <section
+      aria-labelledby="analysis-results-title"
+      className="min-w-0 space-y-4"
+      data-testid="analysis-results"
+    >
+      <h2
+        id="analysis-results-title"
+        ref={headingRef}
+        tabIndex={-1}
+        className="text-xl font-black text-slate-900 outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
+      >
+        Hasil analisis kesiapan kerja
+      </h2>
       {isDemo && (
-        <div className="rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm text-indigo-900">
+        <div
+          role="status"
+          className="rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm text-indigo-900"
+        >
           <strong>Mode demo:</strong> hasil ini menggunakan data simulasi dan
           tidak memanggil layanan AI langsung.
         </div>
@@ -71,12 +89,21 @@ export function AnalysisResults({
       />
 
       <div className="grid gap-3 lg:grid-cols-2">
-        <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <h3 className="text-xs font-black uppercase tracking-wider text-slate-700">
+        <section
+          aria-labelledby="application-message-title"
+          className="min-w-0 rounded-lg border border-slate-200 bg-white p-4 shadow-sm"
+        >
+          <h3
+            id="application-message-title"
+            className="text-xs font-black uppercase tracking-wider text-slate-700"
+          >
             Pesan Lamaran
           </h3>
           <div className="mt-3">
-            <CopyableItem text={analysis.applicationMessage} />
+            <CopyableItem
+              text={analysis.applicationMessage}
+              label="pesan lamaran"
+            />
           </div>
         </section>
         <ListCard
@@ -92,6 +119,6 @@ export function AnalysisResults({
         </strong>
         {analysis.disclaimer}
       </aside>
-    </div>
+    </section>
   );
 }

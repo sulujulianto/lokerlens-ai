@@ -23,6 +23,9 @@ export interface ProfileFormValues {
   jobPosting: string;
 }
 
+export type ProfileFormField = keyof ProfileFormValues;
+export type ProfileFormErrors = Partial<Record<ProfileFormField, string>>;
+
 export const emptyProfileForm: ProfileFormValues = {
   targetJobField: "it_digital",
   targetRole: "",
@@ -113,10 +116,67 @@ const fieldLabels: Record<string, string> = {
   targetJobField: "bidang pekerjaan",
   targetRole: "peran yang ditargetkan",
   educationBackground: "pendidikan atau latar belakang",
+  workExperience: "pengalaman kerja",
+  internshipOrOrganizationalExperience: "magang atau pengalaman organisasi",
   mainSkills: "keahlian utama",
+  toolsOrEquipment: "alat atau perlengkapan",
+  responsibilities: "tanggung jawab",
+  achievements: "pencapaian",
+  certificationsOrTraining: "pelatihan atau sertifikasi",
+  personalStrengths: "kekuatan pribadi",
+  applicationChallenge: "tantangan utama saat melamar",
+  evidenceOrProjects: "bukti kompetensi atau proyek",
+  preferredOutputLanguage: "bahasa hasil",
   jobPosting: "teks lowongan",
-  workExperience: "pengalaman atau bukti praktis",
 };
+
+const formFieldIds = new Set<ProfileFormField>(
+  Object.keys(emptyProfileForm) as ProfileFormField[],
+);
+
+export interface FormValidationFeedback {
+  summary: string;
+  fieldErrors: ProfileFormErrors;
+  firstInvalidField: ProfileFormField | null;
+}
+
+export function getFormValidationFeedback(
+  issues: { path: PropertyKey[]; message: string }[],
+): FormValidationFeedback {
+  const fieldErrors: ProfileFormErrors = {};
+
+  for (const issue of issues) {
+    const isEvidenceRule = issue.message.includes(
+      "meaningful source of experience",
+    );
+    const rawField = issue.path
+      .map(String)
+      .reverse()
+      .find((pathPart) =>
+        formFieldIds.has(pathPart as ProfileFormField),
+      );
+    const field = isEvidenceRule
+      ? "workExperience"
+      : rawField
+        ? (rawField as ProfileFormField)
+        : null;
+
+    if (field && !fieldErrors[field]) {
+      fieldErrors[field] = isEvidenceRule
+        ? "Isi minimal satu: pengalaman kerja, magang atau organisasi, tanggung jawab, atau bukti kompetensi/proyek."
+        : `Periksa ${fieldLabels[field] ?? "isian ini"}: data wajib belum lengkap atau melebihi batas.`;
+    }
+  }
+
+  const firstInvalidField =
+    (Object.keys(fieldErrors)[0] as ProfileFormField | undefined) ?? null;
+
+  return {
+    summary: getFormErrorMessage(issues),
+    fieldErrors,
+    firstInvalidField,
+  };
+}
 
 export function getFormErrorMessage(
   issues: { path: PropertyKey[]; message: string }[],

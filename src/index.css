@@ -30,6 +30,26 @@ body {
   background-color: #f8fafc;
   color: #0f172a;
   -webkit-font-smoothing: antialiased;
+  overflow-wrap: break-word;
+  overflow-x: clip;
+}
+
+html,
+body,
+#root {
+  min-width: 0;
+  max-width: 100%;
+}
+
+textarea,
+select,
+input,
+button {
+  max-width: 100%;
+}
+
+textarea {
+  resize: vertical;
 }
 
 /* Custom progress ring styles */
@@ -37,4 +57,15 @@ body {
   transition: stroke-dashoffset 0.35s;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

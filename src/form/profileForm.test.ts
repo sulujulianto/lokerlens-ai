@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { emptyProfileForm } from "./profileForm";
 import {
   createAnalyzeRequest,
+  getFormValidationFeedback,
   normalizeListInput,
 } from "./profileForm";
 
@@ -95,5 +96,57 @@ describe("createAnalyzeRequest", () => {
         ),
       }).success,
     ).toBe(false);
+  });
+});
+
+describe("getFormValidationFeedback", () => {
+  it("maps shared-schema issues to an actionable focus target", () => {
+    const result = createAnalyzeRequest({
+      ...validValues,
+      targetRole: " ",
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const feedback = getFormValidationFeedback(result.error.issues);
+      expect(feedback.firstInvalidField).toBe("targetRole");
+      expect(feedback.fieldErrors.targetRole).toContain(
+        "peran yang ditargetkan",
+      );
+    }
+  });
+
+  it("maps nested list-item issues back to their textarea", () => {
+    const result = createAnalyzeRequest({
+      ...validValues,
+      mainSkills: "a".repeat(121),
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const feedback = getFormValidationFeedback(result.error.issues);
+      expect(feedback.firstInvalidField).toBe("mainSkills");
+      expect(feedback.fieldErrors.mainSkills).toContain("keahlian utama");
+    }
+  });
+
+  it("explains and focuses the cross-field evidence requirement", () => {
+    const result = createAnalyzeRequest({
+      ...validValues,
+      workExperience: "",
+      internshipOrOrganizationalExperience: "",
+      responsibilities: "",
+      evidenceOrProjects: "",
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const feedback = getFormValidationFeedback(result.error.issues);
+      expect(feedback.firstInvalidField).toBe("workExperience");
+      expect(feedback.fieldErrors.workExperience).toContain(
+        "pengalaman kerja",
+      );
+      expect(feedback.summary).toContain("magang/organisasi");
+    }
   });
 });

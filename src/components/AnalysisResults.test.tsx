@@ -40,6 +40,8 @@ describe("AnalysisResults", () => {
     expect(html).toContain("Saya melamar posisi ini.");
     expect(html).toContain("Panduan ini bukan jaminan kerja.");
     expect(html).not.toContain("APPLY_WITH_IMPROVEMENTS");
+    expect(html).toContain('id="analysis-results-title"');
+    expect(html).toContain('aria-label="Salin pesan lamaran"');
   });
 
   it("renders restrained empty states for optional lists", () => {
@@ -66,5 +68,29 @@ describe("AnalysisResults", () => {
     expect(html).toContain("Tidak ada risiko material yang teridentifikasi.");
     expect(html).toContain("Belum ada pertanyaan wawancara tambahan.");
     expect(html).toContain("Panduan ini bukan jaminan kerja.");
+  });
+
+  it("preserves long material guidance without truncating it", () => {
+    const longContent = `Panduan-${"sangatpanjang".repeat(80)}`;
+    const html = renderToStaticMarkup(
+      <AnalysisResults
+        analysis={{
+          ...analysis,
+          readinessSummary: longContent,
+          mainGaps: [longContent],
+          roadmap30Days: {
+            ...analysis.roadmap30Days,
+            week1: [longContent],
+          },
+          applicationMessage: longContent,
+        }}
+        language="id"
+        isDemo={false}
+      />,
+    );
+
+    expect(html).toContain(longContent);
+    expect(html).toContain("[overflow-wrap:anywhere]");
+    expect(html).toContain("Catatan Penting");
   });
 });

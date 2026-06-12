@@ -22,4 +22,33 @@ describe("ProfileForm", () => {
     expect(html).toContain("Pengalaman formal tidak wajib");
     expect(html).toContain("Bukti kompetensi atau proyek");
   });
+
+  it("associates required and optional labels, hints, and errors", () => {
+    const html = renderToStaticMarkup(
+      <ProfileForm
+        values={{
+          ...formValuesFromRequest(demoScenarios[0].request),
+          targetRole: "Peran sangat panjang ".repeat(20),
+        }}
+        disabled={false}
+        errors={{
+          targetRole: "Peran yang ditargetkan wajib diisi.",
+          mainSkills: "Keahlian utama wajib diisi.",
+        }}
+        onChange={() => undefined}
+      />,
+    );
+
+    expect(html).toContain('for="targetRole"');
+    expect(html).toContain('id="targetRole"');
+    expect(html).toContain("(Wajib)");
+    expect(html).toContain("(Opsional)");
+    expect(html).toContain('aria-invalid="true"');
+    expect(html).toContain('aria-describedby="targetRole-error"');
+    expect(html).toContain(
+      'aria-describedby="mainSkills-hint mainSkills-error"',
+    );
+    expect(html).toContain("Pisahkan dengan koma atau baris baru");
+    expect(html).not.toContain("Optional");
+  });
 });

@@ -36,22 +36,36 @@ export function Roadmap({
   ];
 
   return (
-    <section className="rounded-lg bg-indigo-950 p-5 text-white shadow-sm">
-      <h3 className="text-sm font-black uppercase tracking-wider text-indigo-100">
+    <section
+      aria-labelledby="roadmap-title"
+      className="min-w-0 rounded-lg bg-indigo-950 p-4 text-white shadow-sm sm:p-5"
+    >
+      <h3
+        id="roadmap-title"
+        className="text-sm font-black uppercase tracking-wider text-indigo-100"
+      >
         Rencana Aksi 30 Hari
       </h3>
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         {weeks.map((week, index) => (
-          <div key={week.label} className="flex gap-3">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold">
+          <div key={week.label} className="flex min-w-0 gap-3">
+            <span
+              aria-hidden="true"
+              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold"
+            >
               {index + 1}
             </span>
-            <div>
+            <div className="min-w-0">
               <h4 className="text-sm font-bold">{week.label}</h4>
               {week.actions.length > 0 ? (
                 <ul className="mt-1 list-disc space-y-1 pl-4 text-xs leading-relaxed text-indigo-100">
                   {week.actions.map((action) => (
-                    <li key={action}>{action}</li>
+                    <li
+                      key={action}
+                      className="break-words [overflow-wrap:anywhere]"
+                    >
+                      {action}
+                    </li>
                   ))}
                 </ul>
               ) : (
