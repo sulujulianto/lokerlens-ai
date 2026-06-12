@@ -1,4 +1,4 @@
-import type { AnalyzeJobReadinessRequest } from "../../shared/analysisSchemas";
+import type { AnalyzeJobReadinessRequest } from "./analysisSchemas";
 
 export const crossFieldScenarios = [
   {

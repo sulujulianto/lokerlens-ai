@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { AnalyzeJobReadinessRequest } from "../../shared/analysisSchemas";
-import { crossFieldScenarios } from "../fixtures/crossFieldScenarios";
+import { crossFieldScenarios } from "../../shared/crossFieldScenarios";
 import { buildAnalysisPrompt } from "./promptBuilder";
 
 const request: AnalyzeJobReadinessRequest = {

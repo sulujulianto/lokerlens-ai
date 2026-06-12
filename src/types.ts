@@ -1,3 +1,4 @@
+// Legacy V1 contracts retained temporarily for migration reference.
 export interface CareerProfile {
   education: string;
   skills: string;

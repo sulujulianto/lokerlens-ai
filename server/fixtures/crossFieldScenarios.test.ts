@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { AnalyzeJobReadinessRequestSchema } from "../../shared/analysisSchemas";
-import { crossFieldScenarios } from "./crossFieldScenarios";
+import { crossFieldScenarios } from "../../shared/crossFieldScenarios";
 
 const specializedFields = [
   "it_digital",
