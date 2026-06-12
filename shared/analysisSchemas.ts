@@ -16,15 +16,10 @@ const requiredText = (fieldName: string, maxLength: number) =>
 const optionalText = (fieldName: string, maxLength: number) =>
   requiredText(fieldName, maxLength).optional();
 
-const profileList = (fieldName: string, required: boolean) => {
-  const schema = z
+const profileList = (fieldName: string) =>
+  z
     .array(requiredText(`${fieldName} item`, MAX_PROFILE_LIST_ITEM_LENGTH))
     .max(MAX_LIST_ITEMS, `${fieldName} must contain at most ${MAX_LIST_ITEMS} items`);
-
-  return required
-    ? schema.min(1, `${fieldName} must contain at least one item`)
-    : schema.optional();
-};
 
 const analysisList = (fieldName: string, maxItems = MAX_ANALYSIS_LIST_ITEMS) =>
   z
@@ -62,12 +57,15 @@ export const CareerProfileV2Schema = z
       "Internship or organizational experience",
       4_000,
     ),
-    mainSkills: profileList("Main skills", true),
-    toolsOrEquipment: profileList("Tools or equipment", false),
+    mainSkills: profileList("Main skills").min(
+      1,
+      "Main skills must contain at least one item",
+    ),
+    toolsOrEquipment: profileList("Tools or equipment").optional(),
     responsibilities: optionalText("Responsibilities", 4_000),
     achievements: optionalText("Achievements", 3_000),
     certificationsOrTraining: optionalText("Certifications or training", 3_000),
-    personalStrengths: profileList("Personal strengths", false),
+    personalStrengths: profileList("Personal strengths").optional(),
     applicationChallenge: optionalText("Application challenge", 2_000),
     evidenceOrProjects: optionalText("Evidence or projects", 4_000),
     preferredOutputLanguage: OutputLanguageSchema,
