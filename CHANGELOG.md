@@ -1,6 +1,56 @@
 # Changelog
 
 All notable changes to **LokerLens AI** will be documented in this file.
+Historical release entries describe the implementation and wording of their
+respective release; current development status is recorded under
+**Unreleased**.
+
+## [Unreleased]
+
+### Added
+- Shared Zod request and response contracts for the normalized V2 analysis flow.
+- Provider-neutral backend interface, provider resolver, Gemini adapter, prompt
+  builder, response parser, and analysis service.
+- Multi-field manual profile covering ten stable job-field identifiers.
+- Specialized guidance for IT & Digital, Administration, Customer Service, and
+  Operations/Warehouse/Logistics, with a conservative fallback for other
+  supported fields.
+- Normalized result dashboard with requirements, risks, four-week roadmap,
+  evidence-of-competence suggestions, CV material, application message,
+  interview questions, and disclaimer.
+- Four deterministic offline demo scenarios that do not require an API key.
+- Focused deterministic tests for schemas, backend modules, compatibility,
+  API clients, forms, demos, results, accessibility, and interaction behavior.
+
+### Changed
+- Repositioned the development branch from an IT-focused challenge prototype to
+  a manual-first, multi-field job-readiness assistant for Indonesian
+  entry-level applicants.
+- Migrated the frontend to the normalized V2 request and response contracts.
+- Moved provider selection and credentials entirely behind the server API.
+- Extracted backend responsibilities into configuration, provider, prompt,
+  parsing, service, route, and compatibility modules.
+- Improved responsive layout, semantic structure, form labeling, keyboard
+  navigation, focus handling, demo/reset behavior, and long-content rendering.
+- Preserved temporary V1 request and response adapters during migration.
+
+### Fixed
+- Enforced runtime consistency between match-score ranges and stable verdict
+  identifiers.
+- Rejected malformed or incomplete provider responses before they reach the
+  frontend.
+- Stabilized empty result sections, unavailable-analysis behavior, network
+  errors, invalid JSON handling, duplicate submissions, and demo timers.
+
+### Security
+- Added strict request and provider-response validation with bounded field,
+  list, and request-body sizes.
+- Added prompt boundaries that treat candidate profiles and job postings as
+  untrusted data.
+- Normalized public errors so raw provider output, prompts, credentials, stack
+  traces, and SDK details are not exposed to the frontend.
+- Kept API keys server-side and removed provider/model selection from the
+  frontend contract.
 
 ## [1.0.0] - 2026-06-11
 ### Juara Vibe Coding Edition

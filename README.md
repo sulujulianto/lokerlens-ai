@@ -1,138 +1,328 @@
-# LokerLens AI — Asisten Diagnostik Kesiapan Kerja SMK & Bootcamp
-### v1.0.0 · Juara Vibe Coding Edition
+# LokerLens AI
 
-LokerLens AI adalah sebuah platform evaluasi keahlian dan kesiapan kerja (*Career Alignment & Readiness Diagnostic Assistant*) yang dirancang khusus untuk mengatasi kesenjangan informasi dalam pencarian kerja yang dihadapi oleh lulusan kejuruan (SMK), alumni coding bootcamp, talenta belajar mandiri (*self-taught*), serta para pencari kerja lintas profesi (*career switcher*) di Indonesia.
+**v2.0.0-dev · Multi-Field Job Readiness**
 
-Sistem mendiagnosis keselarasan keahlian kandidat dengan kebutuhan nyata lowongan pekerjaan (ATS), melakukan pemetaan gap secara transparan, serta menyajikan panduan pembelajaran 30 hari yang terencana agar mereka dapat melamar dengan lebih percaya diri dan matang.
+LokerLens AI adalah asisten kesiapan kerja berbasis AI dengan pendekatan
+*manual-first* untuk pencari kerja *entry-level* di Indonesia, terutama pengguna
+yang belum memiliki CV terstruktur.
 
----
+Versi historis **v1.0.0 · Juara Vibe Coding Edition** tetap dipertahankan pada
+branch `main` dan tag `v1.0.0`. Pengembangan V2 berlangsung pada branch
+`v2-development` dan belum merupakan rilis produksi.
 
-## 🎯 Permasalahan (Problem Statement)
-Pencari kerja tingkat pemula (*entry-level/junior/vokasi*) sering kali mengalami:
-* **Penolakan Tanpa Ulasan (The Black Hole of ATS)**: Lamaran ditolak secara otomatis oleh sistem penyaringan tanpa pernah tahu apa yang menjadi kekurangan nyata dalam portofolionya.
-* **Miskonsep Persyaratan Loker**: Kesulitan mencerna kualifikasi teknis yang kompleks atau berlebihan (*must-have* vs *nice-to-have*) pada deskripsi lowongan kerja.
-* **Kebingungan Langkah Perbaikan**: Tidak memiliki peta jalan (*roadmap*) terarah untuk menutupi kesenjangan keterampilan tersebut setelah mengetahui penolakan atau kecocokan rendah.
+## Ringkasan Produk
 
----
+LokerLens membantu pengguna:
 
-## 💡 Solusi (The Solution)
-LokerLens AI hadir menjembatani jurang tersebut dengan menyajikan **analisis diagnostik interaktif berbasis AI**. Daripada sekadar memberikan skor penolakan mentah, LokerLens AI membedah kebutuhan lowongan secara terperinci, menilai kesiapan portofolio kandidat secara adil, dan memetakan aksi nyata mingguan berdurasi 30 hari yang dipersonalisasi demi mendongkrak daya saing kandidat.
+- menyusun latar belakang profesional secara manual;
+- membandingkan profil dengan teks lowongan yang ditempel;
+- mengenali kekuatan dan kesenjangan material;
+- membedakan persyaratan *must-have* dan *nice-to-have*;
+- menyusun langkah perbaikan praktis;
+- menyiapkan bukti kompetensi dan bahan CV;
+- membuat pesan lamaran;
+- mengantisipasi kemungkinan pertanyaan wawancara.
 
----
+Alur utamanya:
 
-## 👥 Pengguna Sasaran (Target Users)
-1. **Lulusan SMK Jurusan RPL / TI**: Talenta muda kejuruan yang ingin memulai debut profesional di dunia rekayasa perangkat lunak.
-2. **Alumni Coding Bootcamp**: Individu dengan keahlian praktis intensif yang memerlukan validasi resume di kancah industri.
-3. **Pencari Kerja Lintas Bidang (Career Changer)**: Profesional non-teknis yang bermigrasi ke industri digital dan membutuhkan kurasi portofolio relevan.
-4. **Talenta Belajar Mandiri (Self-taught)**: Pemelajar otonom yang ingin menyelaraskan portofolio rancangannya dengan ekspektasi standar industri terkini.
-
----
-
-## 🚀 Fitur Utama (Core Features)
-
-* **Analisis Kesiapan Kerja Real-Time**: Mengukur skor kecocokan dalam persentase kuantitatif antara data kualifikasi kandidat dengan naskah kualifikasi lowongan pekerjaan standar industri.
-* **Peta Jalan Strategis 30 Hari (30-Day Action Roadmap)**: Menyusun langkah taktis mingguan yang dipersonalisasi untuk menutupi kesenjangan keahlian dalam satu bulan ke depan.
-* **Rekomendasi Portofolio Proyek**: Menyajikan rekomendasi studi kasus dan perbaikan konkret pada portofolio pendukung agar fungsional sesuai kebutuhan rekruter.
-* **Usulan Kalimat Aktif CV (ATS-Friendly)**: Membantu merumuskan poin deskripsi *hands-on* yang kompatibel dengan pelacak lamaran kerja modern.
-* **Draf Pesan Lamaran Cepat**: Menyusun kalimat perkenalan profesional dinamis yang siap disalin untuk platform LinkedIn, WhatsApp HRD, maupun email resmi kandidat.
-* **Preset Skenario Industri**: Menyediakan visualisasi kasus nyata pra-konfigurasi untuk mempermudah demo fungsi aplikasi secara instan.
-
----
-
-## 🛠️ Arsitektur & Teknologi (Tech Stack)
-
-Aplikasi dibangun sebagai **Full-Stack Web App** yang handal, cepat, dan responsif:
-* **Frontend**: React 19, TypeScript, Vite, Tailwind CSS, Lucide Icons, Motion (f.k.a. Framer Motion).
-* **Backend**: Express (Node.js fungsional) melayani API Gateway terintegrasi untuk menyaring beban kueri.
-* **Layanan Inteligensi**: **Gemini 3.5 Flash** (melalui library modern `@google/genai` fungsional SDK server-side) memberikan ulasan diagnostik terstruktur melalui parameter JSON Schema terarah demi keaslian data.
-* **Pendidikan & Keamanan**: Proteksi prompt-injection terintegrasi untuk mendeteksi kueri yang tidak sah, disertai dengan pembatasan ukuran payload (maksimal 1MB) serta batas teks deskripsi lowongan maksimal 12,000 karakter.
-* **Penyimpanan**: Pendekatan tanpa database server (state dinamis lokal & simulasi sandboxed data) untuk menjamin privasi serta mendukung navigasi audit yang lancar.
-
----
-
-## ⚙️ Mengapa Menggunakan Input Manual & Bukan Unggah PDF/CV? (Design Metathesis)
-LokerLens AI secara sengaja memilih **pendekatan input formulir modular** (*manual entry*) sebagai pengganti fitur pemindaian CV instan:
-1. **Akurasi Pemindaian**: Parser PDF tradisional (*regex/heuristics*) sering kali gagal membaca layout CV kreatif atau format dua-kolom secara akurat, mendistorsi hasil analisis AI.
-2. **Keterlibatan Pengguna Aktif (*Mindful Engineering*)**: Mengharuskan pengguna menulis latar belakang, daftar keterampilan, dan studi kasus proyek unggulan secara manual akan menumbuhkan kesadaran diri terhadap portofolio mereka sendiri, melatih mereka agar menyusun deskripsi pencapaian secara terstruktur.
-3. **Kerahasiaan & Privasi Data**: Menjaga data sensitif kandidat agar tidak tersimpan di server awan tanpa izin eksplisit atau pengelolaan data pribadi yang berisiko bocor.
-
----
-
-## 🔮 Rencana Arah Pengembangan v2 (Planned Direction for v2)
-LokerLens AI v1.0.0 adalah rintisan tangguh dalam edisi **Juara Vibe Coding**. Pada rilis v2 mendatang, kami merencanakan:
-* **Perluasan Non-IT**: Menyediakan kategori evaluasi untuk bidang pemasaran (*digital marketing*), administrasi, perhotelan, desain grafis, dan akuntansi.
-* **Navigasi Riwayat Lokal**: Mengintegrasikan penyimpanan lokal browser (`localStorage` / `IndexedDB`) untuk memulihkan draf portofolio analisis masa lalu tanpa perlu server basis data yang rumit.
-* **Ekspor Laporan PDF**: Unduh hasil ulasan, draf CV, dan 30-Day Roadmap langsung sebagai berkas PDF cetak siap pakai.
-
----
-
-## 🔑 Variabel Lingkungan (Environment Variables)
-
-Aplikasi membutuhkan satu kunci otorisasi rahasia untuk merutekan analisis ke server Google Gemini AI secara langsung:
-
-```env
-GEMINI_API_KEY=your_gemini_api_key_here
-AI_PROVIDER=gemini
+```text
+Pilih bidang dan peran target
+→ susun profil manual
+→ tempel teks lowongan
+→ terima panduan kesiapan kerja
 ```
 
-Pastikan variabel ini diekspos di lingkungan server sebelum meluncurkan analisis langsung (*live analysis*).
+LokerLens bukan ATS, pemindai CV, kalkulator peluang diterima, portal lowongan,
+*job scraper*, pengganti penilaian rekruter, atau jaminan mendapat wawancara
+maupun pekerjaan.
 
----
+## Mengapa Manual-First?
 
-## 💻 Panduan Instalasi Lokal (Local Setup)
+Input manual adalah keputusan produk, bukan pengganti sementara untuk unggah CV.
+Banyak pelamar pemula belum memiliki CV yang rapi, tetapi sudah mempunyai
+pengalaman informal, organisasi, sekolah, magang, tugas operasional, proyek,
+pelatihan, atau tanggung jawab praktis.
 
-Ikuti langkah mudah di bawah ini untuk mengompilasi dan menjalankan LokerLens AI pada komputer lokal Anda:
+Formulir terpandu membantu pengguna mengubah pengalaman mentah tersebut menjadi
+informasi yang dapat dibandingkan dengan kebutuhan lowongan dan kemudian
+digunakan untuk menyusun CV atau bahan lamaran.
 
-### 1. Unduh Dependensi
-Instal seluruh modul pendukung yang diperlukan lewat NPM:
+## Pengguna Sasaran
+
+- lulusan SMK;
+- *fresh graduate*;
+- lulusan *bootcamp*;
+- pembelajar mandiri;
+- *career switcher*;
+- pengguna dengan pengalaman kerja informal atau operasional;
+- pelamar *entry-level* pada bidang yang didukung.
+
+## Bidang Pekerjaan
+
+Pilihan bidang yang tersedia:
+
+1. IT & Digital
+2. Administrasi
+3. Customer Service
+4. Sales & Marketing
+5. Operasional, Gudang & Logistik
+6. Hospitality
+7. Teknis & Vokasional
+8. Pendidikan & Pelatihan
+9. Keuangan & Akuntansi
+10. Bidang entry-level lainnya
+
+Panduan spesifik terdalam saat ini tersedia untuk:
+
+- IT & Digital;
+- Administrasi;
+- Customer Service;
+- Operasional, Gudang & Logistik.
+
+Bidang lain tetap dapat digunakan, tetapi saat ini memakai panduan umum
+*entry-level* yang konservatif. Sistem tidak mengklaim kedalaman spesialis yang
+sama untuk seluruh bidang.
+
+## Hasil Analisis
+
+Kontrak hasil V2 mencakup:
+
+- skor keselarasan 0–100;
+- verdict stabil;
+- ringkasan kesiapan;
+- kekuatan kandidat;
+- kesenjangan utama;
+- persyaratan wajib;
+- persyaratan nilai tambah;
+- faktor risiko;
+- rencana aksi empat minggu;
+- saran bukti kompetensi;
+- saran bahan CV;
+- pesan lamaran;
+- kemungkinan pertanyaan wawancara;
+- disclaimer.
+
+Skor merupakan estimasi keselarasan untuk panduan, bukan probabilitas diterima
+kerja dan bukan jaminan hasil rekrutmen.
+
+Rentang verdict internal:
+
+```text
+0–49   → NOT_READY_YET
+50–74  → APPLY_WITH_IMPROVEMENTS
+75–100 → APPLY_NOW
+```
+
+Frontend menampilkan label yang dilokalkan dan tidak menampilkan identifier
+tersebut secara langsung kepada pengguna.
+
+## Demo Offline
+
+Empat skenario deterministik tersedia tanpa API key:
+
+- Junior Frontend Developer;
+- Junior Administrative Staff;
+- Entry-Level Customer Service;
+- Warehouse Staff.
+
+Demo menggunakan profil, lowongan, dan hasil fiktif yang tersimpan di aplikasi.
+Demo tidak memanggil provider AI dan tetap dapat digunakan ketika analisis
+langsung belum dikonfigurasi.
+
+## Arsitektur
+
+### Frontend
+
+- React 19;
+- TypeScript;
+- Vite;
+- Tailwind CSS;
+- kontrak Zod bersama;
+- API client yang memvalidasi respons sebelum dirender.
+
+Frontend hanya memanggil endpoint aplikasi `/api/analyze` dan membaca status
+umum dari `/api/health`. Frontend tidak memilih atau mengetahui model AI.
+
+### Backend
+
+- Node.js dan Express;
+- konfigurasi server tervalidasi;
+- interface provider AI;
+- implementasi Gemini;
+- resolver provider;
+- *prompt builder*;
+- parser dan validasi respons provider;
+- service orkestrasi analisis;
+- error publik yang dinormalisasi;
+- pemrosesan kandidat tanpa database server.
+
+### Kontrak Bersama
+
+Request dan response V2 didefinisikan di
+[`shared/analysisSchemas.ts`](shared/analysisSchemas.ts). Modul ini menjadi
+sumber tipe TypeScript sekaligus validasi runtime bagi frontend dan backend.
+
+Diagram dan batas migrasi yang lebih rinci tersedia di
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
+## Desain Provider AI
+
+- Gemini adalah satu-satunya provider live yang telah diimplementasikan.
+- Pemilihan provider dilakukan melalui konfigurasi server.
+- Frontend tidak menyediakan pemilih provider, model, atau input API key.
+- Interface provider memungkinkan adapter lain ditambahkan kemudian tanpa
+  mengganti kontrak frontend.
+- Belum ada provider live lain yang diimplementasikan.
+
+Arsitektur provider dan parsing telah diuji secara offline. Namun, karena belum
+ada API key pada lingkungan pengembangan saat ini, koneksi Gemini end-to-end,
+ketersediaan model yang dikonfigurasi, kualitas respons live, latensi, dan
+perilaku timeout belum diverifikasi.
+
+## Privasi dan Penanganan Data
+
+- tidak ada login atau akun pengguna;
+- tidak ada database kandidat di server;
+- LokerLens tidak sengaja menyimpan profil kandidat atau teks lowongan pada
+  servernya dalam desain saat ini;
+- analisis live mengirim konten yang diberikan pengguna ke provider AI yang
+  dikonfigurasi;
+- pengguna sebaiknya tidak memasukkan data pribadi sensitif yang tidak
+  diperlukan;
+- demo offline menggunakan data fiktif lokal;
+- `localStorage` dan riwayat browser belum digunakan.
+
+Ketiadaan database tidak berarti data analisis live tidak pernah meninggalkan
+perangkat. Lihat [`docs/PRIVACY.md`](docs/PRIVACY.md) untuk batasan yang lebih
+jelas. Dokumen tersebut bukan kebijakan privasi produksi atau nasihat hukum.
+
+## Kontrol Keamanan
+
+Kontrol yang sudah diimplementasikan:
+
+- API key hanya dibaca di server;
+- request JSON dibatasi maksimal 1 MB;
+- panjang field dan jumlah item dibatasi melalui schema;
+- request V2 divalidasi secara ketat;
+- respons provider diparsing dan divalidasi secara ketat;
+- kombinasi skor dan verdict harus konsisten;
+- profil dan lowongan diperlakukan sebagai data tidak tepercaya dalam prompt;
+- error publik menggunakan kode dan pesan yang dinormalisasi;
+- respons mentah provider, prompt, stack trace, dan API key tidak dikirim ke
+  frontend;
+- provider atau model tidak dapat dipilih dari frontend.
+
+Batas prompt membantu memitigasi prompt injection, tetapi tidak boleh dianggap
+sebagai pencegahan sempurna terhadap seluruh serangan atau kegagalan model.
+
+## Menjalankan Secara Lokal
+
+Persyaratan: Node.js 20 atau lebih baru.
+
 ```bash
 npm install
-```
-
-### 2. Konfigurasi Kunci API (Secrets)
-* Buat sebuah file bernama `.env` di direktori akar proyek:
-  ```env
-  GEMINI_API_KEY=your_gemini_api_key_here
-  AI_PROVIDER=gemini
-  ```
-* Atau jika Anda mengevaluasi aplikasi ini langsung dalam ekosistem **Google AI Studio**, Anda cukup mendaftarkan kunci API di menu samping **Secrets** dengan nama variabel `GEMINI_API_KEY`.
-
-### 3. Jalankan Mode Pengembangan (Development)
-Aktifkan server lokal Express yang membungkus hot-reload otomatis dari Vite:
-```bash
+cp .env.example .env
 npm run dev
 ```
-Buka penjelajah web Anda di alamat: `http://localhost:3000`
 
-### 4. Eksekusi Produksi (Build & Start)
-Kompilasi bundel TypeScript frontend ke aset statis murni, lalu kemas server Express backend lewat ESBuild:
+Konfigurasi minimum untuk analisis live:
+
+```env
+AI_PROVIDER=gemini
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+Gunakan placeholder pada dokumentasi dan file contoh. Jangan commit API key.
+
+Tanpa `GEMINI_API_KEY`:
+
+- server tetap dapat dijalankan;
+- `/api/health` mengembalikan `analysisAvailable: false`;
+- tombol analisis live dinonaktifkan;
+- empat demo offline tetap tersedia.
+
+Port default adalah `3000` dan dapat diubah melalui `PORT`.
+
+## Script
+
+| Perintah | Fungsi |
+| --- | --- |
+| `npm run dev` | Menjalankan Express dengan middleware Vite untuk development |
+| `npm run lint` | Menjalankan pemeriksaan TypeScript tanpa emit |
+| `npm test` | Menjalankan Vitest dalam mode interaktif/watch |
+| `npm run test:run` | Menjalankan seluruh test sekali |
+| `npm run build` | Membuat bundle frontend dan server produksi |
+| `npm start` | Menjalankan hasil build dari `dist/server.cjs` |
+| `npm run clean` | Menghapus output build lokal |
+
+## Validasi Deterministik
+
+Validasi pengembangan meliputi:
+
+- pemeriksaan TypeScript;
+- test Vitest untuk schema, provider resolver, prompt, parser, service, route,
+  kompatibilitas, API client, form, demo, dan rendering;
+- build produksi frontend dan backend;
+- test otomatis tanpa panggilan provider atau jaringan eksternal.
+
+Perintah validasi:
+
 ```bash
+npm run lint
+npm run test:run
 npm run build
+git diff --check
 ```
 
-Setelah build selesai dan sukses, luncurkan server produksi mandiri:
-```bash
-npm run start
-```
+## Status Pengembangan
 
----
+### Sudah Diimplementasikan
 
-## 🏆 Alur Evaluasi Juri & Penilai (Demo Flow for Judges)
+- schema request dan response runtime bersama;
+- backend provider-neutral;
+- adapter Gemini;
+- prompt dan panduan lintas bidang;
+- panduan spesifik untuk empat bidang awal;
+- fallback umum untuk bidang lain;
+- frontend manual multi-bidang;
+- dashboard hasil V2 tervalidasi;
+- empat demo offline;
+- kebijakan konsistensi skor-verdict;
+- error handling yang dinormalisasi;
+- stabilisasi responsive, aksesibilitas, keyboard, dan fokus;
+- jalur kompatibilitas sementara untuk payload V1.
 
-Untuk memudahkan peninjauan fungsi utama LokerLens AI, silakan ikuti petunjuk eksplorasi terarah berikut ini:
+### Belum Diverifikasi
 
-1. **Jelajahi preset industri (Skenario 1 - 3)**:
-   * Klik tombol Skenario di bar menu atas navigasi:
-     * **Skenario 1**: Lulusan SMK & Career Switcher (Junior Web Developer).
-     * **Skenario 2**: Lulusan SMK RPL (Junior Backend Developer).
-     * **Skenario 3**: Self-taught Career Switcher (Junior Python Backend - English).
-   * Perhatikan bagaimana isian form di sisi portofolio dan isi deskripsi lowongan asli berubah secara dinamis.
+- analisis Gemini end-to-end dengan API key nyata;
+- ketersediaan dan perilaku model yang dikonfigurasi;
+- kualitas prompt live pada seluruh bidang awal;
+- latensi dan timeout provider;
+- deployment produksi.
 
-2. **Gunakan Coba Demo Cepat (Sandbox Preview)**:
-   * Jika Anda belum menaruh `GEMINI_API_KEY` di server rahasia, klik tombol **"Coba Demo Cepat"** di bawah halaman input formulir.
-   * Model simulasi sandboxed akan memicu visualisasi laporan kesiapan komplet beserta ulasan gap, draf pesan WhatsApp/LinkedIn lamaran kerja cepat, peta jalan belajar 30 hari secara bertahap, dan kalimat aktif CV unggulan dalam 2 detik.
+### Ditunda
 
-3. **Gunakan Analisis Live (Gemini Dynamic)**:
-   * Daftarkan kunci API Anda di Settings -> Secrets. Indikator di kanan atas akan berubah warna menjadi hijau dengan tulisan **"Gemini API key terpasang"**.
-   * Ubah isi keahlian, tambahkan proyek unik Anda, atau tempelkan iklan lowongan pekerjaan apa pun secara kustom pada kolom kanan.
-   * Klik tombol **"Analisis dengan Gemini"** untuk menghasilkan evaluasi dinamis berdasarkan profil kandidat dan deskripsi lowongan secara langsung.
+- login dan akun;
+- database pengguna;
+- unggah atau pemindaian CV;
+- scraping lowongan;
+- pembayaran atau langganan;
+- riwayat lokal;
+- export dokumen;
+- provider AI tambahan;
+- redesign visual besar.
+
+## Riwayat Repository dan Migrasi
+
+- `main` mempertahankan rilis stabil V1.
+- Tag `v1.0.0` mempertahankan Juara Vibe Coding Edition.
+- Pengembangan V2 berjalan pada `v2-development`.
+- `/api/analyze` menerima request V2 secara langsung.
+- Adapter request dan response V1 masih dipertahankan sementara untuk
+  kompatibilitas migrasi.
+- `/api/health` masih mengembalikan field kompatibilitas
+  `geminiConfigured`, tetapi frontend V2 hanya menggunakan
+  `analysisAvailable`.
+
+Lihat [`CHANGELOG.md`](CHANGELOG.md) untuk perubahan dan
+[`ROADMAP.md`](ROADMAP.md) untuk pekerjaan sebelum kandidat rilis.

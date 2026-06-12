@@ -1,42 +1,77 @@
-# LokerLens AI — Product Roadmap
+# LokerLens AI — Roadmap V2
 
-This document outlines the strategic path of **LokerLens AI** from its original challenge edition toward broader public coverage.
+Dokumen ini membedakan fondasi yang sudah selesai dari verifikasi yang masih
+dibutuhkan sebelum kandidat rilis. V2 masih berada pada branch
+`v2-development`; belum ada rilis atau tag V2.
 
-## 🎯 Current Status: v1.0.0 (Juara Vibe Coding Edition)
-The current v1.0.0 is our **official challenge submission version**. It handles:
-- Core IT/Software development roles (Frontend, Backend, Fullstack, Python).
-- Clean, structured manual profile input + job posting evaluation.
-- High-performance, server-side Gemini 3.5 integrations under stringent security boundaries.
-- No database storage, keeping user profiles completely private and sandboxed.
+## Selesai untuk Fondasi V2
 
----
+- kontrak request dan response bersama melalui Zod;
+- validasi runtime pada frontend dan backend;
+- backend dengan interface provider AI;
+- resolver provider dan adapter Gemini;
+- prompt builder dengan batas data tidak tepercaya;
+- parsing serta validasi respons provider;
+- error server yang dinormalisasi;
+- service analisis yang terpisah dari Express;
+- panduan khusus untuk IT & Digital, Administrasi, Customer Service, dan
+  Operasional/Gudang/Logistik;
+- fallback umum yang konservatif untuk bidang lain;
+- scoring rubric dan kebijakan konsistensi skor-verdict;
+- frontend manual-first dengan sepuluh bidang pekerjaan;
+- dashboard hasil normalized V2;
+- empat demo offline deterministik;
+- kompatibilitas sementara untuk request dan response V1;
+- stabilisasi responsive, aksesibilitas, keyboard, fokus, loading, demo, reset,
+  error, dan konten panjang;
+- test deterministik tanpa panggilan provider eksternal;
+- build frontend dan backend produksi.
 
-## 🚀 Future Vision: v2.0.0 & Beyond
+## Wajib Sebelum Kandidat Rilis V2
 
-The next generation of LokerLens AI will improve usability, scope of careers, and shareability while maintaining our signature robust manual-first design pattern.
+1. Memperoleh dan mengonfigurasi API key Gemini pada lingkungan pengujian yang
+   aman.
+2. Memverifikasi bahwa model yang dikonfigurasi benar-benar tersedia untuk
+   akun, region, dan versi SDK yang digunakan.
+3. Menjalankan analisis live end-to-end dari frontend sampai provider dan
+   kembali ke dashboard.
+4. Mengevaluasi kualitas prompt dengan lowongan realistis pada empat bidang
+   spesialis awal.
+5. Menguji lowongan panjang, profil dengan pengalaman informal, dan input
+   bilingual.
+6. Menguji respons provider yang kosong, malformed, lambat, atau gagal.
+7. Mengukur latensi dan menentukan strategi timeout/cancellation yang aman.
+8. Memverifikasi konfigurasi, static hosting, health check, logging, dan error
+   handling pada lingkungan deployment produksi.
+9. Meninjau ulang wording privasi setelah platform hosting, lokasi pemrosesan,
+   logging, dan kebijakan provider final diketahui.
+10. Menjalankan pemeriksaan manual responsive dan keyboard pada browser nyata.
 
-### 🌟 1. Expansion Beyond IT & Software Roles
-* **Multi-Field Job Categories**: Adapt prompt instructions to support design, marketing, content writing, visual arts, accounting, administrative, and hospitality job roles.
-* **Academic & Vokasi Localization**: Include specialized templates and grading metrics tuned for multiple SMK disciplines (TKJ, Multimedia, Akuntansi, Perhotelan) and local vocational bootcamps.
+## Kandidat Pasca-Rilis
 
-### ✍️ 2. Preserving the Manual-First Philosophy
-* **No File Parsing (By Design)**: We will continue to avoid automated PDF resume uploads. Manual modular inputs are far superior:
-  - Eliminates parser failures due to bad design/layout blocks.
-  - Forces candidate mindfulness—putting down skills and achievements on the form requires active thought and refinement, yielding higher quality inputs for the AI.
-  - Keeps credentials and PII (Personally Identifiable Information) perfectly secure since candidates only submit what they wish to diagnose.
+Item berikut bersifat opsional dan harus disetujui berdasarkan kebutuhan
+pengguna, bukan dianggap sebagai prasyarat otomatis:
 
-### 🔒 3. Server-Agnostic & Zero-Backend Databases
-* **No Server database / login**: We will explicitly avoid requiring accounts, registrations, or database storage on cloud servers to:
-  - Eliminate security breaches and minimize operational overhead costs.
-  - Maintain absolute privacy of personal information.
-* **Local Web Storage**: Instead, we will store candidates' history of analyses and profile details directly on their client-side device using `localStorage` or browser IndexedDB.
+- penyimpanan draf atau riwayat lokal yang bersifat opt-in;
+- export Markdown atau PDF;
+- panduan spesialis lebih dalam untuk bidang tambahan;
+- adapter provider AI tambahan;
+- redesign visual yang lebih luas;
+- akun dan sinkronisasi lintas perangkat hanya jika kebutuhan produk serta
+  konsekuensi privasinya telah disetujui.
 
-### ⚙️ 4. Local Utilities & Export Features
-* **Export PDF Report**: Allow users to download their 30-Day Action Roadmap and recommended ATS bullets cleanly in a single, well-styled PDF card.
-* **Markdown Copying**: Streamline direct copies of various layout sections for easy note-taking in Notion, Obsidian, or text editors.
+## Tetap Di Luar Cakupan Saat Ini
 
-### 🧠 5. Provider-Agnostic AI Backend
-* **Decoupled AI Engine**: Maintain system instructions such that developers can configure other model backends (DeepSeek, Claude, local Ollama) by simply updating the environment variables.
+- CV scanner atau parser PDF;
+- scraping lowongan;
+- kalkulator peluang diterima kerja;
+- pembayaran dan langganan;
+- database kandidat tanpa kebutuhan produk yang jelas;
+- jaminan wawancara atau pekerjaan.
 
----
-Development contributions and feedback on v1.0.0 are highly welcomed! Feel free to raise GitHub issues on bug traces or localized vocabulary feedback.
+## Riwayat
+
+- `main` mempertahankan rilis stabil V1.
+- Tag `v1.0.0` mempertahankan Juara Vibe Coding Edition.
+- Adapter legacy tetap tersedia sementara selama migrasi klien menuju kontrak
+  V2.
