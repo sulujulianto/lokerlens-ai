@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createJobReadinessAnalysisFixture } from "../../shared/analysisTestFixtures";
 import type { JobReadinessAnalysis } from "../../shared/analysisSchemas";
 import { AppError } from "../errors";
 import { adaptLegacyAnalyzeRequest } from "./legacyRequestAdapter";
@@ -16,27 +17,26 @@ const legacyRequest = {
   jobPosting: "Requires JavaScript, React, and Git.",
 };
 
-const normalizedAnalysis: JobReadinessAnalysis = {
-  matchScore: 80,
-  verdict: "APPLY_NOW",
-  readinessSummary: "Ready to apply.",
-  candidateStrengths: ["Relevant skills"],
-  mainGaps: ["Limited testing evidence"],
-  mustHaveRequirements: ["JavaScript"],
-  niceToHaveRequirements: ["Testing"],
-  riskFactors: [],
-  roadmap30Days: {
-    week1: ["Review fundamentals"],
-    week2: ["Improve project"],
-    week3: ["Practice interview"],
-    week4: ["Apply"],
-  },
-  evidenceOfCompetenceSuggestions: ["Publish project documentation"],
-  cvMaterialSuggestions: ["Describe project impact"],
-  applicationMessage: "I am applying for this role.",
-  possibleInterviewQuestions: ["Describe your project."],
-  disclaimer: "Guidance only.",
-};
+const normalizedAnalysis: JobReadinessAnalysis =
+  createJobReadinessAnalysisFixture({
+    matchScore: 80,
+    requirementMatches: [
+      {
+        requirement: "JavaScript",
+        priority: "MUST_HAVE",
+        status: "MATCHED",
+        evidence: "JavaScript is listed in the profile.",
+        recommendation: "Show the relevant project.",
+      },
+      {
+        requirement: "Testing",
+        priority: "NICE_TO_HAVE",
+        status: "NOT_EVIDENCED",
+        evidence: "Testing evidence was not supplied.",
+        recommendation: "Add one focused test.",
+      },
+    ],
+  });
 
 describe("legacy request adapter", () => {
   it("maps the V1 request to the normalized V2 contract", () => {
@@ -112,6 +112,11 @@ describe("legacy response adapter", () => {
     expect(result.portfolioSuggestions).toEqual(
       normalizedAnalysis.evidenceOfCompetenceSuggestions,
     );
+    expect(result.cvBulletSuggestions).toEqual([
+      normalizedAnalysis.cvImprovementPrompt,
+    ]);
+    expect(result.mustHaveRequirements).toEqual(["JavaScript"]);
+    expect(result.niceToHaveRequirements).toEqual(["Testing"]);
   });
 
   it.each([

@@ -8,8 +8,6 @@ export function createHealthRouter(config: ServerConfig): Router {
     res.json({
       ok: true,
       analysisAvailable: config.analysisAvailable,
-      // Temporary V1 compatibility field. Remove after the frontend migration.
-      geminiConfigured: config.analysisAvailable,
     });
   });
 

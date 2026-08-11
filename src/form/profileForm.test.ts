@@ -49,6 +49,24 @@ describe("createAnalyzeRequest", () => {
     }
   });
 
+  it("preserves optional government or private training context", () => {
+    const result = createAnalyzeRequest({
+      ...validValues,
+      trainingSourceType: "private_bootcamp",
+      trainingProvider: "RevoU",
+      trainingProgram: "Data Analytics",
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.profile).toMatchObject({
+        trainingSourceType: "private_bootcamp",
+        trainingProvider: "RevoU",
+        trainingProgram: "Data Analytics",
+      });
+    }
+  });
+
   it.each([
     { workExperience: "Membantu toko keluarga.", evidenceOrProjects: "" },
     {

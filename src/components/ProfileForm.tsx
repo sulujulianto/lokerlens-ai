@@ -1,10 +1,15 @@
 import type { ReactNode } from "react";
-import type { JobField, OutputLanguage } from "../../shared/analysisSchemas";
+import type {
+  JobField,
+  OutputLanguage,
+  TrainingSourceType,
+} from "../../shared/analysisSchemas";
+import { trainingSourceTypeLabels } from "../../shared/trainingCatalog";
 import type {
   ProfileFormErrors,
   ProfileFormValues,
 } from "../form/profileForm";
-import { jobFieldOptions } from "../jobFields";
+import { jobFieldCatalogByValue, jobFieldGroups } from "../jobFields";
 
 interface ProfileFormProps {
   values: ProfileFormValues;
@@ -17,8 +22,8 @@ interface ProfileFormProps {
 }
 
 const inputClass =
-  "min-h-11 w-full max-w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-600";
-const labelClass = "mb-1 block text-xs font-bold text-slate-700";
+  "min-h-12 w-full max-w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 hover:border-indigo-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500";
+const labelClass = "mb-2 block text-sm font-bold text-slate-800";
 
 export function ProfileForm({
   values,
@@ -54,10 +59,14 @@ export function ProfileForm({
                 onChange("targetJobField", event.target.value as JobField)
               }
             >
-              {jobFieldOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
+              {jobFieldGroups.map((group) => (
+                <optgroup key={group.value} label={group.label}>
+                  {group.options.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </optgroup>
               ))}
             </select>
           </Field>
@@ -93,10 +102,16 @@ export function ProfileForm({
             <option value="en">English</option>
           </select>
         </Field>
-        <p className="text-xs text-slate-500">
-          Panduan paling mendalam saat ini tersedia untuk IT & Digital,
-          Administrasi, Customer Service, serta Operasional/Gudang/Logistik.
-        </p>
+        <div className="rounded-2xl border border-indigo-200 bg-indigo-50 p-4 text-sm text-slate-800">
+          <p className="font-bold">
+            {jobFieldCatalogByValue[values.targetJobField].description}
+          </p>
+          <p className="mt-1.5 text-xs leading-5 text-slate-600">
+            Contoh peran: {jobFieldCatalogByValue[
+              values.targetJobField
+            ].exampleRoles.join(", ")}.
+          </p>
+        </div>
       </FormSection>
 
       <FormSection
@@ -119,6 +134,58 @@ export function ProfileForm({
             }
           />
         </Field>
+        <div className="grid gap-4 md:grid-cols-3">
+          <Field id="trainingSourceType" label="Sumber pelatihan" optional error={errors.trainingSourceType}>
+            <select
+              id="trainingSourceType"
+              {...accessibility("trainingSourceType")}
+              className={inputClass}
+              value={values.trainingSourceType}
+              disabled={disabled}
+              onChange={(event) =>
+                onChange(
+                  "trainingSourceType",
+                  event.target.value as TrainingSourceType | "",
+                )
+              }
+            >
+              <option value="">Pilih jika relevan</option>
+              {Object.entries(trainingSourceTypeLabels).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field id="trainingProvider" label="Lembaga pelatihan" optional error={errors.trainingProvider}>
+            <input
+              id="trainingProvider"
+              {...accessibility("trainingProvider")}
+              className={inputClass}
+              value={values.trainingProvider}
+              disabled={disabled}
+              placeholder="Tulis nama lembaga pelatihan"
+              onChange={(event) => onChange("trainingProvider", event.target.value)}
+            />
+          </Field>
+          <Field id="trainingProgram" label="Program atau kejuruan pelatihan" optional error={errors.trainingProgram}>
+            <input
+              id="trainingProgram"
+              {...accessibility("trainingProgram")}
+              className={inputClass}
+              value={values.trainingProgram}
+              disabled={disabled}
+              placeholder="Tulis nama program atau kejuruan pelatihan"
+              onChange={(event) => onChange("trainingProgram", event.target.value)}
+            />
+          </Field>
+        </div>
+        <p className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-xs leading-5 text-amber-900">
+          Pelatihan pemerintah, lembaga swasta, sekolah, kampus, komunitas,
+          perusahaan, dan belajar mandiri sama-sama dapat dicatat. Nama lembaga
+          memberi konteks, tetapi tidak dianggap sebagai bukti kelulusan atau
+          sertifikasi tanpa keterangan dari Anda.
+        </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <Field id="workExperience" label="Pengalaman kerja" optional error={errors.workExperience}>
             <textarea
@@ -246,17 +313,17 @@ export function ProfileForm({
           <Field
             id="personalStrengths"
             label="Kekuatan pribadi"
-            hint="Pisahkan dengan koma atau baris baru"
             optional
             error={errors.personalStrengths}
           >
             <textarea
               id="personalStrengths"
-              {...accessibility("personalStrengths", true)}
-              rows={2}
+              {...accessibility("personalStrengths")}
+              rows={3}
               className={inputClass}
               value={values.personalStrengths}
               disabled={disabled}
+              placeholder="Contoh: teliti, sabar menghadapi pelanggan, cepat belajar"
               onChange={(event) =>
                 onChange("personalStrengths", event.target.value)
               }
@@ -266,7 +333,7 @@ export function ProfileForm({
             <textarea
               id="evidenceOrProjects"
               {...accessibility("evidenceOrProjects")}
-              rows={2}
+              rows={3}
               className={inputClass}
               value={values.evidenceOrProjects}
               disabled={disabled}
@@ -277,7 +344,7 @@ export function ProfileForm({
             />
           </Field>
         </div>
-        <p className="rounded-md bg-indigo-50 p-2 text-xs text-indigo-900">
+        <p className="rounded-2xl border border-indigo-200 bg-indigo-50 p-4 text-xs leading-5 text-indigo-950">
           Wajib isi minimal satu: pengalaman kerja, magang/organisasi,
           tanggung jawab, atau bukti/proyek.
         </p>
@@ -300,13 +367,13 @@ function FormSection({
   return (
     <section
       aria-labelledby={`${id}-title`}
-      className="min-w-0 rounded-lg border border-slate-200 bg-white p-4 shadow-sm"
+      className="min-w-0 rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-[0_18px_50px_rgba(15,23,42,0.06)] sm:p-7"
     >
-      <h3 id={`${id}-title`} className="text-sm font-extrabold text-slate-900">
+      <h3 id={`${id}-title`} className="text-lg font-extrabold tracking-[-0.02em] text-slate-900 sm:text-xl">
         {title}
       </h3>
-      <p className="mb-3 mt-1 text-xs text-slate-500">{description}</p>
-      <div className="space-y-3">{children}</div>
+      <p className="mb-6 mt-1.5 text-sm leading-6 text-slate-500">{description}</p>
+      <div className="space-y-5">{children}</div>
     </section>
   );
 }
@@ -339,7 +406,7 @@ function Field({
         </label>
       </div>
       {hint && (
-        <p id={`${id}-hint`} className="mb-1 text-xs text-slate-600">
+        <p id={`${id}-hint`} className="mb-1.5 text-xs text-slate-500">
           {hint}
         </p>
       )}

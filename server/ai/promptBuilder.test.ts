@@ -56,18 +56,19 @@ describe("buildAnalysisPrompt", () => {
     const prompt = buildAnalysisPrompt(request);
     const requiredFields = [
       "matchScore",
+      "scoreBreakdown",
       "verdict",
       "readinessSummary",
       "candidateStrengths",
       "mainGaps",
-      "mustHaveRequirements",
-      "niceToHaveRequirements",
+      "requirementMatches",
       "riskFactors",
+      "topPriorities",
       "roadmap30Days",
       "evidenceOfCompetenceSuggestions",
-      "cvMaterialSuggestions",
+      "cvImprovementPrompt",
       "applicationMessage",
-      "possibleInterviewQuestions",
+      "interviewPreparation",
       "disclaimer",
     ];
 
@@ -102,6 +103,9 @@ describe("buildAnalysisPrompt", () => {
     expect(prompt.systemInstruction).toContain(
       "Practical readiness and material risks: 5%",
     );
+    expect(prompt.systemInstruction).toContain(
+      "five component scores must add up exactly to matchScore",
+    );
   });
 
   it("contains score-to-verdict consistency rules", () => {
@@ -114,6 +118,12 @@ describe("buildAnalysisPrompt", () => {
     expect(prompt.systemInstruction).toContain("0-49: NOT_READY_YET");
     expect(prompt.systemInstruction).toContain(
       "The verdict must match the score range",
+    );
+    expect(prompt.systemInstruction).toContain(
+      "APPLY_WITH_IMPROVEMENTS means recommend applying now",
+    );
+    expect(prompt.systemInstruction).toContain(
+      "Keep the recommended application timing in readinessSummary consistent with the verdict",
     );
   });
 
@@ -150,6 +160,21 @@ describe("buildAnalysisPrompt", () => {
     expect(prompt.systemInstruction).toContain(
       "menjadi nilai tambah, diutamakan, preferred",
     );
+    expect(prompt.systemInstruction).toContain(
+      "one requirementMatches item for every distinct requirement",
+    );
+    expect(prompt.systemInstruction).toContain(
+      "MATCHED, PARTIAL, or NOT_EVIDENCED",
+    );
+    expect(prompt.systemInstruction).toContain(
+      "Use MATCHED only when explicit profile evidence is sufficient for the whole requirement",
+    );
+    expect(prompt.systemInstruction).toContain(
+      "MATCHED = 1, PARTIAL = 0.5, and NOT_EVIDENCED = 0",
+    );
+    expect(prompt.systemInstruction).toContain(
+      "Do not upgrade it to PARTIAL merely because the skill could be learned",
+    );
   });
 
   it("accepts informal and non-formal experience as evidence", () => {
@@ -170,10 +195,73 @@ describe("buildAnalysisPrompt", () => {
       "Week 3: create evidence of competence",
     );
     expect(prompt.systemInstruction).toContain(
-      "Mention the target role and use only defensible strengths",
+      "complete, ready-to-edit message",
     );
     expect(prompt.systemInstruction).toContain(
       "Base questions on the supplied posting and selected job field",
+    );
+    expect(prompt.systemInstruction).toContain(
+      "Every roadmap action must name a concrete activity and a visible or measurable output",
+    );
+    expect(prompt.systemInstruction).toContain(
+      "question, whyItIsAsked, and answerOutline",
+    );
+    expect(prompt.systemInstruction).toContain(
+      "exactly 4 interviewPreparation items",
+    );
+  });
+
+  it("requires natural copy and a fact-preserving CV improvement prompt", () => {
+    const prompt = buildAnalysisPrompt(request);
+
+    expect(prompt.systemInstruction).toContain(
+      "experienced career adviser speaking clearly to one person",
+    );
+    expect(prompt.systemInstruction).toContain(
+      "another AI tool together with their existing CV",
+    );
+    expect(prompt.systemInstruction).toContain("[perlu dilengkapi]");
+    expect(prompt.systemInstruction).toContain(
+      "Do not write the revised CV itself inside cvImprovementPrompt",
+    );
+    expect(prompt.systemInstruction).toContain(
+      'address the reader only as "Anda"',
+    );
+    expect(prompt.systemInstruction).toContain(
+      "Do not call the reader an alumnus/alumna",
+    );
+    expect(prompt.systemInstruction).toContain(
+      'neutral wording such as "pernah mengikuti pelatihan"',
+    );
+    expect(prompt.systemInstruction).toContain(
+      "Make every riskFactor concrete",
+    );
+    expect(prompt.systemInstruction).toContain(
+      "Training completion evidence: NOT_PROVEN",
+    );
+    expect(prompt.userPrompt).toContain(
+      'the standalone words "kamu", "kalian", and "kami" must not appear anywhere',
+    );
+    expect(prompt.userPrompt).toContain(
+      "When its status is NOT_PROVEN, no field may claim alumni status",
+    );
+  });
+
+  it("marks explicit training completion evidence without generalizing it", () => {
+    const prompt = buildAnalysisPrompt({
+      ...request,
+      profile: {
+        ...request.profile,
+        certificationsOrTraining:
+          "Telah menyelesaikan pelatihan administrasi dan menerima sertifikat kelulusan.",
+      },
+    });
+
+    expect(prompt.systemInstruction).toContain(
+      "Training completion evidence: EXPLICITLY_SUPPORTED",
+    );
+    expect(prompt.systemInstruction).toContain(
+      "do not generalize it to another training program",
     );
   });
 

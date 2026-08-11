@@ -9,18 +9,32 @@ respective release; current development status is recorded under
 
 ### Added
 - Shared Zod request and response contracts for the normalized V2 analysis flow.
-- Provider-neutral backend interface, provider resolver, Gemini adapter, prompt
+- Provider-neutral backend interface, provider resolver, Gemini and OpenAI adapters, prompt
   builder, response parser, and analysis service.
-- Multi-field manual profile covering ten stable job-field identifiers.
+- Shared catalog covering 29 stable job-field identifiers in seven UI groups,
+  with optional training-source, provider, and program context.
 - Specialized guidance for IT & Digital, Administration, Customer Service, and
   Operations/Warehouse/Logistics, with a conservative fallback for other
   supported fields.
 - Normalized result dashboard with requirements, risks, four-week roadmap,
-  evidence-of-competence suggestions, CV material, application message,
-  interview questions, and disclaimer.
+  evidence-of-competence suggestions, a reusable CV-improvement prompt,
+  application message, interview questions, and disclaimer.
+- Evidence-grounded score breakdown across five fixed dimensions, requirement
+  matching with explicit status and next steps, ordered priorities, and
+  interview preparation with answer outlines.
 - Four deterministic offline demo scenarios that do not require an API key.
 - Focused deterministic tests for schemas, backend modules, compatibility,
   API clients, forms, demos, results, accessibility, and interaction behavior.
+- Provider timeout and end-to-end request cancellation support.
+- Per-client analysis rate limiting, request IDs, Helmet security headers,
+  strict production CSP, Permissions Policy, and immutable asset caching.
+- GitHub Actions CI for typecheck, tests, production build, and dependency audit.
+- jsdom interaction tests for demo selection, reset, live submit, and result
+  rendering.
+- OpenAI Responses API structured-output tests with disabled response storage,
+  normalized failures, and no provider identity exposed to the frontend.
+- A repeatable Gemini live-evaluation script covering three Frontend runs plus
+  Administration, Customer Service, and Warehouse scenarios.
 
 ### Changed
 - Repositioned the development branch from an IT-focused challenge prototype to
@@ -30,17 +44,57 @@ respective release; current development status is recorded under
 - Moved provider selection and credentials entirely behind the server API.
 - Extracted backend responsibilities into configuration, provider, prompt,
   parsing, service, route, and compatibility modules.
+- Replaced the split hero/form layout with one ordered reading flow, while
+  retaining compact paired fields only where desktop width permits.
+- Changed the visual system to a calm white–slate palette with restrained
+  indigo accents, neutral form borders, and stronger mobile spacing.
+- Changed training-provider and training-program fields to unrestricted plain
+  text inputs without browser suggestion lists.
+- Completed every offline demo profile so selecting a scenario fills the full
+  form and provides a concrete end-to-end example.
+- Expanded every offline demo result to mirror the complete live-analysis
+  contract, including score rationales, requirement evidence, measurable
+  weekly outputs, a CV-improvement prompt, and interview guidance.
+- Refined result copy to use a more natural adviser voice, expanded application
+  messages into professional ready-to-edit examples, and standardized interview
+  preparation at exactly four questions.
+- Calibrated requirement statuses and must-have scoring, aligned application
+  timing with verdicts, and required concrete vacancy-specific uncertainties.
+- Reorganized the README around product behavior, local setup, Gemini live
+  evaluation, privacy boundaries, and the remaining release gates.
 - Improved responsive layout, semantic structure, form labeling, keyboard
   navigation, focus handling, demo/reset behavior, and long-content rendering.
+- Reworked the visual system into a warmer vocational-career interface with
+  clearer hierarchy, grouped examples, and less developer-facing language.
+- Expanded field-specific evidence guidance from fourteen to twenty-seven career
+  families, with conservative fallbacks for open categories.
+- Updated compatible dependencies within existing major-version boundaries and
+  aligned the package version with `v2.0.0-dev`.
 - Preserved temporary V1 request and response adapters during migration.
 
 ### Fixed
 - Enforced runtime consistency between match-score ranges and stable verdict
   identifiers.
+- Enforced that five score components total the final score, each roadmap week
+  contains multiple actions, and detailed requirement/interview structures are
+  complete before results reach the frontend.
+- Replaced ambiguous CV draft bullets with one fact-preserving prompt intended
+  to be used alongside the user's existing CV in a separate AI tool.
 - Rejected malformed or incomplete provider responses before they reach the
   frontend.
 - Stabilized empty result sections, unavailable-analysis behavior, network
   errors, invalid JSON handling, duplicate submissions, and demo timers.
+- Localized normalized API failure codes into consistent Indonesian messages.
+- Aligned paired personal-strength and evidence text areas by moving guidance
+  into their placeholders and giving both controls the same initial height.
+- Rejected Indonesian provider output that returns to informal reader pronouns,
+  speaks as the assistant using `kami`, or asserts unsupported training
+  graduation or certification.
+- Reduced Gemini output variation and added a candidate-specific training-status
+  boundary plus a final compliance pass to improve repeated live-analysis
+  stability without weakening response validation.
+- Verified the stabilized Gemini path with six successful live evaluations,
+  including three Frontend runs with one verdict and a two-point score spread.
 
 ### Security
 - Added strict request and provider-response validation with bounded field,
@@ -51,6 +105,9 @@ respective release; current development status is recorded under
   traces, and SDK details are not exposed to the frontend.
 - Kept API keys server-side and removed provider/model selection from the
   frontend contract.
+- Removed the Express identity header and restricted framing, script, style,
+  connection, image, font, camera, location, and microphone capabilities.
+- Reduced the verified npm audit result to zero known vulnerabilities.
 
 ## [1.0.0] - 2026-06-11
 ### Juara Vibe Coding Edition

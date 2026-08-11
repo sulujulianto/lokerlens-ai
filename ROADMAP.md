@@ -9,16 +9,20 @@ dibutuhkan sebelum kandidat rilis. V2 masih berada pada branch
 - kontrak request dan response bersama melalui Zod;
 - validasi runtime pada frontend dan backend;
 - backend dengan interface provider AI;
-- resolver provider dan adapter Gemini;
+- resolver provider serta adapter Gemini dan OpenAI;
 - prompt builder dengan batas data tidak tepercaya;
 - parsing serta validasi respons provider;
 - error server yang dinormalisasi;
 - service analisis yang terpisah dari Express;
 - panduan khusus untuk IT & Digital, Administrasi, Customer Service, dan
   Operasional/Gudang/Logistik;
-- fallback umum yang konservatif untuk bidang lain;
+- katalog 29 rumpun karier dengan panduan khusus untuk 27 rumpun dan fallback
+  konservatif untuk dua rumpun terbuka;
+- konteks jenis sumber, lembaga, serta program pelatihan yang bersifat opsional;
 - scoring rubric dan kebijakan konsistensi skor-verdict;
-- frontend manual-first dengan sepuluh bidang pekerjaan;
+- rincian lima komponen skor, pencocokan persyaratan berbasis bukti, prioritas
+  terurut, roadmap dengan keluaran konkret, dan persiapan wawancara terstruktur;
+- frontend manual-first dengan 29 bidang pekerjaan, alur tunggal, dan visual putih–slate;
 - dashboard hasil normalized V2;
 - empat demo offline deterministik;
 - kompatibilitas sementara untuk request dan response V1;
@@ -26,26 +30,39 @@ dibutuhkan sebelum kandidat rilis. V2 masih berada pada branch
   error, dan konten panjang;
 - test deterministik tanpa panggilan provider eksternal;
 - build frontend dan backend produksi.
+- timeout serta cancellation request provider;
+- rate limit endpoint analisis;
+- security headers, CSP produksi, Permissions Policy, request ID, dan cache
+  aset immutable;
+- GitHub Actions CI;
+- pembaruan dependency kompatibel dengan hasil audit 0 temuan;
+- gerbang kualitas untuk sapaan Indonesia dan klaim kelulusan atau sertifikasi
+  pelatihan yang tidak didukung profil;
+- 24 berkas test dan 286 test, termasuk pengujian interaksi DOM;
+- verifikasi lokal bundle produksi, health check, penolakan tanpa key, header,
+  dan rate limit.
+- evaluasi Gemini live berulang: putaran awal menghasilkan empat respons valid
+  dan dua penolakan aman, sedangkan putaran setelah stabilisasi lulus 6/6 tanpa
+  peringatan;
+- tiga pengulangan Frontend dengan skor 72, 70, dan 72 serta verdict konsisten;
+- latensi lokal enam request tercatat 21.086–34.093 ms, di bawah timeout
+  provider 45 detik.
 
 ## Wajib Sebelum Kandidat Rilis V2
 
-1. Memperoleh dan mengonfigurasi API key Gemini pada lingkungan pengujian yang
-   aman.
-2. Memverifikasi bahwa model yang dikonfigurasi benar-benar tersedia untuk
-   akun, region, dan versi SDK yang digunakan.
-3. Menjalankan analisis live end-to-end dari frontend sampai provider dan
-   kembali ke dashboard.
-4. Mengevaluasi kualitas prompt dengan lowongan realistis pada empat bidang
-   spesialis awal.
-5. Menguji lowongan panjang, profil dengan pengalaman informal, dan input
+1. Mengevaluasi kualitas prompt dengan lowongan realistis minimal pada IT,
+   administrasi, layanan pelanggan, logistik, kuliner, dan satu bidang teknik.
+2. Menguji lowongan panjang, profil dengan pengalaman informal, dan input
    bilingual.
-6. Menguji respons provider yang kosong, malformed, lambat, atau gagal.
-7. Mengukur latensi dan menentukan strategi timeout/cancellation yang aman.
-8. Memverifikasi konfigurasi, static hosting, health check, logging, dan error
-   handling pada lingkungan deployment produksi.
-9. Meninjau ulang wording privasi setelah platform hosting, lokasi pemrosesan,
+3. Menguji respons provider live yang kosong, malformed, lambat, atau gagal.
+4. Memvalidasi batas waktu request terhadap karakteristik platform deployment;
+   pengujian lokal belum membuktikan bahwa platform publik mendukung durasi
+   21–34 detik.
+5. Memilih platform dan memverifikasi konfigurasi, health check, logging,
+   rate-limit store, serta error handling pada deployment publik.
+6. Meninjau ulang wording privasi setelah platform hosting, lokasi pemrosesan,
    logging, dan kebijakan provider final diketahui.
-10. Menjalankan pemeriksaan manual responsive dan keyboard pada browser nyata.
+7. Menjalankan pemeriksaan manual responsive dan keyboard pada browser nyata.
 
 ## Kandidat Pasca-Rilis
 
@@ -55,8 +72,7 @@ pengguna, bukan dianggap sebagai prasyarat otomatis:
 - penyimpanan draf atau riwayat lokal yang bersifat opt-in;
 - export Markdown atau PDF;
 - panduan spesialis lebih dalam untuk bidang tambahan;
-- adapter provider AI tambahan;
-- redesign visual yang lebih luas;
+- adapter provider AI di luar Gemini dan OpenAI;
 - akun dan sinkronisasi lintas perangkat hanya jika kebutuhan produk serta
   konsekuensi privasinya telah disetujui.
 

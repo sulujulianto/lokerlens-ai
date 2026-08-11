@@ -40,12 +40,16 @@ export function adaptToLegacyAnalysisResponse(
     summary: analysis.readinessSummary,
     strengths: analysis.candidateStrengths,
     missingSkills: analysis.mainGaps,
-    mustHaveRequirements: analysis.mustHaveRequirements,
-    niceToHaveRequirements: analysis.niceToHaveRequirements,
+    mustHaveRequirements: analysis.requirementMatches
+      .filter((item) => item.priority === "MUST_HAVE")
+      .map((item) => item.requirement),
+    niceToHaveRequirements: analysis.requirementMatches
+      .filter((item) => item.priority === "NICE_TO_HAVE")
+      .map((item) => item.requirement),
     risks: analysis.riskFactors,
     roadmap30Days: analysis.roadmap30Days,
     portfolioSuggestions: analysis.evidenceOfCompetenceSuggestions,
-    cvBulletSuggestions: analysis.cvMaterialSuggestions,
+    cvBulletSuggestions: [analysis.cvImprovementPrompt],
     applicationMessage: analysis.applicationMessage,
     disclaimer: analysis.disclaimer,
   };

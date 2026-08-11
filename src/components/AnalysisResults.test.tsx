@@ -1,29 +1,29 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import type { JobReadinessAnalysis } from "../../shared/analysisSchemas";
+import { createJobReadinessAnalysisFixture } from "../../shared/analysisTestFixtures";
 import { AnalysisResults } from "./AnalysisResults";
 
-const analysis: JobReadinessAnalysis = {
+const analysis = createJobReadinessAnalysisFixture({
   matchScore: 74,
-  verdict: "APPLY_WITH_IMPROVEMENTS",
   readinessSummary: "Kandidat memiliki fondasi yang relevan.",
   candidateStrengths: ["Pengalaman pencatatan"],
   mainGaps: [],
-  mustHaveRequirements: ["Ketelitian"],
-  niceToHaveRequirements: [],
+  requirementMatches: [
+    {
+      requirement: "Ketelitian",
+      priority: "MUST_HAVE",
+      status: "MATCHED",
+      evidence: "Profil menyebut pemeriksaan ulang data.",
+      recommendation: "Siapkan contoh pemeriksaan data.",
+    },
+  ],
   riskFactors: [],
-  roadmap30Days: {
-    week1: ["Pelajari kebutuhan"],
-    week2: ["Latihan tugas"],
-    week3: ["Buat bukti"],
-    week4: ["Latihan wawancara"],
-  },
   evidenceOfCompetenceSuggestions: ["Buat spreadsheet contoh"],
-  cvMaterialSuggestions: ["Jelaskan tugas pencatatan"],
+  cvImprovementPrompt:
+    "Tinjau CV saya dan pertahankan seluruh fakta yang tersedia.",
   applicationMessage: "Saya melamar posisi ini.",
-  possibleInterviewQuestions: ["Bagaimana menjaga akurasi?"],
   disclaimer: "Panduan ini bukan jaminan kerja.",
-};
+});
 
 describe("AnalysisResults", () => {
   it("renders normalized result sections and localized verdict", () => {
@@ -35,13 +35,18 @@ describe("AnalysisResults", () => {
     expect(html).toContain("Melamar Sambil Melakukan Perbaikan");
     expect(html).toContain("Minggu 1");
     expect(html).toContain("Minggu 4");
-    expect(html).toContain("Kemungkinan Pertanyaan Wawancara");
+    expect(html).toContain("Dasar Perhitungan Skor");
+    expect(html).toContain("Kecocokan dengan Persyaratan Lowongan");
+    expect(html).toContain("Empat Pertanyaan untuk Latihan Wawancara");
+    expect(html).toContain("Prompt untuk Memperbaiki CV");
+    expect(html).toContain("Tinjau CV saya");
     expect(html).toContain("Buat spreadsheet contoh");
     expect(html).toContain("Saya melamar posisi ini.");
     expect(html).toContain("Panduan ini bukan jaminan kerja.");
     expect(html).not.toContain("APPLY_WITH_IMPROVEMENTS");
     expect(html).toContain('id="analysis-results-title"');
     expect(html).toContain('aria-label="Salin pesan lamaran"');
+    expect(html).toContain('aria-label="Salin prompt perbaikan CV"');
   });
 
   it("renders restrained empty states for optional lists", () => {
@@ -50,9 +55,8 @@ describe("AnalysisResults", () => {
         analysis={{
           ...analysis,
           mainGaps: [],
-          niceToHaveRequirements: [],
+          requirementMatches: [],
           riskFactors: [],
-          possibleInterviewQuestions: [],
         }}
         language="id"
         isDemo
@@ -63,10 +67,9 @@ describe("AnalysisResults", () => {
       "Tidak ada kesenjangan utama yang teridentifikasi.",
     );
     expect(html).toContain(
-      "Tidak ada nilai tambah yang dinyatakan secara jelas.",
+      "Teks lowongan tidak menyatakan persyaratan yang cukup jelas",
     );
     expect(html).toContain("Tidak ada risiko material yang teridentifikasi.");
-    expect(html).toContain("Belum ada pertanyaan wawancara tambahan.");
     expect(html).toContain("Panduan ini bukan jaminan kerja.");
   });
 

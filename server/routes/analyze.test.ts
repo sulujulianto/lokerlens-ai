@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createJobReadinessAnalysisFixture } from "../../shared/analysisTestFixtures";
 import type {
   AnalyzeJobReadinessRequest,
   JobReadinessAnalysis,
@@ -8,30 +9,13 @@ import { AppError } from "../errors";
 import { JobReadinessService } from "../services/jobReadinessService";
 import { processAnalyzePayload } from "./analyze";
 
-const analysis: JobReadinessAnalysis = {
+const analysis: JobReadinessAnalysis = createJobReadinessAnalysisFixture({
   matchScore: 68,
-  verdict: "APPLY_WITH_IMPROVEMENTS",
-  readinessSummary: "The candidate has relevant foundations.",
-  candidateStrengths: ["Relevant practical experience"],
-  mainGaps: ["Limited evidence for one required tool"],
-  mustHaveRequirements: ["Accurate task execution"],
-  niceToHaveRequirements: ["Tool familiarity"],
-  riskFactors: [],
-  roadmap30Days: {
-    week1: ["Review the main gap"],
-    week2: ["Practice a role-specific task"],
-    week3: ["Create evidence"],
-    week4: ["Prepare the application"],
-  },
-  evidenceOfCompetenceSuggestions: ["Create a sanitized work sample"],
-  cvMaterialSuggestions: ["Describe relevant responsibilities"],
-  applicationMessage: "I am applying for this role.",
-  possibleInterviewQuestions: ["How do you maintain accuracy?"],
-  disclaimer: "Guidance only.",
-};
+});
 
 class RecordingProvider implements AIProvider {
   requests: AnalyzeJobReadinessRequest[] = [];
+  receivedSignal?: AbortSignal;
 
   isConfigured(): boolean {
     return true;
@@ -39,8 +23,10 @@ class RecordingProvider implements AIProvider {
 
   async analyzeJobReadiness(
     request: AnalyzeJobReadinessRequest,
+    options?: { signal?: AbortSignal },
   ): Promise<JobReadinessAnalysis> {
     this.requests.push(request);
+    this.receivedSignal = options?.signal;
     return analysis;
   }
 }
@@ -80,6 +66,19 @@ describe("processAnalyzePayload", () => {
 
     expect(result).toEqual(analysis);
     expect(provider.requests[0]).toEqual(v2Request);
+  });
+
+  it("passes request cancellation to the provider", async () => {
+    const provider = new RecordingProvider();
+    const controller = new AbortController();
+
+    await processAnalyzePayload(
+      v2Request,
+      new JobReadinessService(provider),
+      { signal: controller.signal },
+    );
+
+    expect(provider.receivedSignal).toBe(controller.signal);
   });
 
   it("keeps the temporary legacy request and response path", async () => {

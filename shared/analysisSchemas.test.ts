@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createJobReadinessAnalysisFixture } from "./analysisTestFixtures";
 import {
   AnalyzeJobReadinessRequestSchema,
   CareerProfileV2Schema,
@@ -9,14 +10,33 @@ import {
 
 const validJobFields = [
   "it_digital",
+  "data_ai",
+  "cyber_network",
+  "product_design",
   "administration",
+  "human_resources",
+  "project_quality",
   "customer_service",
   "sales_marketing",
+  "retail_commerce",
   "operations_logistics",
+  "transportation",
+  "security_cleaning",
   "hospitality",
+  "culinary",
+  "health_care",
+  "social_community",
+  "automotive",
+  "manufacturing",
+  "construction",
+  "electrical_refrigeration",
+  "agriculture_environment",
+  "creative_services",
+  "media_events",
   "technical_vocational",
   "education_training",
   "finance_accounting",
+  "legal_public_service",
   "other",
 ] as const;
 
@@ -24,6 +44,8 @@ const validProfile = {
   targetJobField: "administration",
   targetRole: "Junior Administrative Assistant",
   educationBackground: "SMK graduate in office administration.",
+  trainingProvider: "PPKD Jakarta Pusat",
+  trainingProgram: "Data Management Staff",
   workExperience: "Six months supporting document filing and data entry.",
   mainSkills: ["Document filing", "Spreadsheet data entry"],
   toolsOrEquipment: ["Microsoft Excel"],
@@ -41,27 +63,7 @@ const validRequest = {
   jobPosting: "Seeking an entry-level administrative assistant.",
 };
 
-const validAnalysis = {
-  matchScore: 74,
-  verdict: "APPLY_WITH_IMPROVEMENTS",
-  readinessSummary: "The candidate meets most entry-level requirements.",
-  candidateStrengths: ["Relevant document-handling experience"],
-  mainGaps: ["No stated experience with the employer's filing software"],
-  mustHaveRequirements: ["Accurate data entry"],
-  niceToHaveRequirements: ["Experience with digital filing systems"],
-  riskFactors: ["The posting does not state a salary range"],
-  roadmap30Days: {
-    week1: ["Practice spreadsheet formatting"],
-    week2: ["Create a document filing sample"],
-    week3: ["Prepare interview examples"],
-    week4: ["Polish application materials"],
-  },
-  evidenceOfCompetenceSuggestions: ["Create a sanitized filing index sample"],
-  cvMaterialSuggestions: ["Describe the number and type of records handled"],
-  applicationMessage: "I am applying for the administrative assistant role.",
-  possibleInterviewQuestions: ["How do you prevent data-entry errors?"],
-  disclaimer: "This analysis is guidance and not a hiring guarantee.",
-} as const;
+const validAnalysis = createJobReadinessAnalysisFixture();
 
 describe("JobFieldSchema", () => {
   it.each(validJobFields)("accepts %s", (jobField) => {
@@ -86,6 +88,16 @@ describe("OutputLanguageSchema", () => {
 describe("CareerProfileV2Schema", () => {
   it("accepts a valid profile with formal work experience", () => {
     const result = CareerProfileV2Schema.safeParse(validProfile);
+
+    expect(result.success).toBe(true);
+  });
+
+  it("treats vocational provider and program as optional context", () => {
+    const result = CareerProfileV2Schema.safeParse({
+      ...validProfile,
+      trainingProvider: undefined,
+      trainingProgram: undefined,
+    });
 
     expect(result.success).toBe(true);
   });
@@ -255,6 +267,63 @@ describe("JobReadinessAnalysisSchema", () => {
     ).toBe(false);
   });
 
+  it("rejects roadmap weeks with fewer than two concrete actions", () => {
+    expect(
+      JobReadinessAnalysisSchema.safeParse({
+        ...validAnalysis,
+        roadmap30Days: {
+          ...validAnalysis.roadmap30Days,
+          week1: ["Only one action"],
+        },
+      }).success,
+    ).toBe(false);
+  });
+
+  it("rejects a score breakdown that does not equal the final score", () => {
+    expect(
+      JobReadinessAnalysisSchema.safeParse({
+        ...validAnalysis,
+        scoreBreakdown: {
+          ...validAnalysis.scoreBreakdown,
+          practicalReadiness: {
+            ...validAnalysis.scoreBreakdown.practicalReadiness,
+            score: validAnalysis.scoreBreakdown.practicalReadiness.score - 1,
+          },
+        },
+      }).success,
+    ).toBe(false);
+  });
+
+  it("rejects incomplete requirement and interview details", () => {
+    expect(
+      JobReadinessAnalysisSchema.safeParse({
+        ...validAnalysis,
+        requirementMatches: [
+          {
+            requirement: "Accurate data entry",
+            priority: "MUST_HAVE",
+            status: "MATCHED",
+          },
+        ],
+      }).success,
+    ).toBe(false);
+    expect(
+      JobReadinessAnalysisSchema.safeParse({
+        ...validAnalysis,
+        interviewPreparation: validAnalysis.interviewPreparation.slice(0, 2),
+      }).success,
+    ).toBe(false);
+    expect(
+      JobReadinessAnalysisSchema.safeParse({
+        ...validAnalysis,
+        interviewPreparation: [
+          ...validAnalysis.interviewPreparation,
+          validAnalysis.interviewPreparation[0],
+        ],
+      }).success,
+    ).toBe(false);
+  });
+
   it("rejects malformed list entries", () => {
     expect(
       JobReadinessAnalysisSchema.safeParse({
@@ -290,11 +359,9 @@ describe("JobReadinessAnalysisSchema", () => {
     [100, "APPLY_NOW"],
   ] as const)("accepts score %i with verdict %s", (matchScore, verdict) => {
     expect(
-      JobReadinessAnalysisSchema.safeParse({
-        ...validAnalysis,
-        matchScore,
-        verdict,
-      }).success,
+      JobReadinessAnalysisSchema.safeParse(
+        createJobReadinessAnalysisFixture({ matchScore, verdict }),
+      ).success,
     ).toBe(true);
   });
 

@@ -1,9 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: Inter, "Segoe UI", Arial, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   
   /* Modern color palettes */
   --color-primary-50: #eef2ff;
@@ -32,6 +31,15 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-wrap: break-word;
   overflow-x: clip;
+}
+
+::selection {
+  background: #c7d2fe;
+  color: #312e81;
+}
+
+:focus-visible {
+  scroll-margin-block: 6rem;
 }
 
 html,

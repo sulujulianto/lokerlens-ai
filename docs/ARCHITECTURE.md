@@ -9,10 +9,11 @@ Dokumen ini merangkum arsitektur yang sudah diimplementasikan pada branch
 React form
   → shared request validation
   → POST /api/analyze
+  → rate limit and cancellation context
   → strict V2 route validation
   → JobReadinessService
   → resolved AIProvider
-  → GeminiProvider
+  → GeminiProvider or OpenAIProvider
   → prompt builder
   → provider response text
   → JSON extraction and shared response validation
@@ -34,6 +35,9 @@ definisi bisnis V2.
 - memvalidasi konfigurasi;
 - membuat Express;
 - memasang batas JSON 1 MB;
+- menghapus header identitas Express;
+- memasang security headers, CSP produksi, Permissions Policy, dan request ID;
+- memasang rate limit pada endpoint analisis;
 - mendaftarkan `/api/health` dan `/api/analyze`;
 - memasang Vite middleware saat development;
 - melayani aset hasil build dan fallback SPA saat production;
@@ -47,9 +51,15 @@ merespons tetapi `analysisAvailable` bernilai `false`.
 
 [`../server/config.ts`](../server/config.ts) memvalidasi:
 
-- `AI_PROVIDER`, dengan nilai yang didukung saat ini hanya `gemini`;
+- `AI_PROVIDER`, dengan nilai `gemini` atau `openai`;
 - `GEMINI_API_KEY`, yang bersifat opsional saat server dimulai;
+- `GEMINI_MODEL`, default `gemini-3.5-flash`;
+- `OPENAI_API_KEY`, yang bersifat opsional saat server dimulai;
+- `OPENAI_MODEL`, default `gpt-5.6-luna`;
 - `PORT`, default `3000`.
+- `AI_REQUEST_TIMEOUT_MS`, default `45000` dan dibatasi 5–120 detik;
+- `ANALYSIS_RATE_LIMIT_MAX`, default `10`;
+- `ANALYSIS_RATE_LIMIT_WINDOW_MS`, default `60000` dan dibatasi 10 detik–1 jam.
 
 Konfigurasi menghasilkan flag generik `analysisAvailable`. Frontend V2 tidak
 bergantung pada nama provider.
@@ -65,6 +75,12 @@ dalam urutan berikut:
 4. hasil request V2 dikembalikan sebagai `JobReadinessAnalysis`;
 5. hasil request V1 dipetakan kembali ke bentuk response legacy.
 
+Route membuat `AbortController` per request. Jika browser memutus koneksi,
+signal diteruskan melalui service ke provider. Rate limit dijalankan sebelum
+analisis untuk mengurangi penyalahgunaan biaya provider. Implementasi bawaan
+menyimpan counter dalam memori proses; deployment multi-instance perlu store
+bersama sebelum mengandalkan kuota global.
+
 Adapter pada [`../server/compatibility/`](../server/compatibility/) adalah kode
 migrasi sementara, bukan business schema kedua yang permanen.
 
@@ -72,11 +88,13 @@ migrasi sementara, bukan business schema kedua yang permanen.
 
 [`../server/services/jobReadinessService.ts`](../server/services/jobReadinessService.ts)
 tidak bergantung pada Express. Service menerima request V2 tervalidasi, memanggil
-`AIProvider`, lalu memvalidasi hasil sekali lagi sebelum mengembalikannya.
+`AIProvider` beserta cancellation signal, lalu memvalidasi hasil sekali lagi
+sebelum mengembalikannya.
 
 Interface provider berada di
 [`../server/ai/provider.ts`](../server/ai/provider.ts). Resolver membaca
-konfigurasi server dan saat ini hanya dapat membuat `GeminiProvider`.
+konfigurasi server dan membuat satu adapter sesuai `AI_PROVIDER`. Route,
+service, frontend, serta kontrak hasil tidak bergantung pada nama provider.
 
 Implementasi Gemini:
 
@@ -85,9 +103,22 @@ Implementasi Gemini:
 - meminta JSON terstruktur;
 - tidak mengekspor tipe SDK ke service atau route;
 - memetakan kegagalan ke `AppError`;
+- menerapkan HTTP timeout yang tervalidasi;
+- menerima AbortSignal dari siklus request;
 - menyerahkan teks respons ke parser V2.
 
-Provider atau model lain belum diimplementasikan.
+Implementasi OpenAI:
+
+- memakai Responses API melalui request server-side;
+- meminta Structured Outputs dari JSON Schema yang dihasilkan dari schema Zod;
+- menonaktifkan penyimpanan response melalui `store: false`;
+- menerapkan timeout dan cancellation signal yang sama;
+- menormalisasi HTTP failure, refusal, respons incomplete, dan output kosong;
+- menyerahkan teks respons ke parser V2 yang sama.
+
+Model kedua provider dapat diubah melalui environment tanpa perubahan UI atau
+kontrak API. Menambah provider ketiga tetap memerlukan adapter dan pengujian
+eksplisit; resolver tidak melakukan fallback diam-diam antar-provider.
 
 ## Prompt dan Panduan Bidang
 
@@ -99,12 +130,17 @@ Provider atau model lain belum diimplementasikan.
 - grounding terhadap profil dan lowongan;
 - klasifikasi must-have dan nice-to-have;
 - aturan roadmap, pesan lamaran, dan pertanyaan wawancara;
+- aturan kedalaman hasil, status pencocokan persyaratan, prioritas, serta
+  kerangka jawaban wawancara yang tetap berbasis bukti;
 - schema output normalized;
 - bahasa output yang diminta.
 
+[`../shared/jobFieldCatalog.ts`](../shared/jobFieldCatalog.ts) menjadi sumber
+bersama untuk 29 rumpun, tujuh kelompok UI, label, deskripsi, dan contoh peran.
 [`../server/ai/jobFieldGuidance.ts`](../server/ai/jobFieldGuidance.ts)
-menambahkan panduan khusus untuk empat bidang awal. Bidang lain memakai fallback
-umum yang secara eksplisit menghindari klaim spesialis.
+menambahkan kompetensi, contoh bukti, dan kehati-hatian khusus untuk 27 rumpun.
+Dua rumpun terbuka memakai fallback umum yang secara eksplisit menghindari klaim
+spesialis.
 
 ## Parsing dan Error
 
@@ -116,6 +152,12 @@ umum yang secara eksplisit menghindari klaim spesialis.
 4. memvalidasi seluruh response dengan `JobReadinessAnalysisSchema`;
 5. menolak field asing, field hilang, batas berlebih, atau skor/verdict yang
    tidak konsisten.
+
+Schema juga memastikan total komponen skor `40 + 25 + 20 + 10 + 5` sama dengan
+`matchScore`, setiap minggu memiliki sedikitnya dua aksi, setiap pencocokan
+persyaratan memuat status/bukti/rekomendasi, dan sedikitnya tiga item persiapan
+wawancara tersedia. Validasi ini membuat provider tidak dapat menghilangkan
+bagian penting lalu tetap menghasilkan respons yang dianggap sah.
 
 Error publik hanya berisi kode stabil dan pesan aman. Raw response provider,
 prompt, API key, stack trace, dan detail SDK tidak dikirim ke frontend.
@@ -135,8 +177,7 @@ Frontend health hanya menggunakan:
 }
 ```
 
-Backend masih menyertakan `geminiConfigured` untuk klien V1, tetapi frontend V2
-tidak menggunakannya.
+Backend tidak mengekspos identitas provider atau model pada health response.
 
 ## Demo Offline
 
@@ -146,7 +187,9 @@ bersama dari
 [`../shared/crossFieldScenarios.ts`](../shared/crossFieldScenarios.ts).
 
 Request dan analysis demo divalidasi melalui schema V2. Menampilkan demo tidak
-memanggil `/api/analyze` atau provider eksternal.
+memanggil `/api/analyze` atau provider eksternal. Bentuk hasil demo sama dengan
+kontrak live agar dashboard offline menjadi representasi struktur keluaran,
+bukan versi ringkas yang berbeda.
 
 ## Statelessness
 
@@ -158,9 +201,12 @@ produksi.
 
 ## Status Verifikasi
 
-Unit dan integration-style tests menggunakan fake provider dan mock fetch.
-Lint, test, dan build dapat berjalan tanpa API key dan tanpa panggilan jaringan
-eksternal.
+Unit, integration-style, dan DOM interaction tests menggunakan fake provider,
+mock fetch, dan jsdom. Lint, test, build, dan audit dapat berjalan tanpa API key
+dan tanpa panggilan provider eksternal. Bundle produksi juga telah diperiksa
+secara lokal untuk health response, fallback SPA, CSP, security headers,
+request ID, penolakan tanpa provider, dan rate limit.
 
-Integrasi Gemini live, ketersediaan model, latensi, timeout, dan deployment
-produksi belum diverifikasi.
+Integrasi provider live, kualitas respons, latensi aktual, perilaku timeout
+terhadap layanan nyata, QA browser lintas perangkat, dan deployment publik
+belum diverifikasi.

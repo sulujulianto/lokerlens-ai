@@ -4,6 +4,7 @@ export type AppErrorCode =
   | "PROVIDER_TIMEOUT"
   | "PROVIDER_RESPONSE_INVALID"
   | "PROVIDER_REQUEST_FAILED"
+  | "RATE_LIMITED"
   | "INTERNAL_ERROR";
 
 interface AppErrorOptions {
@@ -54,6 +55,9 @@ export function getPublicErrorResponse(error: AppError) {
   };
 }
 
-export function logServerError(error: AppError): void {
-  console.error(`[${error.code}] ${error.logMessage ?? error.publicMessage}`);
+export function logServerError(error: AppError, requestId?: string): void {
+  const requestContext = requestId ? ` [requestId=${requestId}]` : "";
+  console.error(
+    `[${error.code}]${requestContext} ${error.logMessage ?? error.publicMessage}`,
+  );
 }

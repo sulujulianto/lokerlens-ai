@@ -38,11 +38,11 @@ export function Roadmap({
   return (
     <section
       aria-labelledby="roadmap-title"
-      className="min-w-0 rounded-lg bg-indigo-950 p-4 text-white shadow-sm sm:p-5"
+      className="min-w-0 rounded-3xl border border-indigo-200 bg-indigo-50 p-4 text-slate-900 shadow-[0_16px_38px_rgba(15,23,42,0.06)] sm:p-6"
     >
       <h3
         id="roadmap-title"
-        className="text-sm font-black uppercase tracking-wider text-indigo-100"
+        className="text-sm font-extrabold uppercase tracking-[0.12em] text-indigo-800"
       >
         Rencana Aksi 30 Hari
       </h3>
@@ -51,14 +51,14 @@ export function Roadmap({
           <div key={week.label} className="flex min-w-0 gap-3">
             <span
               aria-hidden="true"
-              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-xs font-extrabold text-white"
             >
               {index + 1}
             </span>
             <div className="min-w-0">
               <h4 className="text-sm font-bold">{week.label}</h4>
               {week.actions.length > 0 ? (
-                <ul className="mt-1 list-disc space-y-1 pl-4 text-xs leading-relaxed text-indigo-100">
+                <ul className="mt-1.5 list-disc space-y-1.5 pl-4 text-xs leading-5 text-slate-700">
                   {week.actions.map((action) => (
                     <li
                       key={action}
@@ -69,7 +69,7 @@ export function Roadmap({
                   ))}
                 </ul>
               ) : (
-                <p className="mt-1 text-xs text-indigo-300">
+                <p className="mt-1 text-xs text-slate-500">
                   Tidak ada tindakan tambahan.
                 </p>
               )}

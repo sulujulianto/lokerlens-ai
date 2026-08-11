@@ -3,12 +3,16 @@ import {
   type AnalyzeJobReadinessRequest,
   type JobField,
   type OutputLanguage,
+  type TrainingSourceType,
 } from "../../shared/analysisSchemas";
 
 export interface ProfileFormValues {
   targetJobField: JobField;
   targetRole: string;
   educationBackground: string;
+  trainingSourceType: TrainingSourceType | "";
+  trainingProvider: string;
+  trainingProgram: string;
   workExperience: string;
   internshipOrOrganizationalExperience: string;
   mainSkills: string;
@@ -30,6 +34,9 @@ export const emptyProfileForm: ProfileFormValues = {
   targetJobField: "it_digital",
   targetRole: "",
   educationBackground: "",
+  trainingSourceType: "",
+  trainingProvider: "",
+  trainingProgram: "",
   workExperience: "",
   internshipOrOrganizationalExperience: "",
   mainSkills: "",
@@ -62,6 +69,9 @@ export function createAnalyzeRequest(values: ProfileFormValues) {
       targetJobField: values.targetJobField,
       targetRole: values.targetRole,
       educationBackground: values.educationBackground,
+      trainingSourceType: values.trainingSourceType || undefined,
+      trainingProvider: optionalText(values.trainingProvider),
+      trainingProgram: optionalText(values.trainingProgram),
       workExperience: optionalText(values.workExperience),
       internshipOrOrganizationalExperience: optionalText(
         values.internshipOrOrganizationalExperience,
@@ -96,6 +106,9 @@ export function formValuesFromRequest(
     targetJobField: profile.targetJobField,
     targetRole: profile.targetRole,
     educationBackground: profile.educationBackground,
+    trainingSourceType: profile.trainingSourceType ?? "",
+    trainingProvider: profile.trainingProvider ?? "",
+    trainingProgram: profile.trainingProgram ?? "",
     workExperience: profile.workExperience ?? "",
     internshipOrOrganizationalExperience:
       profile.internshipOrOrganizationalExperience ?? "",
@@ -116,6 +129,9 @@ const fieldLabels: Record<string, string> = {
   targetJobField: "bidang pekerjaan",
   targetRole: "peran yang ditargetkan",
   educationBackground: "pendidikan atau latar belakang",
+  trainingSourceType: "jenis sumber pelatihan",
+  trainingProvider: "lembaga pelatihan",
+  trainingProgram: "program pelatihan",
   workExperience: "pengalaman kerja",
   internshipOrOrganizationalExperience: "magang atau pengalaman organisasi",
   mainSkills: "keahlian utama",

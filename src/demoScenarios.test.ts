@@ -29,6 +29,25 @@ describe("demoScenarios", () => {
     ]);
   });
 
+  it("prefills every profile field so each demo is a complete example", () => {
+    for (const scenario of demoScenarios) {
+      const profile = scenario.request.profile;
+      expect(profile.trainingSourceType).toBeTruthy();
+      expect(profile.trainingProvider).toBeTruthy();
+      expect(profile.trainingProgram).toBeTruthy();
+      expect(profile.workExperience).toBeTruthy();
+      expect(profile.internshipOrOrganizationalExperience).toBeTruthy();
+      expect(profile.toolsOrEquipment?.length).toBeGreaterThan(0);
+      expect(profile.responsibilities).toBeTruthy();
+      expect(profile.achievements).toBeTruthy();
+      expect(profile.certificationsOrTraining).toBeTruthy();
+      expect(profile.personalStrengths?.length).toBeGreaterThan(0);
+      expect(profile.applicationChallenge).toBeTruthy();
+      expect(profile.evidenceOrProjects).toBeTruthy();
+      expect(scenario.request.jobPosting).toBeTruthy();
+    }
+  });
+
   it("keeps non-IT evidence free from software-only assumptions", () => {
     for (const scenario of demoScenarios.slice(1)) {
       const evidence =

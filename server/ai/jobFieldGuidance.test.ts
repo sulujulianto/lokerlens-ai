@@ -5,9 +5,32 @@ import { getJobFieldGuidance } from "./jobFieldGuidance";
 const allJobFields = JobFieldSchema.options;
 const specializedFields: JobField[] = [
   "it_digital",
+  "data_ai",
+  "cyber_network",
+  "product_design",
   "administration",
+  "human_resources",
+  "project_quality",
   "customer_service",
   "operations_logistics",
+  "sales_marketing",
+  "retail_commerce",
+  "transportation",
+  "security_cleaning",
+  "hospitality",
+  "culinary",
+  "health_care",
+  "social_community",
+  "automotive",
+  "manufacturing",
+  "construction",
+  "electrical_refrigeration",
+  "agriculture_environment",
+  "creative_services",
+  "media_events",
+  "finance_accounting",
+  "education_training",
+  "legal_public_service",
 ];
 
 describe("getJobFieldGuidance", () => {
@@ -68,20 +91,16 @@ describe("getJobFieldGuidance", () => {
     expect(text).toContain("process");
   });
 
-  it.each([
-    "sales_marketing",
-    "hospitality",
-    "technical_vocational",
-    "education_training",
-    "finance_accounting",
-    "other",
-  ] as const)("uses conservative fallback guidance for %s", (jobField) => {
+  it.each(["technical_vocational", "other"] as const)(
+    "uses conservative fallback guidance for %s",
+    (jobField) => {
     const guidance = getJobFieldGuidance(jobField);
     const cautionText = guidance.analysisCautions.join(" ").toLowerCase();
 
-    expect(guidance.fieldLabel).toBe("General Entry-Level Role");
+    expect(guidance.fieldLabel).not.toBe("General Entry-Level Role");
     expect(cautionText).toContain("do not claim deep specialist coverage");
-  });
+    },
+  );
 
   it.each([
     "administration",

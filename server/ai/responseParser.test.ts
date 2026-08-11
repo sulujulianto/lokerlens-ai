@@ -1,28 +1,9 @@
 import { describe, expect, it } from "vitest";
+import { createJobReadinessAnalysisFixture } from "../../shared/analysisTestFixtures";
 import { AppError } from "../errors";
 import { parseJobReadinessResponse } from "./responseParser";
 
-const validAnalysis = {
-  matchScore: 72,
-  verdict: "APPLY_WITH_IMPROVEMENTS",
-  readinessSummary: "The candidate is close to ready.",
-  candidateStrengths: ["Relevant entry-level experience"],
-  mainGaps: ["Limited evidence of reporting work"],
-  mustHaveRequirements: ["Accurate data entry"],
-  niceToHaveRequirements: ["Spreadsheet reporting"],
-  riskFactors: [],
-  roadmap30Days: {
-    week1: ["Review spreadsheet basics"],
-    week2: ["Create a report sample"],
-    week3: ["Practice interview examples"],
-    week4: ["Apply with improved materials"],
-  },
-  evidenceOfCompetenceSuggestions: ["Create a sanitized report sample"],
-  cvMaterialSuggestions: ["Describe filing responsibilities"],
-  applicationMessage: "I am interested in this role.",
-  possibleInterviewQuestions: ["How do you ensure accuracy?"],
-  disclaimer: "This is guidance, not a hiring guarantee.",
-};
+const validAnalysis = createJobReadinessAnalysisFixture({ matchScore: 72 });
 
 function expectInvalidProviderResponse(input: string): void {
   try {
@@ -57,7 +38,10 @@ describe("parseJobReadinessResponse", () => {
     [75, "APPLY_NOW"],
     [100, "APPLY_NOW"],
   ] as const)("accepts boundary score %i with verdict %s", (matchScore, verdict) => {
-    const boundaryAnalysis = { ...validAnalysis, matchScore, verdict };
+    const boundaryAnalysis = createJobReadinessAnalysisFixture({
+      matchScore,
+      verdict,
+    });
 
     expect(
       parseJobReadinessResponse(JSON.stringify(boundaryAnalysis)),
@@ -72,6 +56,22 @@ describe("parseJobReadinessResponse", () => {
     const { disclaimer: _disclaimer, ...incomplete } = validAnalysis;
 
     expectInvalidProviderResponse(JSON.stringify(incomplete));
+  });
+
+  it("records safe schema paths for local diagnostics", () => {
+    const { disclaimer: _disclaimer, ...incomplete } = validAnalysis;
+
+    try {
+      parseJobReadinessResponse(JSON.stringify(incomplete));
+      throw new Error("Expected parsing to fail");
+    } catch (error: unknown) {
+      expect(error).toBeInstanceOf(AppError);
+      expect((error as AppError).logMessage).toContain("disclaimer");
+      expect((error as AppError).publicMessage).toBe(
+        "The analysis provider returned an invalid response.",
+      );
+      expect((error as AppError).publicMessage).not.toContain("disclaimer");
+    }
   });
 
   it.each([-1, 101])("rejects out-of-range score %s", (matchScore) => {

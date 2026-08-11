@@ -70,8 +70,10 @@ dan perlu diaudit sebelum produksi.
 
 ## API Key
 
-`GEMINI_API_KEY` dibaca hanya oleh server. Frontend tidak menyediakan input API
-key dan tidak menerima provider atau model identity dari API analisis.
+`GEMINI_API_KEY` atau `OPENAI_API_KEY` dibaca hanya oleh server sesuai provider
+yang dipilih. Frontend tidak menyediakan input API key dan tidak menerima
+identitas provider atau model dari API analisis. Adapter OpenAI juga meminta
+`store: false`; kebijakan akun dan platform tetap harus diverifikasi terpisah.
 
 API key tidak boleh:
 
@@ -88,3 +90,15 @@ kerahasiaan end-to-end.
 
 Wording privasi harus ditinjau kembali setelah lingkungan hosting, provider,
 logging, dan kebijakan operasional produksi dipilih.
+
+## Kontrol Transport dan Penyalahgunaan
+
+Server memasang security headers, CSP produksi, larangan framing, request ID,
+dan rate limit pada endpoint analisis. Browser dapat membatalkan request, dan
+server meneruskan cancellation signal ke SDK provider. Menurut perilaku SDK,
+pembatalan sisi klien tidak selalu menghentikan pekerjaan yang sudah diterima
+oleh layanan provider sehingga penggunaan dapat tetap tercatat.
+
+Rate limit bawaan menggunakan memori satu proses. Kontrol ini memadai sebagai
+perlindungan dasar pada satu instance, tetapi bukan kuota global untuk
+deployment horizontal dan bukan pengganti kontrol biaya pada akun provider.

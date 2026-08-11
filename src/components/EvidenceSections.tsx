@@ -2,13 +2,13 @@ import { useEffect, useId, useRef, useState } from "react";
 
 export function EvidenceSections({
   evidence,
-  cvMaterial,
+  cvPrompt,
 }: {
   evidence: string[];
-  cvMaterial: string[];
+  cvPrompt: string;
 }) {
   return (
-    <div className="grid gap-3 lg:grid-cols-2">
+    <div className="space-y-3">
       <ListCard
         title="Saran Bukti Kompetensi"
         items={evidence}
@@ -16,27 +16,22 @@ export function EvidenceSections({
       />
       <section
         aria-labelledby="cv-material-title"
-        className="min-w-0 rounded-lg border border-slate-200 bg-white p-4 shadow-sm"
+        className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_12px_32px_rgba(15,23,42,0.05)]"
       >
         <h3
           id="cv-material-title"
-          className="text-xs font-black uppercase tracking-wider text-indigo-700"
+          className="text-xs font-extrabold uppercase tracking-[0.12em] text-indigo-700"
         >
-          Bahan untuk CV
+          Prompt untuk Memperbaiki CV
         </h3>
-        {cvMaterial.length > 0 ? (
-          <div className="mt-3 space-y-2">
-            {cvMaterial.map((item) => (
-              <div key={item}>
-                <CopyableItem text={item} label="bahan CV" />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="mt-2 text-xs text-slate-400">
-            Belum ada bahan CV tambahan.
-          </p>
-        )}
+        <p className="mt-1 max-w-3xl text-xs leading-5 text-slate-500">
+          Unggah CV Anda bersama prompt ini ke layanan AI pilihan Anda. Periksa
+          kembali hasilnya sebelum digunakan dan jangan menerima klaim yang
+          tidak sesuai dengan pengalaman asli.
+        </p>
+        <div className="mt-3">
+          <CopyableItem text={cvPrompt} label="prompt perbaikan CV" />
+        </div>
       </section>
     </div>
   );
@@ -75,15 +70,15 @@ export function CopyableItem({
   }
 
   return (
-    <div className="flex min-w-0 flex-col items-stretch gap-2 rounded-md border border-slate-200 bg-slate-50 p-3 sm:flex-row sm:items-start">
-      <p className="min-w-0 flex-1 break-words text-sm leading-relaxed text-slate-700 [overflow-wrap:anywhere]">
+    <div className="flex min-w-0 flex-col items-stretch gap-2 rounded-xl border border-indigo-100 bg-indigo-50/60 p-3 sm:flex-row sm:items-start">
+      <p className="min-w-0 flex-1 whitespace-pre-wrap break-words text-sm leading-relaxed text-slate-700 [overflow-wrap:anywhere]">
         {text}
       </p>
       <button
         type="button"
         onClick={copy}
         aria-label={`${copied ? "Tersalin" : "Salin"} ${label}`}
-        className="min-h-10 shrink-0 rounded border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+        className="min-h-10 shrink-0 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:border-indigo-400 hover:text-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-100"
       >
         {copied ? "Tersalin" : "Salin"}
       </button>
@@ -98,21 +93,27 @@ export function ListCard({
   title,
   items,
   emptyMessage,
+  emphasized = false,
 }: {
   title: string;
   items: string[];
   emptyMessage: string;
+  emphasized?: boolean;
 }) {
   const titleId = useId();
 
   return (
     <section
       aria-labelledby={titleId}
-      className="min-w-0 rounded-lg border border-slate-200 bg-white p-4 shadow-sm"
+      className={`min-w-0 rounded-2xl border p-4 shadow-[0_12px_32px_rgba(15,23,42,0.05)] ${
+        emphasized
+          ? "border-indigo-200 bg-indigo-50"
+          : "border-slate-200 bg-white"
+      }`}
     >
       <h3
         id={titleId}
-        className="break-words text-xs font-black uppercase tracking-wider text-slate-700"
+        className="break-words text-xs font-extrabold uppercase tracking-[0.12em] text-indigo-700"
       >
         {title}
       </h3>
@@ -122,7 +123,7 @@ export function ListCard({
             <li key={item} className="flex min-w-0 gap-2">
               <span
                 aria-hidden="true"
-                className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500"
+                className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-600"
               />
               <span className="min-w-0 break-words [overflow-wrap:anywhere]">
                 {item}

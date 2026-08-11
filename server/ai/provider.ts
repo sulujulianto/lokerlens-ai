@@ -6,6 +6,7 @@ import type {
 export interface AIProvider {
   analyzeJobReadiness(
     request: AnalyzeJobReadinessRequest,
+    options?: { signal?: AbortSignal },
   ): Promise<JobReadinessAnalysis>;
 
   isConfigured(): boolean;

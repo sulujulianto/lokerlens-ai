@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { createJobReadinessAnalysisFixture } from "../../shared/analysisTestFixtures";
 import type {
   AnalyzeJobReadinessRequest,
   JobReadinessAnalysis,
@@ -21,27 +22,10 @@ const request: AnalyzeJobReadinessRequest = {
   jobPosting: "Wajib teliti dalam input data.",
 };
 
-const analysis: JobReadinessAnalysis = {
+const analysis: JobReadinessAnalysis = createJobReadinessAnalysisFixture({
   matchScore: 70,
-  verdict: "APPLY_WITH_IMPROVEMENTS",
   readinessSummary: "Fondasi kandidat cukup relevan.",
-  candidateStrengths: ["Pernah menangani pencatatan"],
-  mainGaps: ["Belum menunjukkan contoh laporan"],
-  mustHaveRequirements: ["Ketelitian input data"],
-  niceToHaveRequirements: [],
-  riskFactors: [],
-  roadmap30Days: {
-    week1: ["Pelajari format data"],
-    week2: ["Latihan input data"],
-    week3: ["Buat contoh laporan"],
-    week4: ["Latihan wawancara"],
-  },
-  evidenceOfCompetenceSuggestions: ["Buat spreadsheet contoh"],
-  cvMaterialSuggestions: ["Jelaskan tugas pencatatan"],
-  applicationMessage: "Saya melamar posisi Administrative Staff.",
-  possibleInterviewQuestions: ["Bagaimana menjaga akurasi data?"],
-  disclaimer: "Analisis ini adalah panduan, bukan jaminan kerja.",
-};
+});
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -129,9 +113,34 @@ describe("analyzeJobReadiness", () => {
     const promise = analyzeJobReadiness(request, fetchMock);
     await expect(promise).rejects.toBeInstanceOf(AnalysisClientError);
     await expect(promise).rejects.toMatchObject({
-      message: "Live analysis is currently unavailable.",
+      message:
+        "Analisis langsung belum tersedia. Gunakan demo offline untuk mempelajari alurnya.",
       code: "PROVIDER_NOT_CONFIGURED",
     });
+  });
+
+  it("passes an abort signal and reports a deliberate cancellation", async () => {
+    const controller = new AbortController();
+    const fetchMock = vi.fn().mockImplementation(
+      (_url: string, init?: RequestInit) =>
+        new Promise((_resolve, reject) => {
+          init?.signal?.addEventListener("abort", () => {
+            reject(new DOMException("Aborted", "AbortError"));
+          });
+        }),
+    );
+
+    const promise = analyzeJobReadiness(request, {
+      fetchImplementation: fetchMock,
+      signal: controller.signal,
+    });
+    controller.abort();
+
+    await expect(promise).rejects.toMatchObject({
+      message: "Analisis dibatalkan. Data formulir Anda tetap tersimpan.",
+      code: "REQUEST_CANCELLED",
+    });
+    expect(fetchMock.mock.calls[0]?.[1]?.signal).toBe(controller.signal);
   });
 });
 

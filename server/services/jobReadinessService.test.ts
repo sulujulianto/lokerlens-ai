@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createJobReadinessAnalysisFixture } from "../../shared/analysisTestFixtures";
 import type {
   AnalyzeJobReadinessRequest,
   JobReadinessAnalysis,
@@ -19,27 +20,9 @@ const request: AnalyzeJobReadinessRequest = {
   jobPosting: "Seeking an entry-level customer service representative.",
 };
 
-const analysis: JobReadinessAnalysis = {
+const analysis: JobReadinessAnalysis = createJobReadinessAnalysisFixture({
   matchScore: 70,
-  verdict: "APPLY_WITH_IMPROVEMENTS",
-  readinessSummary: "The candidate has a useful foundation.",
-  candidateStrengths: ["Customer-facing experience"],
-  mainGaps: ["No complaint-handling example"],
-  mustHaveRequirements: ["Clear communication"],
-  niceToHaveRequirements: ["CRM familiarity"],
-  riskFactors: [],
-  roadmap30Days: {
-    week1: ["Write response scripts"],
-    week2: ["Practice complaint handling"],
-    week3: ["Prepare examples"],
-    week4: ["Apply"],
-  },
-  evidenceOfCompetenceSuggestions: ["Create response-script samples"],
-  cvMaterialSuggestions: ["Describe customer questions handled"],
-  applicationMessage: "I am applying for the customer service role.",
-  possibleInterviewQuestions: ["How would you handle an upset customer?"],
-  disclaimer: "Guidance only.",
-};
+});
 
 class FakeProvider implements AIProvider {
   constructor(
@@ -86,6 +69,19 @@ describe("JobReadinessService", () => {
         ...analysis,
         matchScore: 101,
       } as JobReadinessAnalysis),
+    );
+
+    await expect(service.analyze(request)).rejects.toMatchObject({
+      code: "PROVIDER_RESPONSE_INVALID",
+    });
+  });
+
+  it("rejects provider output that fails the Indonesian quality gate", async () => {
+    const service = new JobReadinessService(
+      new FakeProvider({
+        ...analysis,
+        readinessSummary: "Kamu sudah cukup siap untuk melamar.",
+      }),
     );
 
     await expect(service.analyze(request)).rejects.toMatchObject({
