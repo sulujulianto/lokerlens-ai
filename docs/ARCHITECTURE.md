@@ -1,7 +1,7 @@
 # Arsitektur LokerLens AI V2
 
-Dokumen ini merangkum arsitektur yang sudah diimplementasikan pada branch
-`v2-development`. Ini bukan spesifikasi untuk provider yang belum tersedia.
+Dokumen ini merangkum arsitektur V2 yang sudah diimplementasikan pada branch
+`main`. Ini bukan spesifikasi untuk provider yang belum tersedia.
 
 ## Alur Request V2
 
@@ -207,6 +207,7 @@ dan tanpa panggilan provider eksternal. Bundle produksi juga telah diperiksa
 secara lokal untuk health response, fallback SPA, CSP, security headers,
 request ID, penolakan tanpa provider, dan rate limit.
 
-Integrasi provider live, kualitas respons, latensi aktual, perilaku timeout
-terhadap layanan nyata, QA browser lintas perangkat, dan deployment publik
-belum diverifikasi.
+Integrasi Gemini live, kualitas respons, dan latensi lokal telah diverifikasi
+melalui enam evaluasi berurutan. Integrasi OpenAI live, perilaku timeout dan
+kegagalan terhadap layanan nyata, QA browser lintas perangkat, serta deployment
+publik belum diverifikasi.

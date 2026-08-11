@@ -1,9 +1,10 @@
 # Release Checklist — LokerLens AI V2
 
 Checklist ini adalah gerbang fakta untuk kandidat rilis dan submission Pijak
-Career Fest. Item hanya boleh ditandai selesai bila memiliki bukti.
+Career Fest. Penyerahan repository dan demo lokal dipisahkan dari deployment
+publik; item hanya boleh ditandai selesai bila memiliki bukti.
 
-## Terverifikasi pada Snapshot Pengembangan
+## Terverifikasi pada Snapshot `main`
 
 - [x] TypeScript lulus tanpa emit.
 - [x] 24 berkas test dan 286 test lulus.
@@ -27,19 +28,26 @@ Career Fest. Item hanya boleh ditandai selesai bila memiliki bukti.
       peringatan; skor Frontend 72, 70, dan 72 dengan verdict yang sama.
 - [x] Durasi evaluasi stabilisasi tercatat 21.086–34.093 ms per request, di
       bawah timeout provider lokal 45 detik.
+- [x] V2 telah dipromosikan ke `main` dan branch `v2-development` telah dihapus
+      dari repository lokal serta remote.
+- [x] CI `main` lulus setelah fast-forward V2.
 
-## Wajib Sebelum Submission Publik
+## Aman untuk Penyerahan Repository dan Demo Lokal
 
-- [ ] Salin perubahan ke repository Git branch `v2-development` dan review diff.
+- [x] Review diff, commit, dan push perubahan V2 ke branch `main`.
 - [x] Jalankan `npm ci`, lint, test, build, audit, dan `git diff --check` di laptop.
 - [x] API key Gemini aktif telah digunakan secara lokal tanpa dibagikan di chat
       atau commit.
 - [x] Jalankan `npm run eval:gemini` untuk tiga pengulangan Frontend serta satu
       skenario Administrasi, Customer Service, dan Warehouse.
-- [ ] Jalankan skenario live minimal pada IT, administrasi, layanan, logistik,
-      kuliner, dan satu bidang teknik.
+- [x] Evaluasi live mencakup IT, administrasi, layanan pelanggan, dan logistik.
 - [x] Catat kualitas grounding, latensi, timeout, dan kegagalan provider dari
       dua putaran evaluasi Phase 5F.
+- [x] Siapkan empat demo deterministik yang dapat dipakai tanpa provider live.
+
+## Wajib Sebelum Deployment atau Rilis Publik
+
+- [ ] Jalankan skenario live tambahan pada kuliner dan satu bidang teknik.
 - [ ] Pilih serta konfigurasi platform deployment publik.
 - [ ] Tinjau log, region, retensi, rate-limit store, dan kontrol biaya deployment.
 - [ ] QA Chrome dan Firefox pada desktop.
@@ -50,7 +58,8 @@ Career Fest. Item hanya boleh ditandai selesai bila memiliki bukti.
 - [ ] Tetapkan versi kandidat rilis dan buat commit yang terfokus.
 - [ ] Ambil maksimal tiga screenshot, masing-masing di bawah 5 MB.
 - [ ] Siapkan nama serta deskripsi submission yang sesuai dengan fitur teruji.
-- [ ] Submit hanya setelah URL publik dan screenshot final diperiksa.
+- [ ] Jika penyelenggara mewajibkan URL publik, submit hanya setelah URL dan
+      screenshot final diperiksa.
 
 ## Di Luar Gerbang Submission
 

@@ -37,7 +37,7 @@ respective release; current development status is recorded under
   Administration, Customer Service, and Warehouse scenarios.
 
 ### Changed
-- Repositioned the development branch from an IT-focused challenge prototype to
+- Repositioned the project from an IT-focused challenge prototype to
   a manual-first, multi-field job-readiness assistant for Indonesian
   entry-level applicants.
 - Migrated the frontend to the normalized V2 request and response contracts.

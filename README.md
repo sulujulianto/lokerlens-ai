@@ -7,9 +7,9 @@ sebuah lowongan. Pengguna menuliskan pengalaman, keterampilan, pelatihan, dan
 bukti kerja secara manual; aplikasi kemudian menyusun analisis yang terstruktur
 dan dapat ditindaklanjuti.
 
-V2 masih dikembangkan pada branch `v2-development` dan belum menjadi rilis
-produksi. Branch `main` serta tag `v1.0.0` tetap menyimpan versi historis
-**Juara Vibe Coding Edition**.
+V2 sekarang berada pada branch `main` sebagai kandidat penyerahan repository
+dan demo lokal, tetapi belum menjadi rilis produksi. Tag `v1.0.0` tetap
+menyimpan versi historis **Juara Vibe Coding Edition**.
 
 ## Apa yang Dihasilkan?
 
@@ -178,7 +178,7 @@ OPENAI_MODEL=gpt-5.6-luna
 
 ## Verifikasi Sebelum Push
 
-Jalankan pemeriksaan berikut pada branch `v2-development`:
+Jalankan pemeriksaan berikut sebelum setiap push:
 
 ```bash
 npm ci
@@ -287,6 +287,8 @@ Sudah tersedia:
 - evaluasi Gemini live enam request yang lulus tanpa peringatan, termasuk tiga
   pengulangan Frontend dengan rentang skor dua poin;
 - timeout, cancellation, rate limit, security headers, CSP, dan CI.
+- V2 telah dipromosikan ke `main`, branch pengembangan lama telah dihapus, dan
+  CI pada `main` telah lulus.
 
 Masih harus diselesaikan sebelum rilis publik:
 
@@ -295,8 +297,7 @@ Masih harus diselesaikan sebelum rilis publik:
 - QA desktop, ponsel, keyboard, reduced motion, dan pembesaran 200%;
 - pemilihan platform deployment beserta region, logging, retensi, dan kontrol
   biaya;
-- pembaruan dokumen privasi sesuai deployment;
-- review diff, commit terfokus, push, dan pemeriksaan CI.
+- pembaruan dokumen privasi sesuai deployment.
 
 Checklist lengkap tersedia di
 [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md). Riwayat perubahan ada

@@ -1,6 +1,6 @@
 # Catatan Privasi dan Penanganan Data
 
-Dokumen ini menjelaskan perilaku teknis branch `v2-development`. Dokumen ini
+Dokumen ini menjelaskan perilaku teknis V2 pada branch `main`. Dokumen ini
 bukan kebijakan privasi produksi, audit keamanan, atau nasihat hukum.
 
 ## Data yang Dimasukkan

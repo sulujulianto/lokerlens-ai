@@ -1,8 +1,8 @@
 # LokerLens AI — Roadmap V2
 
 Dokumen ini membedakan fondasi yang sudah selesai dari verifikasi yang masih
-dibutuhkan sebelum kandidat rilis. V2 masih berada pada branch
-`v2-development`; belum ada rilis atau tag V2.
+dibutuhkan sebelum kandidat rilis. V2 sekarang berada pada branch `main`;
+belum ada deployment produksi atau tag rilis V2.
 
 ## Selesai untuk Fondasi V2
 
@@ -47,6 +47,8 @@ dibutuhkan sebelum kandidat rilis. V2 masih berada pada branch
 - tiga pengulangan Frontend dengan skor 72, 70, dan 72 serta verdict konsisten;
 - latensi lokal enam request tercatat 21.086–34.093 ms, di bawah timeout
   provider 45 detik.
+- V2 dipromosikan ke `main`, branch pengembangan lama dihapus, dan CI `main`
+  lulus.
 
 ## Wajib Sebelum Kandidat Rilis V2
 
@@ -87,7 +89,7 @@ pengguna, bukan dianggap sebagai prasyarat otomatis:
 
 ## Riwayat
 
-- `main` mempertahankan rilis stabil V1.
+- `main` memuat kandidat V2 untuk penyerahan repository dan demo lokal.
 - Tag `v1.0.0` mempertahankan Juara Vibe Coding Edition.
 - Adapter legacy tetap tersedia sementara selama migrasi klien menuju kontrak
   V2.
