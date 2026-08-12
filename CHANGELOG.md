@@ -8,6 +8,10 @@ respective release; current development status is recorded under
 ## [Unreleased]
 
 ### Added
+- MIT License and recruiter-facing application screenshots captured from the
+  real offline demo flow.
+- A dedicated live-evaluation document that separates observed evidence from
+  deterministic CI and states explicit non-claims.
 - Shared Zod request and response contracts for the normalized V2 analysis flow.
 - Provider-neutral backend interface, provider resolver, Gemini and OpenAI adapters, prompt
   builder, response parser, and analysis service.
@@ -37,6 +41,11 @@ respective release; current development status is recorded under
   Administration, Customer Service, and Warehouse scenarios.
 
 ### Changed
+- Reorganized the repository landing page around global-facing product
+  positioning, engineering evidence, architecture, verification, release
+  status, and direct technical-document navigation.
+- Replaced the text-only architecture overview with rendered system and request
+  lifecycle diagrams plus explicit trust, data, and failure boundaries.
 - Repositioned the project from an IT-focused challenge prototype to
   a manual-first, multi-field job-readiness assistant for Indonesian
   entry-level applicants.
