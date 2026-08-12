@@ -1,305 +1,179 @@
 # LokerLens AI
 
-**v2.0.0-dev · Asisten kesiapan kerja lintas bidang**
+[![CI](https://github.com/sulujulianto/lokerlens-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/sulujulianto/lokerlens-ai/actions/workflows/ci.yml)
+![Node.js >=20](https://img.shields.io/badge/Node.js-%3E%3D20-339933?logo=node.js&logoColor=white)
+![Status: pre-release](https://img.shields.io/badge/status-pre--release-F59E0B)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-LokerLens AI membantu pencari kerja entry-level membandingkan profilnya dengan
-sebuah lowongan. Pengguna menuliskan pengalaman, keterampilan, pelatihan, dan
-bukti kerja secara manual; aplikasi kemudian menyusun analisis yang terstruktur
-dan dapat ditindaklanjuti.
+**An evidence-grounded AI job-readiness assistant for Indonesian entry-level
+and vocational applicants.** LokerLens compares a manually entered candidate
+profile with a job posting, then returns a structured readiness assessment,
+requirement-by-requirement evidence, and concrete next steps.
 
-V2 sekarang berada pada branch `main` sebagai kandidat penyerahan repository
-dan demo lokal, tetapi belum menjadi rilis produksi. Tag `v1.0.0` tetap
-menyimpan versi historis **Juara Vibe Coding Edition**.
+> **Release status:** V2 is a locally verified pre-release candidate. There is
+> no public deployment yet. Four complete offline demos work without an API
+> key; live analysis requires a server-side Gemini or OpenAI configuration.
 
-## Apa yang Dihasilkan?
+[Run locally](#run-locally) · [Architecture](docs/ARCHITECTURE.md) ·
+[Verification](#verification-evidence) ·
+[Release gates](docs/RELEASE_CHECKLIST.md) · [Privacy](docs/PRIVACY.md)
 
-Satu analisis berisi:
+![LokerLens AI landing page with offline demo scenarios and the beginning of the candidate profile form](docs/assets/lokerlens-overview.png)
 
-- skor keselarasan 0–100 beserta lima komponen pembentuknya;
-- kesimpulan kapan sebaiknya melamar;
-- pencocokan setiap persyaratan lowongan dengan status `Terpenuhi`, `Sebagian`,
-  atau `Belum terbukti`;
-- kekuatan yang dapat ditelusuri ke profil dan kesenjangan yang dapat ditelusuri
-  ke lowongan;
-- prioritas perbaikan dan rencana 30 hari dengan keluaran yang terukur;
-- saran bukti kompetensi yang sesuai dengan bidang kerja;
-- satu prompt untuk memperbaiki CV yang sudah dimiliki pengguna;
-- contoh pesan lamaran yang sopan dan siap disesuaikan;
-- empat pertanyaan wawancara, tujuan pertanyaan, dan kerangka jawaban;
-- disclaimer bahwa hasil bukan jaminan rekrutmen.
+## Why this is more than an AI wrapper
 
-Skor adalah estimasi keselarasan untuk membantu pengambilan keputusan. Skor
-bukan peluang diterima kerja, nilai psikotes, atau pengganti keputusan rekruter.
+- **One runtime contract across the stack.** Shared strict Zod schemas validate
+  both requests and responses in the browser and server. They also enforce
+  score-component totals, score/verdict alignment, bounded sections, and
+  required evidence structures.
+- **Provider-neutral, failure-aware backend.** Gemini and OpenAI implement one
+  provider interface behind an application service. Provider output passes
+  JSON extraction, schema validation, and Indonesian-language quality gates
+  before it can reach the UI. Timeouts and browser disconnects propagate as
+  cancellation signals.
+- **Explicit trust and privacy boundaries.** Candidate and vacancy text are
+  treated as untrusted prompt data. API keys stay server-side; public errors do
+  not expose prompts, raw model output, credentials, SDK details, or stack
+  traces.
 
-```text
-0–49   → Belum siap untuk lowongan ini
-50–74  → Melamar sambil melakukan perbaikan
-75–100 → Siap melamar sekarang
+## Product flow
+
+1. Select one of 29 job families and a target role.
+2. Describe education, formal or informal experience, skills, and evidence.
+3. Paste the target job posting.
+4. Run live analysis or open one of four deterministic offline demos.
+5. Review a 0–100 alignment estimate, requirement evidence, gaps, a 30-day
+   roadmap, CV-improvement prompt, application message, and interview practice.
+
+The score estimates alignment with the supplied vacancy. It is **not** a hiring
+probability, psychometric score, or substitute for recruiter judgment.
+
+## Architecture at a glance
+
+```mermaid
+flowchart TD
+    A["Manual profile + job posting"] --> B["React form + shared request schema"]
+    B --> C["Express API: limits, rate limiting, request ID"]
+    C --> D["JobReadinessService + provider adapter"]
+    D --> E["Gemini or OpenAI"]
+    E --> F["Parser + shared response schema + quality gates"]
+    F --> G["Validated results dashboard"]
 ```
 
-Waktu melamar harus mengikuti putusan tersebut. Model juga diwajibkan
-membedakan kompetensi yang benar-benar terbukti, baru terbukti sebagian, dan
-belum memiliki bukti di profil.
+The browser only calls `/api/health` and `/api/analyze`. Provider selection,
+model configuration, and credentials remain behind the server boundary. See
+the [architecture document](docs/ARCHITECTURE.md) for the request lifecycle,
+trust boundaries, compatibility layer, and known deployment constraints.
 
-## Cara Kerja
+## Engineering evidence
 
-```text
-Pilih bidang dan peran target
-→ isi profil secara manual
-→ tempel teks lowongan
-→ jalankan analisis
-→ tinjau bukti, kesenjangan, dan langkah berikutnya
-```
-
-Pendekatan *manual-first* adalah keputusan produk. Banyak pelamar pemula belum
-memiliki CV yang rapi, tetapi sudah mempunyai pengalaman informal, tugas
-sekolah, kegiatan organisasi, magang, proyek, pelatihan, atau tanggung jawab
-operasional yang relevan.
-
-LokerLens tidak mengunggah atau memindai CV. Prompt perbaikan CV pada hasil
-analisis dapat disalin ke layanan AI pilihan pengguna bersama CV yang mereka
-miliki. Prompt itu meminta AI mempertahankan fakta, menandai informasi yang
-belum ada dengan `[perlu dilengkapi]`, dan tidak mengarang pengalaman maupun
-angka.
-
-## Cakupan Bidang
-
-Tersedia 29 rumpun pekerjaan dalam tujuh kelompok:
-
-- Teknologi, Data & Produk Digital;
-- Bisnis & Fungsi Profesional;
-- Layanan, Perdagangan & Operasional;
-- Industri, Teknik & Keterampilan Kerja;
-- Kreatif, Media & Komunikasi;
-- Pendidikan, Sosial & Pelayanan Publik;
-- Lingkungan & Bidang Lainnya.
-
-Dua puluh tujuh rumpun memiliki panduan kompetensi, contoh bukti kerja, dan
-peringatan analisis khusus. `Teknik & Vokasional Lainnya` serta `Bidang
-Lainnya` memakai panduan konservatif yang tetap mengikuti isi lowongan.
-
-Jenis sumber pelatihan bersifat opsional. Nama lembaga dan program ditulis bebas
-tanpa daftar pilihan. Nama tersebut hanya menjadi konteks dan tidak dianggap
-sebagai bukti kelulusan, sertifikasi, atau kompetensi. Jika profil tidak
-menyatakan kelulusan secara jelas, hasil hanya boleh menggunakan ungkapan netral
-seperti “pernah mengikuti pelatihan”.
-
-## Demo Offline
-
-Empat demo deterministik dapat digunakan tanpa API key:
-
-- Junior Frontend Developer;
-- Junior Administrative Staff;
-- Entry-Level Customer Service;
-- Warehouse Staff.
-
-Setiap demo mengisi seluruh formulir dan menampilkan struktur hasil yang sama
-dengan analisis live. Profil, lowongan, dan hasil demo bersifat fiktif serta
-tidak memanggil provider AI.
-
-## Teknologi dan Arsitektur
-
-| Lapisan | Teknologi dan tanggung jawab |
+| Area | Implemented evidence |
 | --- | --- |
-| Frontend | React 19, TypeScript, Vite, Tailwind CSS, validasi respons Zod |
-| Backend | Node.js, Express, konfigurasi tervalidasi, rate limit, timeout, cancellation |
-| AI | Adapter Gemini dan OpenAI di belakang interface provider yang sama |
-| Kontrak | Schema Zod bersama untuk request dan response V2 |
-| Keamanan | Helmet, CSP produksi, request ID, batas body, error publik ternormalisasi |
-| Pengujian | Vitest, Testing Library, jsdom, build produksi, npm audit, GitHub Actions |
+| Contracts | Shared strict Zod request/response schemas with cross-field invariants |
+| Backend design | Configuration, provider adapters, prompt builder, parser, quality gates, service, and routes are separated |
+| Security | Helmet, production CSP, Permissions Policy, 1 MB body limit, request IDs, normalized errors, and per-client rate limiting |
+| Resilience | Validated configuration, provider timeouts, request cancellation, unavailable-provider handling, and no silent provider fallback |
+| Testing | 24 test files and 286 deterministic tests across schemas, backend, API client, forms, demos, accessibility, interactions, and results |
+| CI | Typecheck, tests, production build, and production-dependency audit on pushes and pull requests to `main` |
 
-Frontend hanya berkomunikasi dengan `/api/analyze` dan `/api/health`. Provider,
-model, serta API key dipilih di server dan tidak diekspos ke antarmuka. Tidak ada
-fallback diam-diam dari satu provider ke provider lain.
+## Technology
 
-Kontrak utama berada di
-[`shared/analysisSchemas.ts`](shared/analysisSchemas.ts). Alur backend dipisah
-menjadi konfigurasi, provider, prompt builder, parser, gerbang kualitas, service,
-dan route. Penjelasan lebih rinci tersedia di
-[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+| Layer | Stack |
+| --- | --- |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS, Motion, Lucide |
+| Backend | Node.js, Express, Zod, Helmet, express-rate-limit |
+| AI boundary | Gemini and OpenAI adapters behind a shared provider interface |
+| Testing | Vitest, Testing Library, jsdom |
+| Delivery | GitHub Actions, production frontend and server bundles |
 
-## Menjalankan Secara Lokal
+## Visual evidence
 
-Persyaratan:
+### Structured result, not free-form model text
 
-- Node.js 20 atau lebih baru;
-- npm;
-- API key Gemini hanya jika ingin menjalankan analisis live.
+![Offline demo result showing the readiness score, verdict, evidence-grounded summary, and score breakdown](docs/assets/lokerlens-results.png)
+
+### Requirement-by-requirement evidence on mobile
+
+![Mobile view showing strengths, gaps, and job requirement matching with evidence and next steps](docs/assets/lokerlens-requirements-mobile.png)
+
+All screenshots are captured from the real application using fictional offline
+demo data. They contain no API key or personal applicant data.
+
+## Run locally
+
+Requirements: Node.js 20 or newer and npm.
 
 ```bash
+git clone https://github.com/sulujulianto/lokerlens-ai.git
+cd lokerlens-ai
 npm ci
 cp .env.example .env
 npm run dev
 ```
 
-Aplikasi tersedia secara default di `http://localhost:3000`. Port dapat diubah
-melalui `PORT`.
+Open `http://localhost:3000`. The offline demos do not need an API key. Without
+a configured provider, `/api/health` reports `analysisAvailable: false`, live
+analysis is disabled, and the rest of the application remains usable.
 
-### Konfigurasi Gemini
-
-Simpan key di `.env`; jangan memasukkannya ke source, screenshot, chat, commit,
-atau log.
+For live Gemini analysis, keep the credential in `.env` and never commit it:
 
 ```env
 AI_PROVIDER=gemini
 GEMINI_API_KEY=your_gemini_api_key_here
 GEMINI_MODEL=gemini-3.5-flash
-AI_REQUEST_TIMEOUT_MS=45000
-ANALYSIS_RATE_LIMIT_MAX=10
-ANALYSIS_RATE_LIMIT_WINDOW_MS=60000
 ```
 
-Model tetap dapat diubah melalui environment karena ketersediaannya dapat
-berbeda menurut akun dan waktu. Tanpa key yang valid, server tetap berjalan,
-`/api/health` mengembalikan `analysisAvailable: false`, analisis live
-dinonaktifkan, dan demo offline tetap dapat dipakai.
+OpenAI is also supported through `AI_PROVIDER=openai`, `OPENAI_API_KEY`, and
+`OPENAI_MODEL`. There is intentionally no silent fallback between providers.
 
-Adapter OpenAI juga tersedia sebagai jalur alternatif, tetapi fokus verifikasi
-pra-rilis saat ini adalah Gemini.
+## Verification evidence
 
-```env
-AI_PROVIDER=openai
-OPENAI_API_KEY=your_openai_api_key_here
-OPENAI_MODEL=gpt-5.6-luna
-```
-
-## Perintah Proyek
-
-| Perintah | Fungsi |
-| --- | --- |
-| `npm run dev` | Menjalankan Express dan Vite untuk development |
-| `npm run lint` | Memeriksa TypeScript tanpa menghasilkan file |
-| `npm test` | Menjalankan Vitest dalam mode watch |
-| `npm run test:run` | Menjalankan seluruh tes deterministik sekali |
-| `npm run build` | Membuat bundle frontend dan server produksi |
-| `npm start` | Menjalankan `dist/server.cjs` |
-| `npm run eval:gemini` | Menjalankan enam analisis Gemini live secara berurutan |
-| `npm run clean` | Menghapus output build lokal |
-
-## Verifikasi Sebelum Push
-
-Jalankan pemeriksaan berikut sebelum setiap push:
+The following checks passed on the audited `main` snapshot:
 
 ```bash
-npm ci
-npm run lint
-npm run test:run
-npm run build
-npm audit
+npm run lint       # TypeScript typecheck; ESLint is not configured yet
+npm run test:run   # 24 files, 286 tests
+npm run build      # Production frontend and server bundles
+npm audit --omit=dev --audit-level=moderate
 git diff --check
-git status --short --branch
 ```
 
-Tes deterministik tidak memanggil provider eksternal. Suite saat ini mencakup
-schema, prompt, gerbang kualitas, provider, parser, service, route, API client,
-formulir, demo, aksesibilitas, interaksi, dan rendering hasil.
+The deterministic suite does not call an external AI provider. A separate
+six-request Gemini evaluation checks live integration, grounding, response
+validity, and repeated-output spread; it is intentionally not part of CI
+because it consumes provider quota and remains non-deterministic. See the
+[evaluation notes](docs/EVALUATION.md).
 
-### Evaluasi Gemini Live
+## Known limits and release status
 
-Smoke test Gemini dari formulir sampai dashboard telah berhasil menghasilkan
-respons yang lolos schema. Evaluasi pertama Phase 5F kemudian menghasilkan
-empat respons valid dan dua penolakan aman pada keluaran Frontend yang melanggar
-gerbang kualitas. Setelah batas fakta dan stabilitas prompt diperketat,
-pengulangan evaluasi pada 11 Agustus 2026 berhasil menyelesaikan seluruh enam
-request tanpa peringatan otomatis.
+This repository demonstrates a strong pre-release engineering foundation, not
+production readiness. Before a public V2 release it still needs:
 
-Setelah `.env` berisi key yang valid, jalankan:
+- a chosen hosting platform with verified region, logging, retention, cost,
+  timeout, and shared rate-limit behavior;
+- real-browser E2E coverage and manual QA across desktop, mobile, keyboard-only,
+  reduced-motion, and 200% zoom paths;
+- live-provider evaluation for additional culinary and technical job families;
+- deployment-specific privacy wording and production observability;
+- a coverage report and enforced threshold if coverage becomes a release gate.
 
-```bash
-npm run eval:gemini
-```
+The in-memory rate limiter is process-local and is not a global quota for a
+multi-instance deployment. The latest stable GitHub tag, `v1.0.0`, is the
+historical challenge edition; V2 remains `2.0.0-dev` until its release gates
+are satisfied.
 
-Perintah ini membuat enam request berurutan:
+## Documentation
 
-- Frontend sebanyak tiga kali untuk melihat sebaran skor dan verdict;
-- Administrasi satu kali;
-- Customer Service satu kali;
-- Warehouse satu kali.
+| Document | Purpose |
+| --- | --- |
+| [Architecture](docs/ARCHITECTURE.md) | Components, request lifecycle, trust boundaries, and failure modes |
+| [Evaluation](docs/EVALUATION.md) | Live Gemini evaluation scope, results, and non-claims |
+| [Privacy](docs/PRIVACY.md) | Current data-flow boundaries and production review items |
+| [Release checklist](docs/RELEASE_CHECKLIST.md) | Evidence-based gates before deployment and release |
+| [Roadmap](ROADMAP.md) | Completed foundations and intentionally deferred work |
+| [Changelog](CHANGELOG.md) | Historical and unreleased changes |
 
-Hasil pengulangan yang lulus:
+## License
 
-| Skenario | Skor | Verdict | Durasi |
-| --- | --- | --- | --- |
-| Frontend #1 | 72 | `APPLY_WITH_IMPROVEMENTS` | 30.695 ms |
-| Frontend #2 | 70 | `APPLY_WITH_IMPROVEMENTS` | 34.093 ms |
-| Frontend #3 | 72 | `APPLY_WITH_IMPROVEMENTS` | 29.095 ms |
-| Administrasi | 91 | `APPLY_NOW` | 27.890 ms |
-| Customer Service | 62 | `APPLY_WITH_IMPROVEMENTS` | 24.501 ms |
-| Warehouse | 73 | `APPLY_WITH_IMPROVEMENTS` | 21.086 ms |
-
-Tiga hasil Frontend memiliki rentang dua poin, verdict yang sama, dan status
-REST API yang konsisten `PARTIAL`. Durasi seluruh request berada di bawah batas
-provider lokal 45 detik. Angka ini adalah snapshot satu sesi lokal, bukan
-jaminan latensi atau determinisme pada akun, jaringan, dan platform deployment
-lain.
-
-Script mencatat durasi, skor, verdict, dan status persyaratan wajib. Script juga
-menandai sapaan yang tidak konsisten, klaim pelatihan yang tidak terbukti,
-ketidaksesuaian waktu melamar, risiko yang terlalu tipis, serta sebaran skor
-Frontend di atas 10 poin. Karena panggilan ini menggunakan API live, perhatikan
-kuota dan biaya akun yang dipakai.
-
-Konfigurasi Gemini menggunakan suhu `0` dan seed tetap agar model berupaya
-memberikan hasil yang lebih stabil untuk input yang sama. Seed bersifat
-*best-effort*, sehingga tiga pengulangan Frontend tetap diperlukan dan hasil
-live tidak boleh dianggap sepenuhnya deterministik.
-
-Hasil otomatis tetap perlu dibaca manusia. Periksa khususnya:
-
-1. apakah setiap status persyaratan sesuai dengan bukti profil;
-2. apakah skor persyaratan wajib mengikuti status tersebut;
-3. apakah saran tidak mengarang pengalaman, pencapaian, sertifikat, atau aturan
-   perusahaan;
-4. apakah faktor risiko menyebut ketidakpastian yang konkret;
-5. apakah bahasa konsisten menggunakan “Anda” dan pesan lamaran menggunakan
-   sudut pandang “Saya”.
-
-## Privasi dan Batas Produk
-
-Desain saat ini tidak memiliki akun maupun database kandidat. Namun, saat
-analisis live dijalankan, profil dan teks lowongan dikirim ke provider AI yang
-dikonfigurasi. Hindari memasukkan NIK, alamat lengkap, nomor rekening, data
-kesehatan, atau informasi sensitif lain yang tidak dibutuhkan.
-
-LokerLens bukan:
-
-- ATS atau pemindai CV;
-- portal maupun scraper lowongan;
-- kalkulator peluang diterima;
-- pengganti penilaian rekruter;
-- pemberi jaminan wawancara atau pekerjaan.
-
-Lihat [`docs/PRIVACY.md`](docs/PRIVACY.md) untuk batas teknis yang lebih rinci.
-Dokumen tersebut belum menjadi kebijakan privasi produksi dan perlu ditinjau
-lagi setelah platform deployment dipilih.
-
-## Status Menuju Rilis
-
-Sudah tersedia:
-
-- alur manual-first yang responsif dengan palet putih–slate dan aksen indigo;
-- 29 rumpun karier dan 27 panduan khusus;
-- Gemini dan OpenAI adapter;
-- empat demo lengkap;
-- hasil terstruktur dengan skor yang tervalidasi;
-- prompt CV, pesan lamaran, dan empat persiapan wawancara;
-- gerbang kualitas untuk sapaan Indonesia dan klaim pelatihan;
-- evaluasi Gemini live enam request yang lulus tanpa peringatan, termasuk tiga
-  pengulangan Frontend dengan rentang skor dua poin;
-- timeout, cancellation, rate limit, security headers, CSP, dan CI.
-- V2 telah dipromosikan ke `main`, branch pengembangan lama telah dihapus, dan
-  CI pada `main` telah lulus.
-
-Masih harus diselesaikan sebelum rilis publik:
-
-- uji bidang Kuliner serta satu bidang Teknik;
-- verifikasi latensi serta batas waktu pada platform deployment yang dipilih;
-- QA desktop, ponsel, keyboard, reduced motion, dan pembesaran 200%;
-- pemilihan platform deployment beserta region, logging, retensi, dan kontrol
-  biaya;
-- pembaruan dokumen privasi sesuai deployment.
-
-Checklist lengkap tersedia di
-[`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md). Riwayat perubahan ada
-di [`CHANGELOG.md`](CHANGELOG.md), sedangkan pekerjaan lanjutan dicatat di
-[`ROADMAP.md`](ROADMAP.md).
+Released under the [MIT License](LICENSE). Copyright © 2026 Sulu Edward
+Julianto.

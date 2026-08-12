@@ -26,8 +26,8 @@ publik; item hanya boleh ditandai selesai bila memiliki bukti.
       valid dan dua respons Frontend ditolak aman oleh gerbang kualitas.
 - [x] Evaluasi live setelah stabilisasi menyelesaikan 6/6 request tanpa
       peringatan; skor Frontend 72, 70, dan 72 dengan verdict yang sama.
-- [x] Durasi evaluasi stabilisasi tercatat 21.086–34.093 ms per request, di
-      bawah timeout provider lokal 45 detik.
+- [x] Durasi evaluasi stabilisasi tercatat 21.086–34.093 ms per request
+      (sekitar 21,1–34,1 detik), di bawah timeout provider lokal 45 detik.
 - [x] V2 telah dipromosikan ke `main` dan branch `v2-development` telah dihapus
       dari repository lokal serta remote.
 - [x] CI `main` lulus setelah fast-forward V2.
@@ -56,7 +56,8 @@ publik; item hanya boleh ditandai selesai bila memiliki bukti.
 - [ ] Pastikan tidak ada horizontal overflow atau konten terpotong.
 - [ ] Perbarui wording privasi berdasarkan platform dan provider nyata.
 - [ ] Tetapkan versi kandidat rilis dan buat commit yang terfokus.
-- [ ] Ambil maksimal tiga screenshot, masing-masing di bawah 5 MB.
+- [x] Ambil tiga screenshot aplikasi asli dengan data demo fiktif; masing-masing
+      berada di bawah 5 MB dan tidak memuat API key atau data pribadi.
 - [ ] Siapkan nama serta deskripsi submission yang sesuai dengan fitur teruji.
 - [ ] Jika penyelenggara mewajibkan URL publik, submit hanya setelah URL dan
       screenshot final diperiksa.

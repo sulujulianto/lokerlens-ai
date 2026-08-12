@@ -1,213 +1,201 @@
-# Arsitektur LokerLens AI V2
+# LokerLens AI V2 Architecture
 
-Dokumen ini merangkum arsitektur V2 yang sudah diimplementasikan pada branch
-`main`. Ini bukan spesifikasi untuk provider yang belum tersedia.
+This document describes the architecture implemented on `main`. It is an
+implementation map, not a claim that the system is production-ready.
 
-## Alur Request V2
+## System context
 
-```text
-React form
-  → shared request validation
-  → POST /api/analyze
-  → rate limit and cancellation context
-  → strict V2 route validation
-  → JobReadinessService
-  → resolved AIProvider
-  → GeminiProvider or OpenAIProvider
-  → prompt builder
-  → provider response text
-  → JSON extraction and shared response validation
-  → normalized JobReadinessAnalysis
-  → frontend API response validation
-  → results dashboard
+```mermaid
+flowchart TD
+    U["Applicant"] --> W["React web application"]
+    W --> API["Express API"]
+    API --> S["JobReadinessService"]
+    S --> P["Selected AI provider"]
+    P --> S
+    S --> API
+    API --> W
 ```
 
-Kontrak request dan response berada di
-[`../shared/analysisSchemas.ts`](../shared/analysisSchemas.ts). Frontend dan
-backend menggunakan schema yang sama sehingga tidak perlu mempertahankan dua
-definisi bisnis V2.
+The application is stateless: it has no candidate account, database, or
+analysis history. The browser sends a manually entered profile and job posting
+to the server only when live analysis is requested. The configured AI provider
+then processes that data, so deployment and provider logging/retention policies
+remain part of the privacy boundary.
 
-## Bootstrap dan Hosting
+## Request lifecycle
 
-[`../server.ts`](../server.ts) bertanggung jawab untuk:
+```mermaid
+flowchart TD
+    A["Form values"] --> B["Shared request schema"]
+    B --> C["POST /api/analyze"]
+    C --> D["Body limit + rate limit + request ID"]
+    D --> E["V2 validation or temporary V1 adapter"]
+    E --> F["JobReadinessService"]
+    F --> G["Gemini or OpenAI adapter"]
+    G --> H["Prompt + untrusted-data boundaries"]
+    H --> I["Provider response text"]
+    I --> J["JSON extraction + shared response schema"]
+    J --> K["Quality gates"]
+    K --> L["Frontend response validation"]
+    L --> M["Results dashboard"]
+```
 
-- memuat environment;
-- memvalidasi konfigurasi;
-- membuat Express;
-- memasang batas JSON 1 MB;
-- menghapus header identitas Express;
-- memasang security headers, CSP produksi, Permissions Policy, dan request ID;
-- memasang rate limit pada endpoint analisis;
-- mendaftarkan `/api/health` dan `/api/analyze`;
-- memasang Vite middleware saat development;
-- melayani aset hasil build dan fallback SPA saat production;
-- memasang error handler;
-- memulai server pada `PORT`.
+The browser and server import the same schemas from
+[`../shared/analysisSchemas.ts`](../shared/analysisSchemas.ts). This avoids
+maintaining separate frontend and backend definitions for the V2 contract.
 
-Server dapat dimulai tanpa API key. Dalam kondisi tersebut, health check tetap
-merespons tetapi `analysisAvailable` bernilai `false`.
+## Components and responsibilities
 
-## Konfigurasi
+### Bootstrap and HTTP boundary
 
-[`../server/config.ts`](../server/config.ts) memvalidasi:
+[`../server.ts`](../server.ts) owns environment loading, validated
+configuration, Express setup, the 1 MB JSON body limit, security headers,
+production CSP, Permissions Policy, request IDs, analysis rate limiting,
+routes, production static assets, SPA fallback, error handling, and server
+startup.
 
-- `AI_PROVIDER`, dengan nilai `gemini` atau `openai`;
-- `GEMINI_API_KEY`, yang bersifat opsional saat server dimulai;
-- `GEMINI_MODEL`, default `gemini-3.5-flash`;
-- `OPENAI_API_KEY`, yang bersifat opsional saat server dimulai;
-- `OPENAI_MODEL`, default `gpt-5.6-luna`;
-- `PORT`, default `3000`.
-- `AI_REQUEST_TIMEOUT_MS`, default `45000` dan dibatasi 5–120 detik;
+The process may start without an API key. In that state `/api/health` remains
+available but returns `analysisAvailable: false`; offline demos still work and
+live analysis fails safely.
+
+### Configuration
+
+[`../server/config.ts`](../server/config.ts) validates:
+
+- `AI_PROVIDER`: `gemini` or `openai`;
+- provider API key and model name;
+- `PORT`, default `3000`;
+- `AI_REQUEST_TIMEOUT_MS`, default `45000` and bounded to 5–120 seconds;
 - `ANALYSIS_RATE_LIMIT_MAX`, default `10`;
-- `ANALYSIS_RATE_LIMIT_WINDOW_MS`, default `60000` dan dibatasi 10 detik–1 jam.
+- `ANALYSIS_RATE_LIMIT_WINDOW_MS`, default `60000` and bounded to 10 seconds–1 hour.
 
-Konfigurasi menghasilkan flag generik `analysisAvailable`. Frontend V2 tidak
-bergantung pada nama provider.
+The frontend receives only the generic availability flag; it does not learn
+the selected provider or model.
 
-## Route Analisis dan Migrasi
+### Analyze route and compatibility boundary
 
-[`../server/routes/analyze.ts`](../server/routes/analyze.ts) mencoba kontrak
-dalam urutan berikut:
+[`../server/routes/analyze.ts`](../server/routes/analyze.ts) first validates the
+strict V2 request. If that fails, it attempts the temporary V1 request adapter.
+Both paths use the same V2 service. A V1 caller receives a mapped legacy
+response; a V2 caller receives the normalized V2 result.
 
-1. payload V2 divalidasi langsung dengan `AnalyzeJobReadinessRequestSchema`;
-2. jika bukan V2, payload dicoba melalui adapter request V1;
-3. seluruh analisis tetap memakai service V2 yang sama;
-4. hasil request V2 dikembalikan sebagai `JobReadinessAnalysis`;
-5. hasil request V1 dipetakan kembali ke bentuk response legacy.
+Each request gets an `AbortController`. Browser disconnects propagate through
+the service to the provider. The rate limiter executes before analysis to
+reduce accidental or abusive provider spend. Its default store is in-memory
+and process-local, so it is not a global quota in multi-instance deployments.
 
-Route membuat `AbortController` per request. Jika browser memutus koneksi,
-signal diteruskan melalui service ke provider. Rate limit dijalankan sebelum
-analisis untuk mengurangi penyalahgunaan biaya provider. Implementasi bawaan
-menyimpan counter dalam memori proses; deployment multi-instance perlu store
-bersama sebelum mengandalkan kuota global.
-
-Adapter pada [`../server/compatibility/`](../server/compatibility/) adalah kode
-migrasi sementara, bukan business schema kedua yang permanen.
-
-## Service dan Provider
+### Application service
 
 [`../server/services/jobReadinessService.ts`](../server/services/jobReadinessService.ts)
-tidak bergantung pada Express. Service menerima request V2 tervalidasi, memanggil
-`AIProvider` beserta cancellation signal, lalu memvalidasi hasil sekali lagi
-sebelum mengembalikannya.
+is independent of Express. It accepts a validated V2 request, calls the
+resolved provider with a cancellation signal, and validates the result before
+returning it.
 
-Interface provider berada di
-[`../server/ai/provider.ts`](../server/ai/provider.ts). Resolver membaca
-konfigurasi server dan membuat satu adapter sesuai `AI_PROVIDER`. Route,
-service, frontend, serta kontrak hasil tidak bergantung pada nama provider.
+### Provider adapters
 
-Implementasi Gemini:
+[`../server/ai/provider.ts`](../server/ai/provider.ts) defines the provider
+interface. The resolver creates exactly one configured implementation; there is
+no silent cross-provider fallback.
 
-- membuat client SDK hanya saat dibutuhkan;
-- mengambil system instruction dan user prompt dari prompt builder;
-- meminta JSON terstruktur;
-- tidak mengekspor tipe SDK ke service atau route;
-- memetakan kegagalan ke `AppError`;
-- menerapkan HTTP timeout yang tervalidasi;
-- menerima AbortSignal dari siklus request;
-- menyerahkan teks respons ke parser V2.
+The Gemini adapter:
 
-Implementasi OpenAI:
+- creates the SDK client only when needed;
+- requests structured JSON using system and user prompts;
+- applies the validated timeout and cancellation signal;
+- maps failures to normalized application errors;
+- passes response text to the common parser.
 
-- memakai Responses API melalui request server-side;
-- meminta Structured Outputs dari JSON Schema yang dihasilkan dari schema Zod;
-- menonaktifkan penyimpanan response melalui `store: false`;
-- menerapkan timeout dan cancellation signal yang sama;
-- menormalisasi HTTP failure, refusal, respons incomplete, dan output kosong;
-- menyerahkan teks respons ke parser V2 yang sama.
+The OpenAI adapter:
 
-Model kedua provider dapat diubah melalui environment tanpa perubahan UI atau
-kontrak API. Menambah provider ketiga tetap memerlukan adapter dan pengujian
-eksplisit; resolver tidak melakukan fallback diam-diam antar-provider.
+- uses the Responses API with Structured Outputs derived from the Zod schema;
+- sets `store: false`;
+- normalizes HTTP failure, refusal, incomplete response, and empty output;
+- uses the same timeout, cancellation, and parser path as Gemini.
 
-## Prompt dan Panduan Bidang
+Adding a third provider requires a deliberate adapter and tests. Configuration
+alone is not enough.
 
-[`../server/ai/promptBuilder.ts`](../server/ai/promptBuilder.ts) menyusun:
+### Prompt and domain guidance
 
-- batas keamanan dan data tidak tepercaya;
-- scoring rubric;
-- aturan verdict;
-- grounding terhadap profil dan lowongan;
-- klasifikasi must-have dan nice-to-have;
-- aturan roadmap, pesan lamaran, dan pertanyaan wawancara;
-- aturan kedalaman hasil, status pencocokan persyaratan, prioritas, serta
-  kerangka jawaban wawancara yang tetap berbasis bukti;
-- schema output normalized;
-- bahasa output yang diminta.
+[`../server/ai/promptBuilder.ts`](../server/ai/promptBuilder.ts) defines the
+scoring rubric, verdict policy, grounding constraints, must-have versus
+nice-to-have handling, roadmap and application-output rules, and explicit
+boundaries around candidate/vacancy text as untrusted data.
 
-[`../shared/jobFieldCatalog.ts`](../shared/jobFieldCatalog.ts) menjadi sumber
-bersama untuk 29 rumpun, tujuh kelompok UI, label, deskripsi, dan contoh peran.
-[`../server/ai/jobFieldGuidance.ts`](../server/ai/jobFieldGuidance.ts)
-menambahkan kompetensi, contoh bukti, dan kehati-hatian khusus untuk 27 rumpun.
-Dua rumpun terbuka memakai fallback umum yang secara eksplisit menghindari klaim
-spesialis.
+[`../shared/jobFieldCatalog.ts`](../shared/jobFieldCatalog.ts) is the shared
+source for 29 job families in seven UI groups.
+[`../server/ai/jobFieldGuidance.ts`](../server/ai/jobFieldGuidance.ts) adds
+specialized competencies, evidence examples, and cautions for 27 families; two
+open categories use a conservative fallback.
 
-## Parsing dan Error
+### Parsing and quality gates
 
-[`../server/ai/responseParser.ts`](../server/ai/responseParser.ts):
+[`../server/ai/responseParser.ts`](../server/ai/responseParser.ts) removes an
+optional Markdown fence, parses JSON, and validates the complete result with
+the shared response schema. Invalid, missing, extra, oversized, or internally
+inconsistent fields are rejected.
 
-1. menerima teks provider;
-2. melepas Markdown code fence jika ada;
-3. mem-parsing JSON;
-4. memvalidasi seluruh response dengan `JobReadinessAnalysisSchema`;
-5. menolak field asing, field hilang, batas berlebih, atau skor/verdict yang
-   tidak konsisten.
+The schema enforces, among other invariants:
 
-Schema juga memastikan total komponen skor `40 + 25 + 20 + 10 + 5` sama dengan
-`matchScore`, setiap minggu memiliki sedikitnya dua aksi, setiap pencocokan
-persyaratan memuat status/bukti/rekomendasi, dan sedikitnya tiga item persiapan
-wawancara tersedia. Validasi ini membuat provider tidak dapat menghilangkan
-bagian penting lalu tetap menghasilkan respons yang dianggap sah.
+- the five score components total the final score;
+- score ranges agree with stable verdict identifiers;
+- roadmap weeks contain multiple actions;
+- requirement matches contain status, evidence, and a recommendation;
+- the structured result contains the required interview preparation.
 
-Error publik hanya berisi kode stabil dan pesan aman. Raw response provider,
-prompt, API key, stack trace, dan detail SDK tidak dikirim ke frontend.
+Additional quality gates reject selected Indonesian-language violations, such
+as inconsistent reader address and unsupported training graduation or
+certification claims.
 
-## Frontend
+### Frontend
 
-[`../src/api/analysisClient.ts`](../src/api/analysisClient.ts) memvalidasi
-response sukses sekali lagi dengan schema bersama. Komponen React tidak menerima
-output provider yang belum tervalidasi.
+[`../src/api/analysisClient.ts`](../src/api/analysisClient.ts) validates a
+successful API response again before React components receive it. Components
+never intentionally render raw provider output.
 
-Frontend health hanya menggunakan:
+Offline scenarios in [`../src/demoScenarios.ts`](../src/demoScenarios.ts) use
+fictional requests and complete V2 results. They pass through the same schemas
+but do not call `/api/analyze` or an external provider.
 
-```json
-{
-  "ok": true,
-  "analysisAvailable": false
-}
-```
+## Trust boundaries and data handling
 
-Backend tidak mengekspos identitas provider atau model pada health response.
+| Boundary | Control |
+| --- | --- |
+| Browser → API | Shared request validation, field bounds, 1 MB body limit, and rate limiting |
+| User text → model prompt | Explicit untrusted-data delimiters and grounding rules |
+| Provider → application | JSON extraction, strict shared schema, cross-field invariants, and quality gates |
+| Server → browser | Stable public error codes/messages; no raw model output, prompt, key, SDK detail, or stack trace |
+| Configuration → runtime | Environment validation and server-side-only credentials |
 
-## Demo Offline
+The codebase does not intentionally persist candidate data. That statement does
+not cover infrastructure access logs or provider retention; those must be
+verified for the selected deployment.
 
-Demo frontend berada di
-[`../src/demoScenarios.ts`](../src/demoScenarios.ts), dengan request fixture
-bersama dari
-[`../shared/crossFieldScenarios.ts`](../shared/crossFieldScenarios.ts).
+## Failure behavior
 
-Request dan analysis demo divalidasi melalui schema V2. Menampilkan demo tidak
-memanggil `/api/analyze` atau provider eksternal. Bentuk hasil demo sama dengan
-kontrak live agar dashboard offline menjadi representasi struktur keluaran,
-bukan versi ringkas yang berbeda.
+- Missing provider credentials: server starts; health reports unavailable;
+  live analysis returns a normalized service-unavailable response.
+- Invalid request: rejected before provider invocation.
+- Provider timeout or browser disconnect: cancellation propagates to the
+  provider request.
+- Malformed or inconsistent model output: rejected before the frontend.
+- Rate limit exceeded: returns `429`; default counters reset with the process.
+- Unexpected server failure: returns a normalized public error without secret
+  or stack details.
 
-## Statelessness
+## Verification boundary
 
-Server tidak memiliki database kandidat, akun, atau penyimpanan riwayat. Request
-diproses dalam memori selama siklus HTTP. Arsitektur aplikasi tidak sengaja
-menyimpan profil atau lowongan, tetapi platform deployment dan provider AI dapat
-memiliki logging atau kebijakan data tersendiri yang harus ditinjau sebelum
-produksi.
+Vitest, Testing Library, fake providers, mock fetch, and jsdom cover schemas,
+backend modules, compatibility, client behavior, forms, demos, accessibility,
+interactions, and result rendering. CI runs typecheck, the deterministic suite,
+the production build, and a production-dependency audit.
 
-## Status Verifikasi
+The production bundle has also been checked locally for health behavior, SPA
+fallback, security headers, unavailable-provider handling, and rate limiting.
+A six-request Gemini run provides live-integration evidence; see
+[`EVALUATION.md`](EVALUATION.md).
 
-Unit, integration-style, dan DOM interaction tests menggunakan fake provider,
-mock fetch, dan jsdom. Lint, test, build, dan audit dapat berjalan tanpa API key
-dan tanpa panggilan provider eksternal. Bundle produksi juga telah diperiksa
-secara lokal untuk health response, fallback SPA, CSP, security headers,
-request ID, penolakan tanpa provider, dan rate limit.
-
-Integrasi Gemini live, kualitas respons, dan latensi lokal telah diverifikasi
-melalui enam evaluasi berurutan. Integrasi OpenAI live, perilaku timeout dan
-kegagalan terhadap layanan nyata, QA browser lintas perangkat, serta deployment
-publik belum diverifikasi.
+These checks do **not** prove public deployment readiness. Real-browser E2E,
+cross-device manual QA, shared rate limiting, deployment observability,
+production timeout behavior, OpenAI live integration, and deployment-specific
+privacy review remain open release gates.
