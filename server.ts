@@ -13,6 +13,7 @@ import {
   logServerError,
 } from "./server/errors";
 import { createAnalyzeRouter } from "./server/routes/analyze";
+import { apiNotFoundHandler } from "./server/routes/apiNotFound";
 import { createHealthRouter } from "./server/routes/health";
 import { JobReadinessService } from "./server/services/jobReadinessService";
 
@@ -110,6 +111,7 @@ async function startServer(): Promise<void> {
       max: config.analysisRateLimitMax,
     }),
   );
+  app.use("/api", apiNotFoundHandler);
 
   await setupHosting(app);
   app.use(errorHandler);
