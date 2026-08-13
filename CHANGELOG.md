@@ -43,6 +43,8 @@ respective release; current development status is recorded under
 - Playwright Chromium E2E coverage for the production bundle, provider-
   unavailable startup, offline demo isolation, focus and reset behavior, and a
   mobile-width overflow check, enforced in CI.
+- Automated axe-core checks for WCAG A/AA violations on the initial form and
+  offline result, plus a browser-level keyboard reset test, enforced in CI.
 - jsdom interaction tests for demo selection, reset, live submit, and result
   rendering.
 - OpenAI Responses API structured-output tests with disabled response storage,
@@ -97,6 +99,9 @@ respective release; current development status is recorded under
   Vite or binding to the production port.
 
 ### Fixed
+- Raised contrast for demo metadata, scenario numbers, section separators, and
+  score denominators so the tested form and result states meet axe-core's
+  WCAG 2 AA color-contrast checks.
 - Enforced runtime consistency between match-score ranges and stable verdict
   identifiers.
 - Enforced that five score components total the final score, each roadmap week

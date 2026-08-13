@@ -315,12 +315,12 @@ export default function App() {
                       : "border-slate-200 bg-white text-slate-700 hover:border-indigo-300 hover:bg-indigo-50/60"
                   }`}
                 >
-                  <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-extrabold ${activeDemo === index ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-500 group-hover:bg-indigo-100 group-hover:text-indigo-700"}`}>
+                  <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-extrabold ${activeDemo === index ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-600 group-hover:bg-indigo-100 group-hover:text-indigo-700"}`}>
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <span className="min-w-0">
                     <span className="block truncate text-xs font-extrabold">{scenario.name}</span>
-                    <span className="mt-0.5 block truncate text-[11px] font-normal text-slate-500">{scenario.description}</span>
+                    <span className="mt-0.5 block truncate text-[11px] font-normal text-slate-600">{scenario.description}</span>
                   </span>
                   {activeDemo === index && <span className="sr-only">(Dipilih)</span>}
                 </button>

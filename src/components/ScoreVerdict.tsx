@@ -33,7 +33,7 @@ export function ScoreVerdict({
         </span>
         <span className="mt-2 text-4xl font-extrabold tracking-[-0.04em] text-slate-950">
           {score}
-          <span className="text-base text-slate-400">/100</span>
+          <span className="text-base text-slate-600">/100</span>
         </span>
         <span className="mt-1 text-center text-[10px] text-slate-500">
           Estimasi panduan, bukan peluang diterima

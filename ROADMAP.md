@@ -46,6 +46,9 @@ belum ada deployment produksi atau tag rilis V2.
 - tiga test E2E Playwright pada Chromium nyata yang memverifikasi bundle
   produksi, status tanpa provider, alur demo offline tanpa request AI, fokus,
   reset formulir, dan overflow pada viewport ponsel;
+- tiga test aksesibilitas browser yang memeriksa form awal dan dashboard hasil
+  terhadap aturan WCAG A/AA dengan axe-core serta memverifikasi reset formulir
+  melalui keyboard;
 - laporan coverage V8 untuk seluruh kode aplikasi dengan ambang global 75%
   pada statements, branches, functions, dan lines sebagai gerbang CI;
 - verifikasi lokal bundle produksi, health check, penolakan tanpa key, header,
@@ -73,8 +76,9 @@ belum ada deployment produksi atau tag rilis V2.
    rate-limit store, serta error handling pada deployment publik.
 6. Meninjau ulang wording privasi setelah platform hosting, lokasi pemrosesan,
    logging, dan kebijakan provider final diketahui.
-7. Menjalankan pemeriksaan manual lintas browser untuk responsive, keyboard,
-   reduced motion, dan pembesaran 200% di luar cakupan Chromium otomatis.
+7. Menjalankan pemeriksaan manual lintas browser untuk responsive, alur
+   keyboard lengkap, reduced motion, dan pembesaran 200% di luar cakupan
+   Chromium dan axe-core otomatis.
 
 ## Kandidat Pasca-Rilis
 

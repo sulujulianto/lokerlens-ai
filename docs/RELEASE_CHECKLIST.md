@@ -18,10 +18,12 @@ publik; item hanya boleh ditandai selesai bila memiliki bukti.
 - [x] Tiga test E2E Chromium menjalankan bundle produksi dan mencakup status
       tanpa provider, demo offline tanpa request analisis, fokus hasil, reset,
       serta overflow pada viewport ponsel 375 px.
+- [x] axe-core memeriksa aturan WCAG A/AA pada form awal dan dashboard hasil,
+      sedangkan Playwright memverifikasi reset formulir melalui keyboard.
 - [x] Build frontend serta server produksi berhasil.
 - [x] `npm audit` melaporkan 0 kerentanan yang diketahui.
 - [x] CI GitHub tersedia untuk typecheck, lint, test dengan coverage gate,
-      build, E2E Chromium, dan audit.
+      build, E2E/aksesibilitas Chromium, dan audit.
 - [x] Server produksi lokal mengembalikan halaman utama dan health response.
 - [x] Server tanpa API key menolak analisis secara aman dengan 503.
 - [x] Rate limit menghasilkan 429 setelah batas terlampaui.
