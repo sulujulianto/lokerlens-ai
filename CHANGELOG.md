@@ -36,6 +36,8 @@ respective release; current development status is recorded under
   audit.
 - ESLint flat configuration for TypeScript, React Hooks, and Vite Fast Refresh,
   with an explicit CI lint gate and declared React type packages.
+- V8 coverage reporting for all application code with a 70% global threshold
+  for statements, branches, functions, and lines enforced in CI.
 - jsdom interaction tests for demo selection, reset, live submit, and result
   rendering.
 - OpenAI Responses API structured-output tests with disabled response storage,

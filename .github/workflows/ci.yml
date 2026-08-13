@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   verify:
-    name: Typecheck, lint, test, build, and audit
+    name: Typecheck, lint, coverage, build, and audit
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -38,8 +38,8 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Run tests
-        run: npm run test:run
+      - name: Run tests with coverage gate
+        run: npm run test:coverage
 
       - name: Build production bundle
         run: npm run build
