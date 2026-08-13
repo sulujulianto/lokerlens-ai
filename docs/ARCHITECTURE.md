@@ -49,10 +49,11 @@ maintaining separate frontend and backend definitions for the V2 contract.
 ### Bootstrap and HTTP boundary
 
 [`../server.ts`](../server.ts) owns environment loading, validated
-configuration, Express setup, the 1 MB JSON body limit, security headers,
-production CSP, Permissions Policy, request IDs, analysis rate limiting,
-routes, production static assets, SPA fallback, error handling, and server
-startup.
+configuration, provider resolution, development or production hosting setup,
+and process startup. [`../server/app.ts`](../server/app.ts) assembles the
+testable Express application boundary: the 1 MB JSON body limit, security
+headers, production CSP, Permissions Policy, request IDs, analysis rate
+limiting, API routes, hosting hook, and normalized error handling.
 
 The process may start without an API key. In that state `/api/health` remains
 available but returns `analysisAvailable: false`; offline demos still work and
@@ -185,10 +186,12 @@ verified for the selected deployment.
 
 ## Verification boundary
 
-Vitest, Testing Library, fake providers, mock fetch, and jsdom cover schemas,
-backend modules, compatibility, client behavior, forms, demos, accessibility,
-interactions, and result rendering. CI runs typecheck, the deterministic suite,
-the production build, and a production-dependency audit.
+Vitest, Testing Library, fake providers, mock fetch, jsdom, and ephemeral local
+HTTP servers cover schemas, backend modules, the complete Express middleware
+and route boundary, compatibility, client behavior, forms, demos,
+accessibility, interactions, and result rendering. CI enforces 75% global V8
+coverage for statements, branches, functions, and lines, then runs the
+production build and a production-dependency audit.
 
 The production bundle has also been checked locally for health behavior, SPA
 fallback, security headers, unavailable-provider handling, and rate limiting.

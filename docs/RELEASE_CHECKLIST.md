@@ -8,8 +8,11 @@ publik; item hanya boleh ditandai selesai bila memiliki bukti.
 
 - [x] TypeScript lulus tanpa emit.
 - [x] ESLint lulus tanpa warning untuk TypeScript, React Hooks, dan Fast Refresh.
-- [x] 25 berkas test dan 290 test lulus.
-- [x] Coverage V8 mencakup seluruh kode aplikasi dan memenuhi ambang global 70%
+- [x] 26 berkas test dan 299 test lulus.
+- [x] Integration test HTTP mencakup health, analisis valid, validasi request,
+      kegagalan provider, JSON 404, body limit, rate limit, header keamanan,
+      dan CSP produksi.
+- [x] Coverage V8 mencakup seluruh kode aplikasi dan memenuhi ambang global 75%
       untuk statements, branches, functions, serta lines.
 - [x] Test interaksi DOM mencakup demo, reset, health state, submit, dan hasil.
 - [x] Build frontend serta server produksi berhasil.
