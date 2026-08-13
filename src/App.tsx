@@ -34,6 +34,13 @@ import {
 type ViewState = "edit" | "loading" | "result";
 type LoadingMode = "live" | "demo";
 
+const liveLoadingMessages = [
+  "Memeriksa profil dan bukti pengalaman...",
+  "Membandingkan persyaratan wajib dan nilai tambah...",
+  "Menilai kekuatan, kesenjangan, dan risiko praktis...",
+  "Menyusun rencana aksi serta bahan lamaran...",
+] as const;
+
 export default function App() {
   const [formValues, setFormValues] = useState<ProfileFormValues>(() =>
     formValuesFromRequest(demoScenarios[0].request),
@@ -46,8 +53,8 @@ export default function App() {
   const [fieldErrors, setFieldErrors] = useState<ProfileFormErrors>({});
   const [activeDemo, setActiveDemo] = useState<number | null>(0);
   const [isDemoResult, setIsDemoResult] = useState(false);
-  const [loadingMessage, setLoadingMessage] = useState(
-    "Menyiapkan analisis kesiapan kerja...",
+  const [loadingMessage, setLoadingMessage] = useState<string>(
+    liveLoadingMessages[0],
   );
   const [loadingMode, setLoadingMode] = useState<LoadingMode>("live");
   const resultHeadingRef = useRef<HTMLHeadingElement>(null);
@@ -62,22 +69,11 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (viewState !== "loading") return;
-    if (loadingMode === "demo") {
-      setLoadingMessage("Menyiapkan hasil demo offline...");
-      return;
-    }
-    const messages = [
-      "Memeriksa profil dan bukti pengalaman...",
-      "Membandingkan persyaratan wajib dan nilai tambah...",
-      "Menilai kekuatan, kesenjangan, dan risiko praktis...",
-      "Menyusun rencana aksi serta bahan lamaran...",
-    ];
+    if (viewState !== "loading" || loadingMode !== "live") return;
     let index = 0;
-    setLoadingMessage(messages[0]);
     const interval = window.setInterval(() => {
-      index = Math.min(index + 1, messages.length - 1);
-      setLoadingMessage(messages[index]);
+      index = Math.min(index + 1, liveLoadingMessages.length - 1);
+      setLoadingMessage(liveLoadingMessages[index]);
     }, 800);
     return () => window.clearInterval(interval);
   }, [loadingMode, viewState]);
@@ -128,6 +124,7 @@ export default function App() {
     setIsDemoResult(false);
     if (showResult) {
       setLoadingMode("demo");
+      setLoadingMessage("Menyiapkan hasil demo offline...");
       setViewState("loading");
       demoTimerRef.current = window.setTimeout(() => {
         const resultContent = selectDemoContent(demoScenarios, index, true);
@@ -172,6 +169,7 @@ export default function App() {
     setFieldErrors({});
     setIsDemoResult(false);
     setLoadingMode("live");
+    setLoadingMessage(liveLoadingMessages[0]);
     setViewState("loading");
     const controller = new AbortController();
     analysisControllerRef.current?.abort();

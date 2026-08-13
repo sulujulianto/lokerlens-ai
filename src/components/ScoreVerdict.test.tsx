@@ -1,7 +1,8 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import type { Verdict } from "../../shared/analysisSchemas";
-import { getVerdictLabel, ScoreVerdict } from "./ScoreVerdict";
+import { getVerdictLabel } from "../scoreVerdictPresentation";
+import { ScoreVerdict } from "./ScoreVerdict";
 
 describe("ScoreVerdict", () => {
   it.each([

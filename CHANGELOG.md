@@ -32,7 +32,10 @@ respective release; current development status is recorded under
 - Provider timeout and end-to-end request cancellation support.
 - Per-client analysis rate limiting, request IDs, Helmet security headers,
   strict production CSP, Permissions Policy, and immutable asset caching.
-- GitHub Actions CI for typecheck, tests, production build, and dependency audit.
+- GitHub Actions CI for typecheck, lint, tests, production build, and dependency
+  audit.
+- ESLint flat configuration for TypeScript, React Hooks, and Vite Fast Refresh,
+  with an explicit CI lint gate and declared React type packages.
 - jsdom interaction tests for demo selection, reset, live submit, and result
   rendering.
 - OpenAI Responses API structured-output tests with disabled response storage,
@@ -80,6 +83,8 @@ respective release; current development status is recorded under
 - Updated compatible dependencies within existing major-version boundaries and
   aligned the package version with `v2.0.0-dev`.
 - Preserved temporary V1 request and response adapters during migration.
+- Separated TypeScript typechecking from ESLint so each CI gate reports its
+  actual responsibility.
 
 ### Fixed
 - Enforced runtime consistency between match-score ranges and stable verdict
@@ -104,6 +109,9 @@ respective release; current development status is recorded under
   stability without weakening response validation.
 - Verified the stabilized Gemini path with six successful live evaluations,
   including three Frontend runs with one verdict and a two-point score spread.
+- Removed a synchronous loading-state update from a React effect and separated
+  verdict presentation helpers from the component module for reliable Fast
+  Refresh behavior.
 
 ### Security
 - Added strict request and provider-response validation with bounded field,

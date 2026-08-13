@@ -5,7 +5,6 @@ import type {
   JobReadinessAnalysis,
 } from "../../shared/analysisSchemas";
 import type { AIProvider } from "../ai/provider";
-import { AppError } from "../errors";
 import { JobReadinessService } from "../services/jobReadinessService";
 import { processAnalyzePayload } from "./analyze";
 

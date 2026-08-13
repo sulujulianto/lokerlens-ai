@@ -73,8 +73,9 @@ trust boundaries, compatibility layer, and known deployment constraints.
 | Backend design | Configuration, provider adapters, prompt builder, parser, quality gates, service, and routes are separated |
 | Security | Helmet, production CSP, Permissions Policy, 1 MB body limit, request IDs, normalized errors, and per-client rate limiting |
 | Resilience | Validated configuration, provider timeouts, request cancellation, unavailable-provider handling, and no silent provider fallback |
-| Testing | 24 test files and 286 deterministic tests across schemas, backend, API client, forms, demos, accessibility, interactions, and results |
-| CI | Typecheck, tests, production build, and production-dependency audit on pushes and pull requests to `main` |
+| Testing | 25 test files and 290 deterministic tests across schemas, backend, API client, forms, demos, accessibility, interactions, and results |
+| Static analysis | TypeScript typecheck plus ESLint rules for TypeScript, React Hooks, and Vite Fast Refresh |
+| CI | Typecheck, lint, tests, production build, and production-dependency audit on pushes and pull requests to `main` |
 
 ## Technology
 
@@ -101,7 +102,7 @@ demo data. They contain no API key or personal applicant data.
 
 ## Run locally
 
-Requirements: Node.js 20 or newer and npm.
+Requirements: Node.js 20.9 or newer and npm.
 
 ```bash
 git clone https://github.com/sulujulianto/lokerlens-ai.git
@@ -131,8 +132,9 @@ OpenAI is also supported through `AI_PROVIDER=openai`, `OPENAI_API_KEY`, and
 The following checks passed on the audited `main` snapshot:
 
 ```bash
-npm run lint       # TypeScript typecheck; ESLint is not configured yet
-npm run test:run   # 24 files, 286 tests
+npm run typecheck  # TypeScript typecheck without emitting files
+npm run lint       # ESLint with zero warnings allowed
+npm run test:run   # 25 files, 290 tests
 npm run build      # Production frontend and server bundles
 npm audit --omit=dev --audit-level=moderate
 git diff --check
