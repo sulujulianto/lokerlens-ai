@@ -73,9 +73,9 @@ trust boundaries, compatibility layer, and known deployment constraints.
 | Backend design | Configuration, provider adapters, prompt builder, parser, quality gates, service, and routes are separated |
 | Security | Helmet, production CSP, Permissions Policy, 1 MB body limit, request IDs, normalized errors, and per-client rate limiting |
 | Resilience | Validated configuration, provider timeouts, request cancellation, unavailable-provider handling, and no silent provider fallback |
-| Testing | 26 Vitest files with 299 deterministic tests, plus 6 Playwright Chromium E2E tests including axe-core checks against WCAG A/AA rules |
+| Testing | 26 Vitest files with 299 deterministic tests, plus 7 Playwright scenarios run on Chromium and Firefox (14 project runs), including axe-core WCAG A/AA and reduced-motion checks |
 | Static analysis | TypeScript typecheck plus ESLint rules for TypeScript, React Hooks, and Vite Fast Refresh |
-| CI | Typecheck, lint, tests with coverage thresholds, production build, Chromium E2E/accessibility, and production-dependency audit on pushes and pull requests to `main` |
+| CI | Typecheck, lint, tests with coverage thresholds, production build, Chromium/Firefox E2E and accessibility, and production-dependency audit on pushes and pull requests to `main` |
 
 ## Technology
 
@@ -84,7 +84,7 @@ trust boundaries, compatibility layer, and known deployment constraints.
 | Frontend | React 19, TypeScript, Vite, Tailwind CSS, Motion, Lucide |
 | Backend | Node.js, Express, Zod, Helmet, express-rate-limit |
 | AI boundary | Gemini and OpenAI adapters behind a shared provider interface |
-| Testing | Vitest, Testing Library, jsdom, Playwright, Chromium, axe-core |
+| Testing | Vitest, Testing Library, jsdom, Playwright, Chromium, Firefox, axe-core |
 | Delivery | GitHub Actions, production frontend and server bundles |
 
 ## Visual evidence
@@ -137,8 +137,8 @@ npm run lint       # ESLint with zero warnings allowed
 npm run test:run   # 26 files, 299 tests
 npm run test:coverage  # Same suite plus enforced V8 coverage thresholds
 npm run build      # Production frontend and server bundles
-npx playwright install chromium  # One-time local browser install
-npm run test:e2e   # 6 Chromium tests, including automated WCAG A/AA checks
+npx playwright install chromium firefox  # One-time local browser install
+npm run test:e2e   # 7 scenarios on 2 browsers: 14 project runs
 npm audit --omit=dev --audit-level=moderate
 git diff --check
 ```
@@ -156,9 +156,9 @@ production readiness. Before a public V2 release it still needs:
 
 - a chosen hosting platform with verified region, logging, retention, cost,
   timeout, and shared rate-limit behavior;
-- manual cross-browser QA across Firefox, complete keyboard-only flows,
-  reduced-motion, and 200% zoom paths beyond the automated Chromium E2E and
-  axe-core coverage;
+- manual cross-browser QA beyond the automated Chromium/Firefox scenarios,
+  including complete keyboard-only flows and 200% zoom; the automated
+  reduced-motion check currently covers the loading spinner only;
 - live-provider evaluation for additional culinary and technical job families;
 - deployment-specific privacy wording and production observability;
 - deeper coverage around server startup and hosting modes, low-level provider

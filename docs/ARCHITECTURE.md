@@ -191,19 +191,21 @@ HTTP servers cover schemas, backend modules, the complete Express middleware
 and route boundary, compatibility, client behavior, forms, demos,
 accessibility, interactions, and result rendering. CI enforces 75% global V8
 coverage for statements, branches, functions, and lines. Playwright then runs
-six Chromium E2E tests against the production bundle. Three cover provider-
-unavailable startup, offline demo behavior, focus management, reset behavior,
-and a mobile viewport overflow check. Three more use axe-core on the initial
-form and offline result for WCAG A/AA rules and exercise keyboard-driven reset
-before the production-dependency audit.
+seven scenarios on both Chromium and Firefox (14 project runs) against the
+production bundle. Three cover provider-unavailable startup, offline demo
+behavior, focus management, reset behavior, and a mobile viewport overflow
+check. Three more use axe-core on the initial form and offline result for WCAG
+A/AA rules and exercise keyboard-driven reset. The seventh emulates reduced
+motion and verifies that the loading spinner stops animating before the
+production-dependency audit.
 
 The production bundle has also been checked locally for health behavior, SPA
 fallback, security headers, unavailable-provider handling, and rate limiting.
 A six-request Gemini run provides live-integration evidence; see
 [`EVALUATION.md`](EVALUATION.md).
 
-These checks do **not** prove public deployment readiness. Firefox and broader
-cross-device manual QA, complete keyboard-only and reduced-motion review,
-200% zoom review, shared rate limiting, deployment observability, production
-timeout behavior, OpenAI live integration, and deployment-specific privacy
-review remain open release gates.
+These checks do **not** prove public deployment readiness. Broader manual
+cross-browser and cross-device QA, complete keyboard-only review, reduced-
+motion review beyond the spinner, 200% zoom review, shared rate limiting,
+deployment observability, production timeout behavior, OpenAI live integration,
+and deployment-specific privacy review remain open release gates.

@@ -44,10 +44,10 @@ jobs:
       - name: Build production bundle
         run: npm run build
 
-      - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+      - name: Install Chromium and Firefox
+        run: npx playwright install --with-deps chromium firefox
 
-      - name: Run browser E2E and accessibility tests
+      - name: Run cross-browser E2E and accessibility tests
         run: npm run test:e2e
 
       - name: Audit production dependencies

@@ -43,12 +43,13 @@ belum ada deployment produksi atau tag rilis V2.
 - 26 berkas test dan 299 test, termasuk pengujian interaksi DOM serta boundary
   HTTP Express untuk health, analisis, error, header keamanan, batas body,
   rate limit, dan CSP produksi;
-- tiga test E2E Playwright pada Chromium nyata yang memverifikasi bundle
-  produksi, status tanpa provider, alur demo offline tanpa request AI, fokus,
-  reset formulir, dan overflow pada viewport ponsel;
-- tiga test aksesibilitas browser yang memeriksa form awal dan dashboard hasil
-  terhadap aturan WCAG A/AA dengan axe-core serta memverifikasi reset formulir
-  melalui keyboard;
+- tujuh skenario Playwright yang dijalankan pada Chromium dan Firefox (14
+  project run) untuk memverifikasi bundle produksi, status tanpa provider,
+  alur demo offline tanpa request AI, fokus, reset formulir, dan overflow pada
+  viewport ponsel;
+- pemeriksaan aksesibilitas browser untuk form awal dan dashboard hasil terhadap
+  aturan WCAG A/AA dengan axe-core, reset melalui keyboard, serta penghentian
+  animasi spinner ketika preferensi reduced motion aktif;
 - laporan coverage V8 untuk seluruh kode aplikasi dengan ambang global 75%
   pada statements, branches, functions, dan lines sebagai gerbang CI;
 - verifikasi lokal bundle produksi, health check, penolakan tanpa key, header,
@@ -77,8 +78,8 @@ belum ada deployment produksi atau tag rilis V2.
 6. Meninjau ulang wording privasi setelah platform hosting, lokasi pemrosesan,
    logging, dan kebijakan provider final diketahui.
 7. Menjalankan pemeriksaan manual lintas browser untuk responsive, alur
-   keyboard lengkap, reduced motion, dan pembesaran 200% di luar cakupan
-   Chromium dan axe-core otomatis.
+   keyboard lengkap, dan pembesaran 200% di luar cakupan skenario otomatis
+   Chromium/Firefox; pemeriksaan reduced motion otomatis baru mencakup spinner.
 
 ## Kandidat Pasca-Rilis
 
