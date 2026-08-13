@@ -40,6 +40,9 @@ respective release; current development status is recorded under
   for statements, branches, functions, and lines enforced in CI.
 - HTTP integration tests for health, analysis, validation, provider failures,
   API 404s, body limits, rate limiting, security headers, and production CSP.
+- Playwright Chromium E2E coverage for the production bundle, provider-
+  unavailable startup, offline demo isolation, focus and reset behavior, and a
+  mobile-width overflow check, enforced in CI.
 - jsdom interaction tests for demo selection, reset, live submit, and result
   rendering.
 - OpenAI Responses API structured-output tests with disabled response storage,

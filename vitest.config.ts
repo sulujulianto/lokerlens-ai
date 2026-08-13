@@ -10,6 +10,7 @@ export default defineConfig({
     },
   },
   test: {
+    exclude: ['e2e/**', '**/node_modules/**', '**/.git/**'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json-summary'],

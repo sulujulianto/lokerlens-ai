@@ -43,6 +43,9 @@ belum ada deployment produksi atau tag rilis V2.
 - 26 berkas test dan 299 test, termasuk pengujian interaksi DOM serta boundary
   HTTP Express untuk health, analisis, error, header keamanan, batas body,
   rate limit, dan CSP produksi;
+- tiga test E2E Playwright pada Chromium nyata yang memverifikasi bundle
+  produksi, status tanpa provider, alur demo offline tanpa request AI, fokus,
+  reset formulir, dan overflow pada viewport ponsel;
 - laporan coverage V8 untuk seluruh kode aplikasi dengan ambang global 75%
   pada statements, branches, functions, dan lines sebagai gerbang CI;
 - verifikasi lokal bundle produksi, health check, penolakan tanpa key, header,
@@ -70,7 +73,8 @@ belum ada deployment produksi atau tag rilis V2.
    rate-limit store, serta error handling pada deployment publik.
 6. Meninjau ulang wording privasi setelah platform hosting, lokasi pemrosesan,
    logging, dan kebijakan provider final diketahui.
-7. Menjalankan pemeriksaan manual responsive dan keyboard pada browser nyata.
+7. Menjalankan pemeriksaan manual lintas browser untuk responsive, keyboard,
+   reduced motion, dan pembesaran 200% di luar cakupan Chromium otomatis.
 
 ## Kandidat Pasca-Rilis
 

@@ -190,15 +190,17 @@ Vitest, Testing Library, fake providers, mock fetch, jsdom, and ephemeral local
 HTTP servers cover schemas, backend modules, the complete Express middleware
 and route boundary, compatibility, client behavior, forms, demos,
 accessibility, interactions, and result rendering. CI enforces 75% global V8
-coverage for statements, branches, functions, and lines, then runs the
-production build and a production-dependency audit.
+coverage for statements, branches, functions, and lines. Playwright then runs
+three Chromium E2E tests against the production bundle for provider-unavailable
+startup, offline demo behavior, focus management, reset behavior, and a mobile
+viewport overflow check before the production-dependency audit.
 
 The production bundle has also been checked locally for health behavior, SPA
 fallback, security headers, unavailable-provider handling, and rate limiting.
 A six-request Gemini run provides live-integration evidence; see
 [`EVALUATION.md`](EVALUATION.md).
 
-These checks do **not** prove public deployment readiness. Real-browser E2E,
-cross-device manual QA, shared rate limiting, deployment observability,
-production timeout behavior, OpenAI live integration, and deployment-specific
-privacy review remain open release gates.
+These checks do **not** prove public deployment readiness. Firefox and broader
+cross-device manual QA, keyboard-only and reduced-motion review, shared rate
+limiting, deployment observability, production timeout behavior, OpenAI live
+integration, and deployment-specific privacy review remain open release gates.

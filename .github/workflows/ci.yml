@@ -15,9 +15,9 @@ concurrency:
 
 jobs:
   verify:
-    name: Typecheck, lint, coverage, build, and audit
+    name: Typecheck, lint, coverage, build, browser E2E, and audit
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Check out repository
@@ -43,6 +43,12 @@ jobs:
 
       - name: Build production bundle
         run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run browser E2E tests
+        run: npm run test:e2e
 
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=moderate

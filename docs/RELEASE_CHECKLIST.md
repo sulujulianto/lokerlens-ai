@@ -15,10 +15,13 @@ publik; item hanya boleh ditandai selesai bila memiliki bukti.
 - [x] Coverage V8 mencakup seluruh kode aplikasi dan memenuhi ambang global 75%
       untuk statements, branches, functions, serta lines.
 - [x] Test interaksi DOM mencakup demo, reset, health state, submit, dan hasil.
+- [x] Tiga test E2E Chromium menjalankan bundle produksi dan mencakup status
+      tanpa provider, demo offline tanpa request analisis, fokus hasil, reset,
+      serta overflow pada viewport ponsel 375 px.
 - [x] Build frontend serta server produksi berhasil.
 - [x] `npm audit` melaporkan 0 kerentanan yang diketahui.
 - [x] CI GitHub tersedia untuk typecheck, lint, test dengan coverage gate,
-      build, dan audit.
+      build, E2E Chromium, dan audit.
 - [x] Server produksi lokal mengembalikan halaman utama dan health response.
 - [x] Server tanpa API key menolak analisis secara aman dengan 503.
 - [x] Rate limit menghasilkan 429 setelah batas terlampaui.
