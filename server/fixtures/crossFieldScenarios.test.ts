@@ -1,16 +1,24 @@
 import { describe, expect, it } from "vitest";
+import { additionalLiveEvaluationScenarios } from "../../shared/additionalLiveEvaluationScenarios";
 import { AnalyzeJobReadinessRequestSchema } from "../../shared/analysisSchemas";
 import { crossFieldScenarios } from "../../shared/crossFieldScenarios";
 
-const specializedFields = [
+const liveEvaluationScenarios = [
+  ...crossFieldScenarios,
+  ...additionalLiveEvaluationScenarios,
+] as const;
+
+const liveEvaluationFields = [
   "it_digital",
   "administration",
   "customer_service",
   "operations_logistics",
+  "culinary",
+  "electrical_refrigeration",
 ] as const;
 
 describe("crossFieldScenarios", () => {
-  it.each(crossFieldScenarios)(
+  it.each(liveEvaluationScenarios)(
     "validates the $profile.targetJobField fixture",
     (scenario) => {
       expect(
@@ -19,24 +27,26 @@ describe("crossFieldScenarios", () => {
     },
   );
 
-  it("represents all specialized fields", () => {
+  it("represents every live-evaluation field", () => {
     const representedFields = new Set(
-      crossFieldScenarios.map((scenario) => scenario.profile.targetJobField),
+      liveEvaluationScenarios.map(
+        (scenario) => scenario.profile.targetJobField,
+      ),
     );
 
-    for (const field of specializedFields) {
+    for (const field of liveEvaluationFields) {
       expect(representedFields.has(field)).toBe(true);
     }
   });
 
-  it.each(crossFieldScenarios)(
+  it.each(liveEvaluationScenarios)(
     "provides a non-empty posting for $profile.targetJobField",
     (scenario) => {
       expect(scenario.jobPosting.trim().length).toBeGreaterThan(0);
     },
   );
 
-  it.each(crossFieldScenarios)(
+  it.each(liveEvaluationScenarios)(
     "provides experience or evidence for $profile.targetJobField",
     (scenario) => {
       const profile = scenario.profile;
@@ -54,7 +64,7 @@ describe("crossFieldScenarios", () => {
   );
 
   it("contains no provider configuration or secrets", () => {
-    const serialized = JSON.stringify(crossFieldScenarios).toLowerCase();
+    const serialized = JSON.stringify(liveEvaluationScenarios).toLowerCase();
 
     expect(serialized).not.toContain("gemini_api_key");
     expect(serialized).not.toContain("ai_provider");

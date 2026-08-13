@@ -8,7 +8,7 @@ publik; item hanya boleh ditandai selesai bila memiliki bukti.
 
 - [x] TypeScript lulus tanpa emit.
 - [x] ESLint lulus tanpa warning untuk TypeScript, React Hooks, dan Fast Refresh.
-- [x] 26 berkas test dan 299 test lulus.
+- [x] 26 berkas test dan 305 test lulus.
 - [x] Integration test HTTP mencakup health, analisis valid, validasi request,
       kegagalan provider, JSON 404, body limit, rate limit, header keamanan,
       dan CSP produksi.
@@ -40,6 +40,9 @@ publik; item hanya boleh ditandai selesai bila memiliki bukti.
       valid dan dua respons Frontend ditolak aman oleh gerbang kualitas.
 - [x] Evaluasi live setelah stabilisasi menyelesaikan 6/6 request tanpa
       peringatan; skor Frontend 72, 70, dan 72 dengan verdict yang sama.
+- [x] Evaluasi live yang diperluas menyelesaikan 8/8 request tanpa peringatan;
+      tiga skor Frontend konsisten pada 70, Cook Helper mendapat 72, dan Junior
+      AC Maintenance Helper mendapat 89.
 - [x] Durasi evaluasi stabilisasi tercatat 21.086–34.093 ms per request
       (sekitar 21,1–34,1 detik), di bawah timeout provider lokal 45 detik.
 - [x] V2 telah dipromosikan ke `main` dan branch `v2-development` telah dihapus
@@ -54,15 +57,18 @@ publik; item hanya boleh ditandai selesai bila memiliki bukti.
 - [x] API key Gemini aktif telah digunakan secara lokal tanpa dibagikan di chat
       atau commit.
 - [x] Jalankan `npm run eval:gemini` untuk tiga pengulangan Frontend serta satu
-      skenario Administrasi, Customer Service, dan Warehouse.
-- [x] Evaluasi live mencakup IT, administrasi, layanan pelanggan, dan logistik.
+      skenario Administrasi, Customer Service, Warehouse, Cook Helper, dan
+      Junior AC Maintenance Helper.
+- [x] Evaluasi live mencakup IT, administrasi, layanan pelanggan, logistik,
+      kuliner, dan pemeliharaan AC dengan satu input lowongan bilingual.
 - [x] Catat kualitas grounding, latensi, timeout, dan kegagalan provider dari
       dua putaran evaluasi Phase 5F.
 - [x] Siapkan empat demo deterministik yang dapat dipakai tanpa provider live.
 
 ## Wajib Sebelum Deployment atau Rilis Publik
 
-- [ ] Jalankan skenario live tambahan pada kuliner dan satu bidang teknik.
+- [x] Jalankan evaluator live delapan request dan tinjau hasil otomatis Cook
+      Helper serta Junior AC Maintenance Helper.
 - [ ] Pilih serta konfigurasi platform deployment publik.
 - [ ] Tinjau log, region, retensi, rate-limit store, dan kontrol biaya deployment.
 - [ ] QA manual Chrome dan Firefox pada desktop di luar skenario otomatis.

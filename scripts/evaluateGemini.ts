@@ -1,5 +1,6 @@
 import "dotenv/config";
 import type { JobReadinessAnalysis } from "../shared/analysisSchemas";
+import { additionalLiveEvaluationScenarios } from "../shared/additionalLiveEvaluationScenarios";
 import { crossFieldScenarios } from "../shared/crossFieldScenarios";
 import { GeminiProvider } from "../server/ai/geminiProvider";
 import { loadServerConfig } from "../server/config";
@@ -106,6 +107,8 @@ async function evaluate(): Promise<void> {
     { label: "Administrasi", scenario: crossFieldScenarios[1] },
     { label: "Customer Service", scenario: crossFieldScenarios[2] },
     { label: "Warehouse", scenario: crossFieldScenarios[3] },
+    { label: "Culinary", scenario: additionalLiveEvaluationScenarios[0] },
+    { label: "AC Maintenance", scenario: additionalLiveEvaluationScenarios[1] },
   ] as const;
   const results: EvaluationResult[] = [];
   const failures: EvaluationFailure[] = [];

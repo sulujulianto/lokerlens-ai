@@ -1,9 +1,11 @@
 import { expect, test } from "@playwright/test";
 
+import { openApplication } from "./navigation";
+
 test("loads the production application without a configured provider", async ({
   page,
 }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await openApplication(page);
 
   await expect(
     page.getByRole("heading", { level: 1, name: "LokerLens AI" }),
@@ -29,7 +31,7 @@ test("renders a selected offline demo without calling the analysis API", async (
     }
   });
 
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await openApplication(page);
   await page
     .getByRole("button", { name: /Entry-Level Customer Service/ })
     .click();
@@ -58,7 +60,7 @@ test("reset clears demo data, restores focus, and stays usable on mobile", async
   page,
 }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await openApplication(page);
 
   await page.getByRole("button", { name: "Form baru" }).click();
 

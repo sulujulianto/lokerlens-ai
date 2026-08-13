@@ -53,9 +53,13 @@ respective release; current development status is recorded under
 - OpenAI Responses API structured-output tests with disabled response storage,
   normalized failures, and no provider identity exposed to the frontend.
 - A repeatable Gemini live-evaluation script covering three Frontend runs plus
-  Administration, Customer Service, and Warehouse scenarios.
+  Administration, Customer Service, Warehouse, Culinary, and AC Maintenance
+  scenarios; the expanded 8/8 run completed without automated warnings.
 
 ### Changed
+- Changed Playwright navigation to wait for the committed document response and
+  an explicit application heading instead of relying on a browser lifecycle
+  event that could stall intermittently in Firefox.
 - Reorganized the repository landing page around global-facing product
   positioning, engineering evidence, architecture, verification, release
   status, and direct technical-document navigation.

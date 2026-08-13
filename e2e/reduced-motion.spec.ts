@@ -1,10 +1,12 @@
 import { expect, test } from "@playwright/test";
 
+import { openApplication } from "./navigation";
+
 test("disables the loading spinner animation when reduced motion is requested", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await openApplication(page);
 
   expect(
     await page.evaluate(() =>
