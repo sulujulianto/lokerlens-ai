@@ -15,15 +15,17 @@ publik; item hanya boleh ditandai selesai bila memiliki bukti.
 - [x] Coverage V8 mencakup seluruh kode aplikasi dan memenuhi ambang global 75%
       untuk statements, branches, functions, serta lines.
 - [x] Test interaksi DOM mencakup demo, reset, health state, submit, dan hasil.
-- [x] Tiga test E2E Chromium menjalankan bundle produksi dan mencakup status
-      tanpa provider, demo offline tanpa request analisis, fokus hasil, reset,
-      serta overflow pada viewport ponsel 375 px.
+- [x] Tujuh skenario Playwright berjalan pada Chromium dan Firefox (14 project
+      run) serta mencakup status tanpa provider, demo offline tanpa request
+      analisis, fokus hasil, reset, dan overflow pada viewport ponsel 375 px.
 - [x] axe-core memeriksa aturan WCAG A/AA pada form awal dan dashboard hasil,
       sedangkan Playwright memverifikasi reset formulir melalui keyboard.
+- [x] Playwright mengemulasikan preferensi reduced motion dan memverifikasi
+      spinner loading tidak beranimasi pada Chromium maupun Firefox.
 - [x] Build frontend serta server produksi berhasil.
 - [x] `npm audit` melaporkan 0 kerentanan yang diketahui.
 - [x] CI GitHub tersedia untuk typecheck, lint, test dengan coverage gate,
-      build, E2E/aksesibilitas Chromium, dan audit.
+      build, E2E/aksesibilitas Chromium dan Firefox, serta audit.
 - [x] Server produksi lokal mengembalikan halaman utama dan health response.
 - [x] Server tanpa API key menolak analisis secara aman dengan 503.
 - [x] Rate limit menghasilkan 429 setelah batas terlampaui.
@@ -63,9 +65,10 @@ publik; item hanya boleh ditandai selesai bila memiliki bukti.
 - [ ] Jalankan skenario live tambahan pada kuliner dan satu bidang teknik.
 - [ ] Pilih serta konfigurasi platform deployment publik.
 - [ ] Tinjau log, region, retensi, rate-limit store, dan kontrol biaya deployment.
-- [ ] QA Chrome dan Firefox pada desktop.
+- [ ] QA manual Chrome dan Firefox pada desktop di luar skenario otomatis.
 - [ ] QA viewport ponsel sekitar 360–430 px dan tablet.
-- [ ] QA keyboard-only, focus order, reduced motion, dan pembesaran 200%.
+- [ ] QA manual keyboard-only, focus order, reduced motion di luar spinner, dan
+      pembesaran 200%.
 - [ ] Pastikan tidak ada horizontal overflow atau konten terpotong.
 - [ ] Perbarui wording privasi berdasarkan platform dan provider nyata.
 - [ ] Tetapkan versi kandidat rilis dan buat commit yang terfokus.

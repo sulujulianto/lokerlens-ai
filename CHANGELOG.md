@@ -45,6 +45,9 @@ respective release; current development status is recorded under
   mobile-width overflow check, enforced in CI.
 - Automated axe-core checks for WCAG A/AA violations on the initial form and
   offline result, plus a browser-level keyboard reset test, enforced in CI.
+- Cross-browser Playwright coverage on Chromium and Firefox, including a
+  reduced-motion check that verifies the loading spinner stops animating when
+  the operating-system preference requests less motion.
 - jsdom interaction tests for demo selection, reset, live submit, and result
   rendering.
 - OpenAI Responses API structured-output tests with disabled response storage,
