@@ -35,10 +35,12 @@ belum ada deployment produksi atau tag rilis V2.
 - security headers, CSP produksi, Permissions Policy, request ID, dan cache
   aset immutable;
 - GitHub Actions CI;
+- ESLint untuk TypeScript, React Hooks, dan Vite Fast Refresh sebagai gerbang
+  CI terpisah dari TypeScript typecheck;
 - pembaruan dependency kompatibel dengan hasil audit 0 temuan;
 - gerbang kualitas untuk sapaan Indonesia dan klaim kelulusan atau sertifikasi
   pelatihan yang tidak didukung profil;
-- 24 berkas test dan 286 test, termasuk pengujian interaksi DOM;
+- 25 berkas test dan 290 test, termasuk pengujian interaksi DOM;
 - verifikasi lokal bundle produksi, health check, penolakan tanpa key, header,
   dan rate limit.
 - evaluasi Gemini live berulang: putaran awal menghasilkan empat respons valid

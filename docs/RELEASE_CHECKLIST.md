@@ -7,11 +7,12 @@ publik; item hanya boleh ditandai selesai bila memiliki bukti.
 ## Terverifikasi pada Snapshot `main`
 
 - [x] TypeScript lulus tanpa emit.
-- [x] 24 berkas test dan 286 test lulus.
+- [x] ESLint lulus tanpa warning untuk TypeScript, React Hooks, dan Fast Refresh.
+- [x] 25 berkas test dan 290 test lulus.
 - [x] Test interaksi DOM mencakup demo, reset, health state, submit, dan hasil.
 - [x] Build frontend serta server produksi berhasil.
 - [x] `npm audit` melaporkan 0 kerentanan yang diketahui.
-- [x] CI GitHub tersedia untuk typecheck, test, build, dan audit.
+- [x] CI GitHub tersedia untuk typecheck, lint, test, build, dan audit.
 - [x] Server produksi lokal mengembalikan halaman utama dan health response.
 - [x] Server tanpa API key menolak analisis secara aman dengan 503.
 - [x] Rate limit menghasilkan 429 setelah batas terlampaui.
@@ -35,7 +36,8 @@ publik; item hanya boleh ditandai selesai bila memiliki bukti.
 ## Aman untuk Penyerahan Repository dan Demo Lokal
 
 - [x] Review diff, commit, dan push perubahan V2 ke branch `main`.
-- [x] Jalankan `npm ci`, lint, test, build, audit, dan `git diff --check` di laptop.
+- [x] Jalankan `npm ci`, typecheck, lint, test, build, audit, dan
+      `git diff --check` di laptop.
 - [x] API key Gemini aktif telah digunakan secara lokal tanpa dibagikan di chat
       atau commit.
 - [x] Jalankan `npm run eval:gemini` untuk tiga pengulangan Frontend serta satu
