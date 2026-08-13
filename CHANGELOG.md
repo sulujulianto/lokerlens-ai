@@ -36,8 +36,10 @@ respective release; current development status is recorded under
   audit.
 - ESLint flat configuration for TypeScript, React Hooks, and Vite Fast Refresh,
   with an explicit CI lint gate and declared React type packages.
-- V8 coverage reporting for all application code with a 70% global threshold
+- V8 coverage reporting for all application code with a 75% global threshold
   for statements, branches, functions, and lines enforced in CI.
+- HTTP integration tests for health, analysis, validation, provider failures,
+  API 404s, body limits, rate limiting, security headers, and production CSP.
 - jsdom interaction tests for demo selection, reset, live submit, and result
   rendering.
 - OpenAI Responses API structured-output tests with disabled response storage,
@@ -87,6 +89,9 @@ respective release; current development status is recorded under
 - Preserved temporary V1 request and response adapters during migration.
 - Separated TypeScript typechecking from ESLint so each CI gate reports its
   actual responsibility.
+- Extracted Express application assembly from the process entrypoint so the
+  complete HTTP middleware and route boundary can be tested without starting
+  Vite or binding to the production port.
 
 ### Fixed
 - Enforced runtime consistency between match-score ranges and stable verdict
