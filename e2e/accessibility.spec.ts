@@ -1,6 +1,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
+import { openApplication } from "./navigation";
+
 const wcagTags: string[] = [
   "wcag2a",
   "wcag2aa",
@@ -19,7 +21,7 @@ async function expectNoWcagViolations(page: Page) {
 test("initial form has no detectable WCAG A or AA violations", async ({
   page,
 }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await openApplication(page);
   await expect(page.getByRole("status").first()).toContainText(
     "Analisis langsung belum dikonfigurasi",
   );
@@ -30,7 +32,7 @@ test("initial form has no detectable WCAG A or AA violations", async ({
 test("offline result has no detectable WCAG A or AA violations", async ({
   page,
 }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await openApplication(page);
   await page.getByTestId("demo-analysis-button").click();
   await expect(
     page.getByRole("heading", {
@@ -45,7 +47,7 @@ test("offline result has no detectable WCAG A or AA violations", async ({
 test("keyboard users can reset the form and reach its first control", async ({
   page,
 }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await openApplication(page);
 
   await page.keyboard.press("Tab");
   await expect(page.getByRole("button", { name: "Form baru" })).toBeFocused();

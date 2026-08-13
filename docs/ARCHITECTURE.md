@@ -201,7 +201,9 @@ production-dependency audit.
 
 The production bundle has also been checked locally for health behavior, SPA
 fallback, security headers, unavailable-provider handling, and rate limiting.
-A six-request Gemini run provides live-integration evidence; see
+The recorded eight-request Gemini run provides live-integration evidence across
+six job families. It completed without automated warnings and includes culinary
+and bilingual electrical/refrigeration scenarios; see
 [`EVALUATION.md`](EVALUATION.md).
 
 These checks do **not** prove public deployment readiness. Broader manual

@@ -73,7 +73,7 @@ trust boundaries, compatibility layer, and known deployment constraints.
 | Backend design | Configuration, provider adapters, prompt builder, parser, quality gates, service, and routes are separated |
 | Security | Helmet, production CSP, Permissions Policy, 1 MB body limit, request IDs, normalized errors, and per-client rate limiting |
 | Resilience | Validated configuration, provider timeouts, request cancellation, unavailable-provider handling, and no silent provider fallback |
-| Testing | 26 Vitest files with 299 deterministic tests, plus 7 Playwright scenarios run on Chromium and Firefox (14 project runs), including axe-core WCAG A/AA and reduced-motion checks |
+| Testing | 26 Vitest files with 305 deterministic tests, plus 7 Playwright scenarios run on Chromium and Firefox (14 project runs), including axe-core WCAG A/AA and reduced-motion checks |
 | Static analysis | TypeScript typecheck plus ESLint rules for TypeScript, React Hooks, and Vite Fast Refresh |
 | CI | Typecheck, lint, tests with coverage thresholds, production build, Chromium/Firefox E2E and accessibility, and production-dependency audit on pushes and pull requests to `main` |
 
@@ -134,7 +134,7 @@ The following checks passed on the audited `main` snapshot:
 ```bash
 npm run typecheck  # TypeScript typecheck without emitting files
 npm run lint       # ESLint with zero warnings allowed
-npm run test:run   # 26 files, 299 tests
+npm run test:run   # 26 files, 305 tests
 npm run test:coverage  # Same suite plus enforced V8 coverage thresholds
 npm run build      # Production frontend and server bundles
 npx playwright install chromium firefox  # One-time local browser install
@@ -144,10 +144,12 @@ git diff --check
 ```
 
 The deterministic suite does not call an external AI provider. A separate
-six-request Gemini evaluation checks live integration, grounding, response
-validity, and repeated-output spread; it is intentionally not part of CI
-because it consumes provider quota and remains non-deterministic. See the
-[evaluation notes](docs/EVALUATION.md).
+eight-request Gemini evaluator checks live integration, grounding, response
+validity, repeated-output spread, and six job families; it is intentionally
+not part of CI because it consumes provider quota and remains non-deterministic.
+An observed expanded run completed 8/8 requests without automated warnings,
+including the culinary and bilingual electrical/refrigeration scenarios.
+See the [evaluation notes](docs/EVALUATION.md).
 
 ## Known limits and release status
 
@@ -159,7 +161,8 @@ production readiness. Before a public V2 release it still needs:
 - manual cross-browser QA beyond the automated Chromium/Firefox scenarios,
   including complete keyboard-only flows and 200% zoom; the automated
   reduced-motion check currently covers the loading spinner only;
-- live-provider evaluation for additional culinary and technical job families;
+- broader live-provider sampling beyond the six observed job families, plus
+  OpenAI live-integration evidence;
 - deployment-specific privacy wording and production observability;
 - deeper coverage around server startup and hosting modes, low-level provider
   SDK failures, and complex form rendering beyond the enforced 75% global

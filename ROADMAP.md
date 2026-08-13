@@ -40,7 +40,7 @@ belum ada deployment produksi atau tag rilis V2.
 - pembaruan dependency kompatibel dengan hasil audit 0 temuan;
 - gerbang kualitas untuk sapaan Indonesia dan klaim kelulusan atau sertifikasi
   pelatihan yang tidak didukung profil;
-- 26 berkas test dan 299 test, termasuk pengujian interaksi DOM serta boundary
+- 26 berkas test dan 305 test, termasuk pengujian interaksi DOM serta boundary
   HTTP Express untuk health, analisis, error, header keamanan, batas body,
   rate limit, dan CSP produksi;
 - tujuh skenario Playwright yang dijalankan pada Chromium dan Firefox (14
@@ -60,24 +60,25 @@ belum ada deployment produksi atau tag rilis V2.
 - tiga pengulangan Frontend dengan skor 72, 70, dan 72 serta verdict konsisten;
 - latensi lokal enam request tercatat 21.086–34.093 ms, di bawah timeout
   provider 45 detik.
+- evaluasi Gemini live yang diperluas lulus 8/8 tanpa peringatan otomatis:
+  tiga skor Frontend konsisten pada 70, Cook Helper mendapat 72, dan Junior AC
+  Maintenance Helper mendapat 89; durasi tercatat 24.448–36.845 ms per request.
 - V2 dipromosikan ke `main`, branch pengembangan lama dihapus, dan CI `main`
   lulus.
 
 ## Wajib Sebelum Kandidat Rilis V2
 
-1. Mengevaluasi kualitas prompt dengan lowongan realistis minimal pada IT,
-   administrasi, layanan pelanggan, logistik, kuliner, dan satu bidang teknik.
-2. Menguji lowongan panjang, profil dengan pengalaman informal, dan input
+1. Menguji lowongan panjang, profil dengan pengalaman informal, dan input
    bilingual.
-3. Menguji respons provider live yang kosong, malformed, lambat, atau gagal.
-4. Memvalidasi batas waktu request terhadap karakteristik platform deployment;
+2. Menguji respons provider live yang kosong, malformed, lambat, atau gagal.
+3. Memvalidasi batas waktu request terhadap karakteristik platform deployment;
    pengujian lokal belum membuktikan bahwa platform publik mendukung durasi
-   21–34 detik.
-5. Memilih platform dan memverifikasi konfigurasi, health check, logging,
+   24–37 detik.
+4. Memilih platform dan memverifikasi konfigurasi, health check, logging,
    rate-limit store, serta error handling pada deployment publik.
-6. Meninjau ulang wording privasi setelah platform hosting, lokasi pemrosesan,
+5. Meninjau ulang wording privasi setelah platform hosting, lokasi pemrosesan,
    logging, dan kebijakan provider final diketahui.
-7. Menjalankan pemeriksaan manual lintas browser untuk responsive, alur
+6. Menjalankan pemeriksaan manual lintas browser untuk responsive, alur
    keyboard lengkap, dan pembesaran 200% di luar cakupan skenario otomatis
    Chromium/Firefox; pemeriksaan reduced motion otomatis baru mencakup spinner.
 

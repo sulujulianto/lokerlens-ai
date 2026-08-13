@@ -6,12 +6,15 @@ is not part of CI.
 
 ## Scope
 
-`npm run eval:gemini` sends six sequential requests:
+`npm run eval:gemini` sends eight sequential requests:
 
 - Junior Frontend Developer three times to inspect score and verdict spread;
 - Junior Administrative Staff once;
 - Entry-Level Customer Service once;
-- Warehouse Staff once.
+- Warehouse Staff once;
+- Cook Helper once;
+- Junior AC Maintenance Helper once using a bilingual Indonesian/English job
+  posting.
 
 The script records duration, score, verdict, and required-requirement statuses.
 It flags inconsistent reader address, unsupported training claims, verdict and
@@ -19,6 +22,27 @@ application-timing disagreement, thin risk factors, and a Frontend score spread
 above ten points.
 
 ## Observed runs
+
+An expanded run on 13 August 2026 completed all eight requests without
+automated warnings:
+
+| Scenario | Score | Verdict | Duration |
+| --- | ---: | --- | ---: |
+| Frontend #1 | 70 | `APPLY_WITH_IMPROVEMENTS` | 36.170 s |
+| Frontend #2 | 70 | `APPLY_WITH_IMPROVEMENTS` | 36.845 s |
+| Frontend #3 | 70 | `APPLY_WITH_IMPROVEMENTS` | 34.835 s |
+| Administration | 91 | `APPLY_NOW` | 29.206 s |
+| Customer Service | 62 | `APPLY_WITH_IMPROVEMENTS` | 24.448 s |
+| Warehouse | 72 | `APPLY_WITH_IMPROVEMENTS` | 28.263 s |
+| Culinary | 72 | `APPLY_WITH_IMPROVEMENTS` | 26.626 s |
+| AC Maintenance | 89 | `APPLY_NOW` | 26.417 s |
+
+The three Frontend results had a zero-point spread and one verdict. The
+culinary and bilingual electrical/refrigeration scenarios both completed the
+structured path. All eight requests finished inside the locally configured
+45-second provider timeout, with durations from 24.448 to 36.845 seconds.
+
+### Earlier stabilization run
 
 The first Phase 5F run produced four schema-valid responses. Two Frontend
 responses were safely rejected by the quality gate rather than being shown to
@@ -53,13 +77,15 @@ inside the locally configured 45-second provider timeout.
   best-effort controls, not a guarantee.
 - The recorded latency generalizes to another account, region, network,
   provider version, or hosting platform.
-- Six scenarios establish broad domain quality or absence of bias.
+- The recorded eight-scenario run establishes broad domain quality or absence
+  of bias. The expanded evaluator remains a small, curated sample.
 - OpenAI live integration has been verified.
 - The system is production-ready or that its score predicts hiring outcomes.
 
 ## Reproduce the evaluation
 
-Configure a valid Gemini key locally, then run:
+Configure a valid Gemini key locally, review the expected eight-request quota,
+then run:
 
 ```bash
 npm run eval:gemini
