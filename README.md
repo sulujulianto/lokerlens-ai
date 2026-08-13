@@ -73,9 +73,9 @@ trust boundaries, compatibility layer, and known deployment constraints.
 | Backend design | Configuration, provider adapters, prompt builder, parser, quality gates, service, and routes are separated |
 | Security | Helmet, production CSP, Permissions Policy, 1 MB body limit, request IDs, normalized errors, and per-client rate limiting |
 | Resilience | Validated configuration, provider timeouts, request cancellation, unavailable-provider handling, and no silent provider fallback |
-| Testing | 25 test files and 290 deterministic tests across schemas, backend, API client, forms, demos, accessibility, interactions, and results |
+| Testing | 25 test files and 290 deterministic tests, with V8 coverage reporting and a 70% global threshold for statements, branches, functions, and lines |
 | Static analysis | TypeScript typecheck plus ESLint rules for TypeScript, React Hooks, and Vite Fast Refresh |
-| CI | Typecheck, lint, tests, production build, and production-dependency audit on pushes and pull requests to `main` |
+| CI | Typecheck, lint, tests with coverage thresholds, production build, and production-dependency audit on pushes and pull requests to `main` |
 
 ## Technology
 
@@ -135,6 +135,7 @@ The following checks passed on the audited `main` snapshot:
 npm run typecheck  # TypeScript typecheck without emitting files
 npm run lint       # ESLint with zero warnings allowed
 npm run test:run   # 25 files, 290 tests
+npm run test:coverage  # Same suite plus enforced V8 coverage thresholds
 npm run build      # Production frontend and server bundles
 npm audit --omit=dev --audit-level=moderate
 git diff --check
@@ -157,7 +158,8 @@ production readiness. Before a public V2 release it still needs:
   reduced-motion, and 200% zoom paths;
 - live-provider evaluation for additional culinary and technical job families;
 - deployment-specific privacy wording and production observability;
-- a coverage report and enforced threshold if coverage becomes a release gate.
+- deeper coverage around server startup, provider failures, route handlers, and
+  complex form rendering beyond the enforced 70% global baseline.
 
 The in-memory rate limiter is process-local and is not a global quota for a
 multi-instance deployment. The latest stable GitHub tag, `v1.0.0`, is the

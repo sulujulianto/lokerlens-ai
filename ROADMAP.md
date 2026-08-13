@@ -41,6 +41,8 @@ belum ada deployment produksi atau tag rilis V2.
 - gerbang kualitas untuk sapaan Indonesia dan klaim kelulusan atau sertifikasi
   pelatihan yang tidak didukung profil;
 - 25 berkas test dan 290 test, termasuk pengujian interaksi DOM;
+- laporan coverage V8 untuk seluruh kode aplikasi dengan ambang global 70%
+  pada statements, branches, functions, dan lines sebagai gerbang CI;
 - verifikasi lokal bundle produksi, health check, penolakan tanpa key, header,
   dan rate limit.
 - evaluasi Gemini live berulang: putaran awal menghasilkan empat respons valid

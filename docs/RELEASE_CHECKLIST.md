@@ -9,10 +9,13 @@ publik; item hanya boleh ditandai selesai bila memiliki bukti.
 - [x] TypeScript lulus tanpa emit.
 - [x] ESLint lulus tanpa warning untuk TypeScript, React Hooks, dan Fast Refresh.
 - [x] 25 berkas test dan 290 test lulus.
+- [x] Coverage V8 mencakup seluruh kode aplikasi dan memenuhi ambang global 70%
+      untuk statements, branches, functions, serta lines.
 - [x] Test interaksi DOM mencakup demo, reset, health state, submit, dan hasil.
 - [x] Build frontend serta server produksi berhasil.
 - [x] `npm audit` melaporkan 0 kerentanan yang diketahui.
-- [x] CI GitHub tersedia untuk typecheck, lint, test, build, dan audit.
+- [x] CI GitHub tersedia untuk typecheck, lint, test dengan coverage gate,
+      build, dan audit.
 - [x] Server produksi lokal mengembalikan halaman utama dan health response.
 - [x] Server tanpa API key menolak analisis secara aman dengan 503.
 - [x] Rate limit menghasilkan 429 setelah batas terlampaui.
