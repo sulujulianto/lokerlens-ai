@@ -68,7 +68,7 @@ export function ScoreBreakdownSection({
               <p className="text-xs font-bold text-slate-600">{label}</p>
               <p className="mt-1 text-2xl font-extrabold tracking-[-0.03em] text-slate-950">
                 {dimension.score}
-                <span className="text-sm text-slate-400">
+                <span className="text-sm text-slate-600">
                   /{dimension.maxScore}
                 </span>
               </p>

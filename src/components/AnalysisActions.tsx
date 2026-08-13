@@ -44,7 +44,7 @@ export function AnalysisActions({
           alur dan hasil melalui empat demo offline.
         </p>
       )}
-      <div className="my-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">
+      <div className="my-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-600">
         <span className="h-px flex-1 bg-slate-200" />
         Demo offline
         <span className="h-px flex-1 bg-slate-200" />
