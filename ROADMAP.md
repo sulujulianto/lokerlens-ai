@@ -40,7 +40,7 @@ belum ada deployment produksi atau tag rilis V2.
 - pembaruan dependency kompatibel dengan hasil audit 0 temuan;
 - gerbang kualitas untuk sapaan Indonesia dan klaim kelulusan atau sertifikasi
   pelatihan yang tidak didukung profil;
-- 26 berkas test dan 305 test, termasuk pengujian interaksi DOM serta boundary
+- 28 berkas test dan 324 test, termasuk pengujian interaksi DOM serta boundary
   HTTP Express untuk health, analisis, error, header keamanan, batas body,
   rate limit, dan CSP produksi;
 - tujuh skenario Playwright yang dijalankan pada Chromium dan Firefox (14
@@ -63,22 +63,25 @@ belum ada deployment produksi atau tag rilis V2.
 - evaluasi Gemini live yang diperluas lulus 8/8 tanpa peringatan otomatis:
   tiga skor Frontend konsisten pada 70, Cook Helper mendapat 72, dan Junior AC
   Maintenance Helper mendapat 89; durasi tercatat 24.448–36.845 ms per request.
+- skenario deterministik lowongan panjang bilingual dengan pengalaman informal
+  lulus melalui validasi schema, prompt builder, dan boundary HTTP tanpa
+  pemotongan konten;
+- adapter Gemini dan OpenAI memiliki fault matrix deterministik untuk respons
+  kosong, malformed, refusal, timeout, dan kegagalan upstream tanpa memakai
+  kuota provider live.
 - V2 dipromosikan ke `main`, branch pengembangan lama dihapus, dan CI `main`
   lulus.
 
 ## Wajib Sebelum Kandidat Rilis V2
 
-1. Menguji lowongan panjang, profil dengan pengalaman informal, dan input
-   bilingual.
-2. Menguji respons provider live yang kosong, malformed, lambat, atau gagal.
-3. Memvalidasi batas waktu request terhadap karakteristik platform deployment;
+1. Memvalidasi batas waktu request terhadap karakteristik platform deployment;
    pengujian lokal belum membuktikan bahwa platform publik mendukung durasi
    24–37 detik.
-4. Memilih platform dan memverifikasi konfigurasi, health check, logging,
+2. Memilih platform dan memverifikasi konfigurasi, health check, logging,
    rate-limit store, serta error handling pada deployment publik.
-5. Meninjau ulang wording privasi setelah platform hosting, lokasi pemrosesan,
+3. Meninjau ulang wording privasi setelah platform hosting, lokasi pemrosesan,
    logging, dan kebijakan provider final diketahui.
-6. Menjalankan pemeriksaan manual lintas browser untuk responsive, alur
+4. Menjalankan pemeriksaan manual lintas browser untuk responsive, alur
    keyboard lengkap, dan pembesaran 200% di luar cakupan skenario otomatis
    Chromium/Firefox; pemeriksaan reduced motion otomatis baru mencakup spinner.
 

@@ -6,6 +6,7 @@ import type {
   AnalyzeJobReadinessRequest,
   JobReadinessAnalysis,
 } from "../shared/analysisSchemas";
+import { longBilingualInformalScenario } from "../shared/robustnessScenarios";
 import type { AIProvider } from "./ai/provider";
 import { createApp } from "./app";
 import { loadServerConfig } from "./config";
@@ -154,6 +155,23 @@ describe("createApp HTTP integration", () => {
     expect(provider.requests).toEqual([request]);
   });
 
+  it("preserves a long bilingual posting and informal evidence through HTTP", async () => {
+    const provider = new StubProvider();
+    const { baseUrl } = await createRunningApp({}, provider);
+
+    const response = await fetch(`${baseUrl}/api/analyze`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(longBilingualInformalScenario),
+    });
+
+    expect(response.status).toBe(200);
+    expect(provider.requests).toEqual([longBilingualInformalScenario]);
+    expect(provider.requests[0]?.jobPosting).toContain(
+      "END-OF-LONG-BILINGUAL-POSTING",
+    );
+  });
+
   it("normalizes invalid request payloads without exposing internals", async () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     const { baseUrl } = await createRunningApp();
@@ -171,30 +189,42 @@ describe("createApp HTTP integration", () => {
     });
   });
 
-  it("preserves normalized provider failures at the HTTP boundary", async () => {
-    vi.spyOn(console, "error").mockImplementation(() => undefined);
-    const providerError = new AppError(
-      "PROVIDER_REQUEST_FAILED",
-      502,
-      "The analysis provider could not complete the request.",
-    );
-    const { baseUrl } = await createRunningApp(
-      {},
-      new StubProvider(analysis, providerError),
-    );
+  it.each([
+    {
+      code: "PROVIDER_REQUEST_FAILED" as const,
+      status: 502,
+      message: "The analysis provider could not complete the request.",
+    },
+    {
+      code: "PROVIDER_RESPONSE_INVALID" as const,
+      status: 502,
+      message: "The analysis provider returned an invalid response.",
+    },
+    {
+      code: "PROVIDER_TIMEOUT" as const,
+      status: 504,
+      message: "The analysis provider took too long to respond. Please try again.",
+    },
+  ])(
+    "preserves normalized $code failures at the HTTP boundary",
+    async ({ code, status, message }) => {
+      vi.spyOn(console, "error").mockImplementation(() => undefined);
+      const providerError = new AppError(code, status, message);
+      const { baseUrl } = await createRunningApp(
+        {},
+        new StubProvider(analysis, providerError),
+      );
 
-    const response = await fetch(`${baseUrl}/api/analyze`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(request),
-    });
+      const response = await fetch(`${baseUrl}/api/analyze`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(request),
+      });
 
-    expect(response.status).toBe(502);
-    await expect(response.json()).resolves.toEqual({
-      error: "The analysis provider could not complete the request.",
-      code: "PROVIDER_REQUEST_FAILED",
-    });
-  });
+      expect(response.status).toBe(status);
+      await expect(response.json()).resolves.toEqual({ error: message, code });
+    },
+  );
 
   it("hides unexpected provider details behind a generic 500 response", async () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);

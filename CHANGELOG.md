@@ -52,6 +52,9 @@ respective release; current development status is recorded under
   rendering.
 - OpenAI Responses API structured-output tests with disabled response storage,
   normalized failures, and no provider identity exposed to the frontend.
+- Deterministic Gemini/OpenAI adapter fault coverage for empty, malformed,
+  refused, timed-out, and failed responses, plus a long bilingual request with
+  explicit informal experience across schema, prompt, and HTTP boundaries.
 - A repeatable Gemini live-evaluation script covering three Frontend runs plus
   Administration, Customer Service, Warehouse, Culinary, and AC Maintenance
   scenarios; the expanded 8/8 run completed without automated warnings.
