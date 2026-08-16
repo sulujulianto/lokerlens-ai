@@ -189,8 +189,12 @@ verified for the selected deployment.
 Vitest, Testing Library, fake providers, mock fetch, jsdom, and ephemeral local
 HTTP servers cover schemas, backend modules, the complete Express middleware
 and route boundary, compatibility, client behavior, forms, demos,
-accessibility, interactions, and result rendering. CI enforces 75% global V8
-coverage for statements, branches, functions, and lines. Playwright then runs
+accessibility, interactions, and result rendering. A long bilingual request
+with explicit informal experience is preserved through schema validation,
+prompt construction, and the HTTP boundary. Controlled Gemini and OpenAI
+adapter tests exercise empty, malformed, refused, timed-out, and failed
+responses without external provider calls. CI enforces 75% global V8 coverage
+for statements, branches, functions, and lines. Playwright then runs
 seven scenarios on both Chromium and Firefox (14 project runs) against the
 production bundle. Three cover provider-unavailable startup, offline demo
 behavior, focus management, reset behavior, and a mobile viewport overflow

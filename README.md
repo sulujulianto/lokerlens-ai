@@ -72,8 +72,8 @@ trust boundaries, compatibility layer, and known deployment constraints.
 | Contracts | Shared strict Zod request/response schemas with cross-field invariants |
 | Backend design | Configuration, provider adapters, prompt builder, parser, quality gates, service, and routes are separated |
 | Security | Helmet, production CSP, Permissions Policy, 1 MB body limit, request IDs, normalized errors, and per-client rate limiting |
-| Resilience | Validated configuration, provider timeouts, request cancellation, unavailable-provider handling, and no silent provider fallback |
-| Testing | 26 Vitest files with 305 deterministic tests, plus 7 Playwright scenarios run on Chromium and Firefox (14 project runs), including axe-core WCAG A/AA and reduced-motion checks |
+| Resilience | Validated configuration, provider timeouts, request cancellation, normalized provider failures, unavailable-provider handling, and no silent provider fallback |
+| Testing | 28 Vitest files with 324 deterministic tests, plus 7 Playwright scenarios run on Chromium and Firefox (14 project runs), including axe-core WCAG A/AA and reduced-motion checks |
 | Static analysis | TypeScript typecheck plus ESLint rules for TypeScript, React Hooks, and Vite Fast Refresh |
 | CI | Typecheck, lint, tests with coverage thresholds, production build, Chromium/Firefox E2E and accessibility, and production-dependency audit on pushes and pull requests to `main` |
 
@@ -134,7 +134,7 @@ The following checks passed on the audited `main` snapshot:
 ```bash
 npm run typecheck  # TypeScript typecheck without emitting files
 npm run lint       # ESLint with zero warnings allowed
-npm run test:run   # 26 files, 305 tests
+npm run test:run   # 28 files, 324 tests
 npm run test:coverage  # Same suite plus enforced V8 coverage thresholds
 npm run build      # Production frontend and server bundles
 npx playwright install chromium firefox  # One-time local browser install
@@ -151,6 +151,11 @@ An observed expanded run completed 8/8 requests without automated warnings,
 including the culinary and bilingual electrical/refrigeration scenarios.
 See the [evaluation notes](docs/EVALUATION.md).
 
+The deterministic suite also exercises a long bilingual vacancy with explicit
+informal experience through schema validation, prompt construction, and the
+HTTP boundary. Controlled adapter tests cover empty, malformed, refused,
+timed-out, and failed Gemini/OpenAI responses without consuming provider quota.
+
 ## Known limits and release status
 
 This repository demonstrates a strong pre-release engineering foundation, not
@@ -164,8 +169,8 @@ production readiness. Before a public V2 release it still needs:
 - broader live-provider sampling beyond the six observed job families, plus
   OpenAI live-integration evidence;
 - deployment-specific privacy wording and production observability;
-- deeper coverage around server startup and hosting modes, low-level provider
-  SDK failures, and complex form rendering beyond the enforced 75% global
+- deeper coverage around server startup and deployment hosting modes, complex
+  form rendering, and live OpenAI behavior beyond the enforced 75% global
   baseline.
 
 The in-memory rate limiter is process-local and is not a global quota for a

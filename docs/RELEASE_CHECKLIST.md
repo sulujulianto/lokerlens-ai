@@ -8,10 +8,14 @@ publik; item hanya boleh ditandai selesai bila memiliki bukti.
 
 - [x] TypeScript lulus tanpa emit.
 - [x] ESLint lulus tanpa warning untuk TypeScript, React Hooks, dan Fast Refresh.
-- [x] 26 berkas test dan 305 test lulus.
+- [x] 28 berkas test dan 324 test lulus.
 - [x] Integration test HTTP mencakup health, analisis valid, validasi request,
       kegagalan provider, JSON 404, body limit, rate limit, header keamanan,
       dan CSP produksi.
+- [x] Lowongan panjang bilingual dengan pengalaman informal dipertahankan utuh
+      melalui schema, prompt builder, dan boundary HTTP.
+- [x] Fault matrix adapter Gemini dan OpenAI menormalisasi respons kosong,
+      malformed, refusal, timeout, dan kegagalan upstream tanpa provider live.
 - [x] Coverage V8 mencakup seluruh kode aplikasi dan memenuhi ambang global 75%
       untuk statements, branches, functions, serta lines.
 - [x] Test interaksi DOM mencakup demo, reset, health state, submit, dan hasil.

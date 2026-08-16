@@ -4,6 +4,12 @@ This document separates live-provider evidence from deterministic automated
 tests. The evaluation uses real Gemini requests, consumes provider quota, and
 is not part of CI.
 
+Provider failure handling is verified separately with controlled adapter tests.
+They simulate empty and malformed structured output, refusal, timeout, and
+generic upstream failure for Gemini and OpenAI without consuming quota. Those
+tests prove local normalization behavior, not the latency or reliability of a
+specific provider deployment.
+
 ## Scope
 
 `npm run eval:gemini` sends eight sequential requests:
