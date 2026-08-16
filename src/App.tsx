@@ -154,6 +154,11 @@ export default function App() {
     focusControl("targetJobField");
   }
 
+  function returnToForm() {
+    setViewState("edit");
+    focusControl("demo-analysis-button");
+  }
+
   async function submitLiveAnalysis(event?: FormEvent) {
     event?.preventDefault();
     const requestResult = createAnalyzeRequest(formValues);
@@ -418,7 +423,7 @@ export default function App() {
           <div>
             <button
               type="button"
-              onClick={() => setViewState("edit")}
+              onClick={returnToForm}
               className="mb-5 inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:border-indigo-400 hover:text-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-100"
             >
               <ArrowLeft size={14} aria-hidden="true" />

@@ -67,6 +67,13 @@ describe("App interactions", () => {
       "value",
       "Warehouse Staff",
     );
+    await waitFor(() =>
+      expect(document.activeElement).toBe(
+        screen.getByRole("button", {
+          name: "Tampilkan hasil demo terpilih",
+        }),
+      ),
+    );
   });
 
   it("clears a prefilled demo when starting a new form", async () => {

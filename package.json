@@ -17,6 +17,7 @@
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
+    "test:e2e:release-qa": "playwright test e2e/release-qa.spec.ts e2e/reduced-motion.spec.ts --project=chromium --project=firefox",
     "eval:gemini": "node --import tsx scripts/evaluateGemini.ts"
   },
   "dependencies": {

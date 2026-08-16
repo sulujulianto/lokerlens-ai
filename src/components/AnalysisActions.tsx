@@ -50,6 +50,7 @@ export function AnalysisActions({
         <span className="h-px flex-1 bg-slate-200" />
       </div>
       <button
+        id="demo-analysis-button"
         type="button"
         data-testid="demo-analysis-button"
         onClick={onDemo}

@@ -48,6 +48,9 @@ respective release; current development status is recorded under
 - Cross-browser Playwright coverage on Chromium and Firefox, including a
   reduced-motion check that verifies the loading spinner stops animating when
   the operating-system preference requests less motion.
+- A manual release-QA runbook plus cross-browser support checks for 360–768 px
+  reflow, a 200% zoom reflow proxy, keyboard-only demo navigation, focus
+  restoration, and reduced scrolling and transition motion.
 - jsdom interaction tests for demo selection, reset, live submit, and result
   rendering.
 - OpenAI Responses API structured-output tests with disabled response storage,
@@ -137,6 +140,8 @@ respective release; current development status is recorded under
 - Removed a synchronous loading-state update from a React effect and separated
   verdict presentation helpers from the component module for reliable Fast
   Refresh behavior.
+- Restored focus to the offline-demo action when keyboard users return from a
+  rendered result.
 
 ### Security
 - Added strict request and provider-response validation with bounded field,

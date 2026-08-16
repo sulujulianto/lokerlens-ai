@@ -43,13 +43,14 @@ belum ada deployment produksi atau tag rilis V2.
 - 28 berkas test dan 324 test, termasuk pengujian interaksi DOM serta boundary
   HTTP Express untuk health, analisis, error, header keamanan, batas body,
   rate limit, dan CSP produksi;
-- tujuh skenario Playwright yang dijalankan pada Chromium dan Firefox (14
+- sembilan skenario Playwright yang dijalankan pada Chromium dan Firefox (18
   project run) untuk memverifikasi bundle produksi, status tanpa provider,
-  alur demo offline tanpa request AI, fokus, reset formulir, dan overflow pada
-  viewport ponsel;
+  alur demo offline tanpa request AI, fokus, reset formulir, reflow pada matriks
+  viewport 360–768 px, dan round trip keyboard tanpa focus trap;
 - pemeriksaan aksesibilitas browser untuk form awal dan dashboard hasil terhadap
-  aturan WCAG A/AA dengan axe-core, reset melalui keyboard, serta penghentian
-  animasi spinner ketika preferensi reduced motion aktif;
+  aturan WCAG A/AA dengan axe-core, reset serta kembali dari hasil melalui
+  keyboard, dan pengurangan spinner, scrolling, serta transisi ketika preferensi
+  reduced motion aktif;
 - laporan coverage V8 untuk seluruh kode aplikasi dengan ambang global 75%
   pada statements, branches, functions, dan lines sebagai gerbang CI;
 - verifikasi lokal bundle produksi, health check, penolakan tanpa key, header,
