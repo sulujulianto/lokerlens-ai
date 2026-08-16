@@ -73,7 +73,7 @@ trust boundaries, compatibility layer, and known deployment constraints.
 | Backend design | Configuration, provider adapters, prompt builder, parser, quality gates, service, and routes are separated |
 | Security | Helmet, production CSP, Permissions Policy, 1 MB body limit, request IDs, normalized errors, and per-client rate limiting |
 | Resilience | Validated configuration, provider timeouts, request cancellation, normalized provider failures, unavailable-provider handling, and no silent provider fallback |
-| Testing | 28 Vitest files with 324 deterministic tests, plus 7 Playwright scenarios run on Chromium and Firefox (14 project runs), including axe-core WCAG A/AA and reduced-motion checks |
+| Testing | 28 Vitest files with 324 deterministic tests, plus 9 Playwright scenarios run on Chromium and Firefox (18 project runs), including axe-core WCAG A/AA, responsive reflow, keyboard, and reduced-motion checks |
 | Static analysis | TypeScript typecheck plus ESLint rules for TypeScript, React Hooks, and Vite Fast Refresh |
 | CI | Typecheck, lint, tests with coverage thresholds, production build, Chromium/Firefox E2E and accessibility, and production-dependency audit on pushes and pull requests to `main` |
 
@@ -138,7 +138,8 @@ npm run test:run   # 28 files, 324 tests
 npm run test:coverage  # Same suite plus enforced V8 coverage thresholds
 npm run build      # Production frontend and server bundles
 npx playwright install chromium firefox  # One-time local browser install
-npm run test:e2e   # 7 scenarios on 2 browsers: 14 project runs
+npm run test:e2e   # 9 scenarios on 2 browsers: 18 project runs
+npm run test:e2e:release-qa  # Focused reflow, keyboard, and motion support
 npm audit --omit=dev --audit-level=moderate
 git diff --check
 ```
@@ -186,6 +187,7 @@ are satisfied.
 | [Evaluation](docs/EVALUATION.md) | Live Gemini evaluation scope, results, and non-claims |
 | [Privacy](docs/PRIVACY.md) | Current data-flow boundaries and production review items |
 | [Release checklist](docs/RELEASE_CHECKLIST.md) | Evidence-based gates before deployment and release |
+| [Manual QA](docs/MANUAL_QA.md) | Human desktop, device, keyboard, motion, zoom, and overflow runbook |
 | [Roadmap](ROADMAP.md) | Completed foundations and intentionally deferred work |
 | [Changelog](CHANGELOG.md) | Historical and unreleased changes |
 

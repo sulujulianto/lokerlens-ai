@@ -19,13 +19,14 @@ publik; item hanya boleh ditandai selesai bila memiliki bukti.
 - [x] Coverage V8 mencakup seluruh kode aplikasi dan memenuhi ambang global 75%
       untuk statements, branches, functions, serta lines.
 - [x] Test interaksi DOM mencakup demo, reset, health state, submit, dan hasil.
-- [x] Tujuh skenario Playwright berjalan pada Chromium dan Firefox (14 project
-      run) serta mencakup status tanpa provider, demo offline tanpa request
-      analisis, fokus hasil, reset, dan overflow pada viewport ponsel 375 px.
+- [x] Sembilan skenario Playwright berjalan pada Chromium dan Firefox (18
+      project run) serta mencakup status tanpa provider, demo offline tanpa
+      request analisis, fokus hasil, reset, matriks reflow 360–768 px, dan
+      round trip keyboard tanpa focus trap.
 - [x] axe-core memeriksa aturan WCAG A/AA pada form awal dan dashboard hasil,
       sedangkan Playwright memverifikasi reset formulir melalui keyboard.
 - [x] Playwright mengemulasikan preferensi reduced motion dan memverifikasi
-      spinner loading tidak beranimasi pada Chromium maupun Firefox.
+      spinner, scrolling, serta transisi pada Chromium maupun Firefox.
 - [x] Build frontend serta server produksi berhasil.
 - [x] `npm audit` melaporkan 0 kerentanan yang diketahui.
 - [x] CI GitHub tersedia untuk typecheck, lint, test dengan coverage gate,
@@ -71,15 +72,19 @@ publik; item hanya boleh ditandai selesai bila memiliki bukti.
 
 ## Wajib Sebelum Deployment atau Rilis Publik
 
+Gunakan [`MANUAL_QA.md`](MANUAL_QA.md) untuk mencatat browser, perangkat,
+hasil, dan bukti. Pengujian otomatis pendukung tidak boleh dipakai untuk
+menandai item manual sebagai selesai.
+
 - [x] Jalankan evaluator live delapan request dan tinjau hasil otomatis Cook
       Helper serta Junior AC Maintenance Helper.
 - [ ] Pilih serta konfigurasi platform deployment publik.
 - [ ] Tinjau log, region, retensi, rate-limit store, dan kontrol biaya deployment.
-- [ ] QA manual Chrome dan Firefox pada desktop di luar skenario otomatis.
-- [ ] QA viewport ponsel sekitar 360–430 px dan tablet.
-- [ ] QA manual keyboard-only, focus order, reduced motion di luar spinner, dan
+- [x] QA manual Chrome dan Firefox pada desktop di luar skenario otomatis.
+- [x] QA viewport ponsel sekitar 360–430 px dan tablet.
+- [x] QA manual keyboard-only, focus order, reduced motion di luar spinner, dan
       pembesaran 200%.
-- [ ] Pastikan tidak ada horizontal overflow atau konten terpotong.
+- [x] Pastikan tidak ada horizontal overflow atau konten terpotong.
 - [ ] Perbarui wording privasi berdasarkan platform dan provider nyata.
 - [ ] Tetapkan versi kandidat rilis dan buat commit yang terfokus.
 - [x] Ambil tiga screenshot aplikasi asli dengan data demo fiktif; masing-masing

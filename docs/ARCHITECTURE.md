@@ -195,12 +195,14 @@ prompt construction, and the HTTP boundary. Controlled Gemini and OpenAI
 adapter tests exercise empty, malformed, refused, timed-out, and failed
 responses without external provider calls. CI enforces 75% global V8 coverage
 for statements, branches, functions, and lines. Playwright then runs
-seven scenarios on both Chromium and Firefox (14 project runs) against the
+nine scenarios on both Chromium and Firefox (18 project runs) against the
 production bundle. Three cover provider-unavailable startup, offline demo
 behavior, focus management, reset behavior, and a mobile viewport overflow
 check. Three more use axe-core on the initial form and offline result for WCAG
-A/AA rules and exercise keyboard-driven reset. The seventh emulates reduced
-motion and verifies that the loading spinner stops animating before the
+A/AA rules and exercise keyboard-driven reset. Another scenario emulates
+reduced motion and verifies spinner, scrolling, and transition behavior. Two
+release-QA support scenarios check initial/result reflow across 360–768 CSS px
+and a keyboard-only offline-demo round trip with focus restoration before the
 production-dependency audit.
 
 The production bundle has also been checked locally for health behavior, SPA

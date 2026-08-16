@@ -19,8 +19,13 @@ async function expectNoWcagViolations(page: Page) {
 }
 
 test("initial form has no detectable WCAG A or AA violations", async ({
+  browserName,
   page,
 }) => {
+  test.slow(
+    browserName === "firefox",
+    "axe-core scans can exceed the default timeout on Firefox",
+  );
   await openApplication(page);
   await expect(page.getByRole("status").first()).toContainText(
     "Analisis langsung belum dikonfigurasi",
@@ -30,8 +35,13 @@ test("initial form has no detectable WCAG A or AA violations", async ({
 });
 
 test("offline result has no detectable WCAG A or AA violations", async ({
+  browserName,
   page,
 }) => {
+  test.slow(
+    browserName === "firefox",
+    "axe-core scans can exceed the default timeout on Firefox",
+  );
   await openApplication(page);
   await page.getByTestId("demo-analysis-button").click();
   await expect(
