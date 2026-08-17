@@ -16,6 +16,7 @@ requirement-by-requirement evidence, and concrete next steps.
 
 [Run locally](#run-locally) · [Architecture](docs/ARCHITECTURE.md) ·
 [Verification](#verification-evidence) ·
+[Deployment preparation](docs/DEPLOYMENT.md) ·
 [Release gates](docs/RELEASE_CHECKLIST.md) · [Privacy](docs/PRIVACY.md)
 
 ![LokerLens AI landing page with offline demo scenarios and the beginning of the candidate profile form](docs/assets/lokerlens-overview.png)
@@ -163,16 +164,19 @@ This repository demonstrates a strong pre-release engineering foundation, not
 production readiness. Before a public V2 release it still needs:
 
 - a chosen hosting platform with verified region, logging, retention, cost,
-  timeout, and shared rate-limit behavior;
-- manual cross-browser QA beyond the automated Chromium/Firefox scenarios,
-  including complete keyboard-only flows and 200% zoom; the automated
-  reduced-motion check currently covers the loading spinner only;
+  timeout, proxy semantics, and shared rate-limit behavior;
+- deployment validation for live requests that took roughly 24–37 seconds in
+  the recorded local Gemini evaluation;
 - broader live-provider sampling beyond the six observed job families, plus
   OpenAI live-integration evidence;
 - deployment-specific privacy wording and production observability;
 - deeper coverage around server startup and deployment hosting modes, complex
   form rendering, and live OpenAI behavior beyond the enforced 75% global
   baseline.
+
+Manual Chrome/Firefox, responsive, keyboard, reduced-motion, 200% zoom, and
+overflow evidence is recorded in the manual-QA document. Deployment remains a
+separate gate and is not performed by this repository branch.
 
 The in-memory rate limiter is process-local and is not a global quota for a
 multi-instance deployment. The latest stable GitHub tag, `v1.0.0`, is the
@@ -186,6 +190,7 @@ are satisfied.
 | [Architecture](docs/ARCHITECTURE.md) | Components, request lifecycle, trust boundaries, and failure modes |
 | [Evaluation](docs/EVALUATION.md) | Live Gemini evaluation scope, results, and non-claims |
 | [Privacy](docs/PRIVACY.md) | Current data-flow boundaries and production review items |
+| [Deployment preparation](docs/DEPLOYMENT.md) | Provider-neutral runtime contract, decision record, canary checks, and rollback |
 | [Release checklist](docs/RELEASE_CHECKLIST.md) | Evidence-based gates before deployment and release |
 | [Manual QA](docs/MANUAL_QA.md) | Human desktop, device, keyboard, motion, zoom, and overflow runbook |
 | [Roadmap](ROADMAP.md) | Completed foundations and intentionally deferred work |

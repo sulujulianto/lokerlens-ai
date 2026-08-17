@@ -51,6 +51,10 @@ respective release; current development status is recorded under
 - A manual release-QA runbook plus cross-browser support checks for 360–768 px
   reflow, a 200% zoom reflow proxy, keyboard-only demo navigation, focus
   restoration, and reduced scrolling and transition motion.
+- A provider-neutral deployment-preparation runbook and production environment
+  template covering runtime commands, health checks, secrets, cost stop
+  conditions, proxy and rate-limit risks, observability, privacy evidence,
+  canary validation, and rollback without selecting or provisioning a host.
 - jsdom interaction tests for demo selection, reset, live submit, and result
   rendering.
 - OpenAI Responses API structured-output tests with disabled response storage,

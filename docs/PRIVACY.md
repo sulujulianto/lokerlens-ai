@@ -2,6 +2,9 @@
 
 Dokumen ini menjelaskan perilaku teknis V2 pada branch `main`. Dokumen ini
 bukan kebijakan privasi produksi, audit keamanan, atau nasihat hukum.
+Bukti platform, region, logging, retensi, proxy, kontrol biaya, dan rollback
+yang wajib dikumpulkan sebelum wording produksi ditetapkan berada di
+[`DEPLOYMENT.md`](DEPLOYMENT.md).
 
 ## Data yang Dimasukkan
 
@@ -89,7 +92,8 @@ oleh LokerLens, tetapi tidak menjamin anonimitas, keamanan absolut, atau
 kerahasiaan end-to-end.
 
 Wording privasi harus ditinjau kembali setelah lingkungan hosting, provider,
-logging, dan kebijakan operasional produksi dipilih.
+logging, dan kebijakan operasional produksi dipilih serta evidence record pada
+runbook deployment terisi.
 
 ## Kontrol Transport dan Penyalahgunaan
 

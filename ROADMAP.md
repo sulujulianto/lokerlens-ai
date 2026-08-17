@@ -70,6 +70,12 @@ belum ada deployment produksi atau tag rilis V2.
 - adapter Gemini dan OpenAI memiliki fault matrix deterministik untuk respons
   kosong, malformed, refusal, timeout, dan kegagalan upstream tanpa memakai
   kuota provider live.
+- QA manual Chrome dan Firefox mencakup desktop, viewport 360–768 px, keyboard,
+  reduced motion, pembesaran 200%, serta pemeriksaan overflow tanpa temuan
+  blocking yang tercatat di `docs/MANUAL_QA.md`;
+- runbook persiapan deployment dan template environment produksi tersedia
+  tanpa memilih provider hosting, membuat service eksternal, memasukkan kartu,
+  atau mengaktifkan biaya;
 - V2 dipromosikan ke `main`, branch pengembangan lama dihapus, dan CI `main`
   lulus.
 
@@ -82,9 +88,9 @@ belum ada deployment produksi atau tag rilis V2.
    rate-limit store, serta error handling pada deployment publik.
 3. Meninjau ulang wording privasi setelah platform hosting, lokasi pemrosesan,
    logging, dan kebijakan provider final diketahui.
-4. Menjalankan pemeriksaan manual lintas browser untuk responsive, alur
-   keyboard lengkap, dan pembesaran 200% di luar cakupan skenario otomatis
-   Chromium/Firefox; pemeriksaan reduced motion otomatis baru mencakup spinner.
+4. Mengisi bukti deployment, canary, observability, kontrol biaya, dan rollback
+   pada `docs/DEPLOYMENT.md`; QA manual diulang bila deployment atau perubahan
+   UI material menghasilkan perilaku yang berbeda.
 
 ## Kandidat Pasca-Rilis
 

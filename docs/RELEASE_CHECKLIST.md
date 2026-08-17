@@ -73,11 +73,15 @@ publik; item hanya boleh ditandai selesai bila memiliki bukti.
 ## Wajib Sebelum Deployment atau Rilis Publik
 
 Gunakan [`MANUAL_QA.md`](MANUAL_QA.md) untuk mencatat browser, perangkat,
-hasil, dan bukti. Pengujian otomatis pendukung tidak boleh dipakai untuk
-menandai item manual sebagai selesai.
+hasil, dan bukti. Gunakan [`DEPLOYMENT.md`](DEPLOYMENT.md) untuk keputusan
+platform, runtime, biaya, proxy, observability, privasi, canary, dan rollback.
+Pengujian otomatis pendukung tidak boleh dipakai untuk menandai item manual
+atau deployment sebagai selesai.
 
 - [x] Jalankan evaluator live delapan request dan tinjau hasil otomatis Cook
       Helper serta Junior AC Maintenance Helper.
+- [x] Siapkan runbook deployment provider-neutral dan template environment
+      produksi tanpa secret, akun hosting, kartu pembayaran, atau service aktif.
 - [ ] Pilih serta konfigurasi platform deployment publik.
 - [ ] Tinjau log, region, retensi, rate-limit store, dan kontrol biaya deployment.
 - [x] QA manual Chrome dan Firefox pada desktop di luar skenario otomatis.
@@ -87,6 +91,8 @@ menandai item manual sebagai selesai.
 - [x] Pastikan tidak ada horizontal overflow atau konten terpotong.
 - [ ] Perbarui wording privasi berdasarkan platform dan provider nyata.
 - [ ] Tetapkan versi kandidat rilis dan buat commit yang terfokus.
+- [ ] Isi evidence record deployment dan buktikan health, timeout, proxy,
+      observability, kontrol biaya, serta rollback pada canary nyata.
 - [x] Ambil tiga screenshot aplikasi asli dengan data demo fiktif; masing-masing
       berada di bawah 5 MB dan tidak memuat API key atau data pribadi.
 - [ ] Siapkan nama serta deskripsi submission yang sesuai dengan fitur teruji.
