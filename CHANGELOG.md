@@ -112,6 +112,9 @@ respective release; current development status is recorded under
   Vite or binding to the production port.
 
 ### Fixed
+- Added a bounded recovery for an initial Playwright document-navigation
+  timeout after proving the production server is healthy, preventing a Firefox
+  transport stall from consuming an entire test retry.
 - Raised contrast for demo metadata, scenario numbers, section separators, and
   score denominators so the tested form and result states meet axe-core's
   WCAG 2 AA color-contrast checks.
