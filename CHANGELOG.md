@@ -1,190 +1,236 @@
-# Changelog
+# Catatan Perubahan
 
-All notable changes to **LokerLens AI** will be documented in this file.
-Historical release entries describe the implementation and wording of their
-respective release; current development status is recorded under
-**Unreleased**.
+Seluruh perubahan penting pada **LokerLens AI** dicatat dalam dokumen ini.
+Entri rilis historis menjelaskan implementasi dan redaksi pada rilis masing-
+masing; status pengembangan terkini dicatat pada bagian **Belum Dirilis**.
 
-## [Unreleased]
+## [Belum Dirilis]
 
-### Added
-- MIT License and recruiter-facing application screenshots captured from the
-  real offline demo flow.
-- A dedicated live-evaluation document that separates observed evidence from
-  deterministic CI and states explicit non-claims.
-- Shared Zod request and response contracts for the normalized V2 analysis flow.
-- Provider-neutral backend interface, provider resolver, Gemini and OpenAI adapters, prompt
-  builder, response parser, and analysis service.
-- Shared catalog covering 29 stable job-field identifiers in seven UI groups,
-  with optional training-source, provider, and program context.
-- Specialized guidance for IT & Digital, Administration, Customer Service, and
-  Operations/Warehouse/Logistics, with a conservative fallback for other
-  supported fields.
-- Normalized result dashboard with requirements, risks, four-week roadmap,
-  evidence-of-competence suggestions, a reusable CV-improvement prompt,
-  application message, interview questions, and disclaimer.
-- Evidence-grounded score breakdown across five fixed dimensions, requirement
-  matching with explicit status and next steps, ordered priorities, and
-  interview preparation with answer outlines.
-- Four deterministic offline demo scenarios that do not require an API key.
-- Focused deterministic tests for schemas, backend modules, compatibility,
-  API clients, forms, demos, results, accessibility, and interaction behavior.
-- Provider timeout and end-to-end request cancellation support.
-- Per-client analysis rate limiting, request IDs, Helmet security headers,
-  strict production CSP, Permissions Policy, and immutable asset caching.
-- GitHub Actions CI for typecheck, lint, tests, production build, and dependency
-  audit.
-- ESLint flat configuration for TypeScript, React Hooks, and Vite Fast Refresh,
-  with an explicit CI lint gate and declared React type packages.
-- V8 coverage reporting for all application code with a 75% global threshold
-  for statements, branches, functions, and lines enforced in CI.
-- HTTP integration tests for health, analysis, validation, provider failures,
-  API 404s, body limits, rate limiting, security headers, and production CSP.
-- Playwright Chromium E2E coverage for the production bundle, provider-
-  unavailable startup, offline demo isolation, focus and reset behavior, and a
-  mobile-width overflow check, enforced in CI.
-- Automated axe-core checks for WCAG A/AA violations on the initial form and
-  offline result, plus a browser-level keyboard reset test, enforced in CI.
-- Cross-browser Playwright coverage on Chromium and Firefox, including a
-  reduced-motion check that verifies the loading spinner stops animating when
-  the operating-system preference requests less motion.
-- A manual release-QA runbook plus cross-browser support checks for 360–768 px
-  reflow, a 200% zoom reflow proxy, keyboard-only demo navigation, focus
-  restoration, and reduced scrolling and transition motion.
-- A provider-neutral deployment-preparation runbook and production environment
-  template covering runtime commands, health checks, secrets, cost stop
-  conditions, proxy and rate-limit risks, observability, privacy evidence,
-  canary validation, and rollback without selecting or provisioning a host.
-- jsdom interaction tests for demo selection, reset, live submit, and result
-  rendering.
-- OpenAI Responses API structured-output tests with disabled response storage,
-  normalized failures, and no provider identity exposed to the frontend.
-- Deterministic Gemini/OpenAI adapter fault coverage for empty, malformed,
-  refused, timed-out, and failed responses, plus a long bilingual request with
-  explicit informal experience across schema, prompt, and HTTP boundaries.
-- A repeatable Gemini live-evaluation script covering three Frontend runs plus
-  Administration, Customer Service, Warehouse, Culinary, and AC Maintenance
-  scenarios; the expanded 8/8 run completed without automated warnings.
+### Ditambahkan
 
-### Changed
-- Changed Playwright navigation to wait for the committed document response and
-  an explicit application heading instead of relying on a browser lifecycle
-  event that could stall intermittently in Firefox.
-- Reorganized the repository landing page around global-facing product
-  positioning, engineering evidence, architecture, verification, release
-  status, and direct technical-document navigation.
-- Replaced the text-only architecture overview with rendered system and request
-  lifecycle diagrams plus explicit trust, data, and failure boundaries.
-- Repositioned the project from an IT-focused challenge prototype to
-  a manual-first, multi-field job-readiness assistant for Indonesian
-  entry-level applicants.
-- Migrated the frontend to the normalized V2 request and response contracts.
-- Moved provider selection and credentials entirely behind the server API.
-- Extracted backend responsibilities into configuration, provider, prompt,
-  parsing, service, route, and compatibility modules.
-- Replaced the split hero/form layout with one ordered reading flow, while
-  retaining compact paired fields only where desktop width permits.
-- Changed the visual system to a calm white–slate palette with restrained
-  indigo accents, neutral form borders, and stronger mobile spacing.
-- Changed training-provider and training-program fields to unrestricted plain
-  text inputs without browser suggestion lists.
-- Completed every offline demo profile so selecting a scenario fills the full
-  form and provides a concrete end-to-end example.
-- Expanded every offline demo result to mirror the complete live-analysis
-  contract, including score rationales, requirement evidence, measurable
-  weekly outputs, a CV-improvement prompt, and interview guidance.
-- Refined result copy to use a more natural adviser voice, expanded application
-  messages into professional ready-to-edit examples, and standardized interview
-  preparation at exactly four questions.
-- Calibrated requirement statuses and must-have scoring, aligned application
-  timing with verdicts, and required concrete vacancy-specific uncertainties.
-- Reorganized the README around product behavior, local setup, Gemini live
-  evaluation, privacy boundaries, and the remaining release gates.
-- Improved responsive layout, semantic structure, form labeling, keyboard
-  navigation, focus handling, demo/reset behavior, and long-content rendering.
-- Reworked the visual system into a warmer vocational-career interface with
-  clearer hierarchy, grouped examples, and less developer-facing language.
-- Expanded field-specific evidence guidance from fourteen to twenty-seven career
-  families, with conservative fallbacks for open categories.
-- Updated compatible dependencies within existing major-version boundaries and
-  aligned the package version with `v2.0.0-dev`.
-- Preserved temporary V1 request and response adapters during migration.
-- Separated TypeScript typechecking from ESLint so each CI gate reports its
-  actual responsibility.
-- Extracted Express application assembly from the process entrypoint so the
-  complete HTTP middleware and route boundary can be tested without starting
-  Vite or binding to the production port.
+- Lisensi MIT dan tangkapan layar aplikasi yang ditujukan bagi perekrut,
+  diambil dari alur demo luring sebenarnya.
+- Dokumen evaluasi langsung khusus yang memisahkan bukti teramati dari CI
+  deterministik dan menyatakan batas klaim secara eksplisit.
+- Kontrak permintaan dan respons Zod bersama untuk alur analisis V2
+  ternormalisasi.
+- Antarmuka sisi server netral terhadap penyedia, pemilih penyedia, adaptor Gemini
+  dan OpenAI, penyusun instruksi model, pengurai respons, serta layanan analisis.
+- Katalog bersama yang mencakup 29 pengenal rumpun pekerjaan stabil dalam
+  tujuh kelompok antarmuka, dengan konteks sumber, penyedia, dan program
+  pelatihan opsional.
+- Panduan khusus untuk TI & Digital, Administrasi, Layanan Pelanggan, serta
+  Operasional/Gudang/Logistik, dengan mekanisme cadangan konservatif bagi bidang lain
+  yang didukung.
+- Dasbor hasil ternormalisasi dengan persyaratan, risiko, peta jalan empat
+  minggu, saran bukti kompetensi, instruksi perbaikan CV yang dapat digunakan
+  ulang, pesan lamaran, pertanyaan wawancara, dan penafian.
+- Rincian skor berbasis bukti pada lima dimensi tetap, pencocokan persyaratan
+  dengan status serta langkah berikutnya, prioritas terurut, dan persiapan
+  wawancara dengan kerangka jawaban.
+- Empat skenario demo luring deterministik yang tidak memerlukan kunci API.
+- Pengujian deterministik terfokus untuk skema, modul sisi server, kompatibilitas,
+  klien API, formulir, demo, hasil, aksesibilitas, dan perilaku interaksi.
+- Dukungan batas waktu penyedia dan pembatalan permintaan secara menyeluruh.
+- Pembatasan laju analisis per klien, ID permintaan, header keamanan Helmet, CSP
+  produksi ketat, Permissions Policy, dan tembolok aset yang tidak dapat diubah.
+- GitHub Actions CI untuk pemeriksaan tipe, lint, pengujian, pembuatan paket produksi,
+  dan audit dependensi.
+- Konfigurasi datar ESLint untuk TypeScript, React Hooks, dan Vite Fast Refresh,
+  dengan gerbang lint eksplisit di CI serta paket tipe React yang dideklarasikan.
+- Laporan cakupan V8 untuk seluruh kode aplikasi dengan ambang global 75%
+  untuk pernyataan, cabang, fungsi, dan baris yang ditegakkan pada CI.
+- Pengujian integrasi HTTP untuk kesehatan layanan, analisis, validasi,
+  kegagalan penyedia, API 404, batas badan permintaan, pembatasan laju, header
+  keamanan, dan CSP produksi.
+- E2E Playwright Chromium untuk paket produksi, proses awal tanpa penyedia,
+  isolasi demo luring, perilaku fokus/pengaturan ulang, serta pemeriksaan luapan pada lebar
+  seluler yang ditegakkan di CI.
+- Pemeriksaan axe-core otomatis untuk pelanggaran WCAG A/AA pada formulir awal
+  dan hasil luring serta pengujian pengaturan ulang melalui papan ketik pada tingkat peramban.
+- Cakupan Playwright lintas peramban di Chromium dan Firefox, termasuk
+  pemeriksaan pengurangan gerakan yang memastikan animasi indikator pemuatan berhenti ketika
+  preferensi sistem operasi meminta pengurangan gerakan.
+- Panduan QA manual untuk rilis beserta pemeriksaan pendukung lintas peramban
+  untuk penyesuaian tata letak 360–768 px, proksi pembesaran 200%, navigasi demo
+  hanya dengan papan ketik, pemulihan fokus, dan pengurangan pengguliran serta transisi.
+- Panduan persiapan penerapan yang netral terhadap penyedia dan templat
+  variabel lingkungan produksi yang mencakup perintah saat aplikasi berjalan,
+  pemeriksaan kesehatan, nilai rahasia, kondisi penghentian biaya, risiko
+  proksi/pembatasan laju, observabilitas, bukti privasi, validasi uji terbatas, dan
+  pemulihan tanpa memilih atau menyediakan layanan hosting.
+- Catatan keputusan konteks produk yang mencakup asal Juara Vibe Coding,
+  sasaran awal orang yang memasuki TI, alasan profil manual, perkembangan V1
+  ke V2, dan batas klaim eksplisit.
+- Pengujian interaksi jsdom untuk pemilihan demo, pengaturan ulang, pengiriman langsung,
+  dan penampilan hasil.
+- Pengujian Structured Outputs pada OpenAI Responses API dengan penyimpanan
+  respons dinonaktifkan, kegagalan ternormalisasi, dan tanpa identitas penyedia pada
+  antarmuka.
+- Cakupan kegagalan deterministik adaptor Gemini/OpenAI untuk respons kosong,
+  rusak, ditolak, melewati batas waktu, dan gagal, ditambah permintaan panjang dwibahasa
+  dengan pengalaman informal pada batas skema, instruksi model, dan HTTP.
+- Skrip evaluasi Gemini langsung yang dapat diulang untuk tiga proses pengembang antarmuka
+  serta skenario Administrasi, Layanan Pelanggan, Gudang, Kuliner, dan
+  Pemeliharaan AC; evaluasi 8/8 yang diperluas selesai tanpa peringatan otomatis.
 
-### Fixed
-- Added a bounded recovery for an initial Playwright document-navigation
-  timeout after proving the production server is healthy, preventing a Firefox
-  transport stall from consuming an entire test retry.
-- Raised contrast for demo metadata, scenario numbers, section separators, and
-  score denominators so the tested form and result states meet axe-core's
-  WCAG 2 AA color-contrast checks.
-- Enforced runtime consistency between match-score ranges and stable verdict
-  identifiers.
-- Enforced that five score components total the final score, each roadmap week
-  contains multiple actions, and detailed requirement/interview structures are
-  complete before results reach the frontend.
-- Replaced ambiguous CV draft bullets with one fact-preserving prompt intended
-  to be used alongside the user's existing CV in a separate AI tool.
-- Rejected malformed or incomplete provider responses before they reach the
-  frontend.
-- Stabilized empty result sections, unavailable-analysis behavior, network
-  errors, invalid JSON handling, duplicate submissions, and demo timers.
-- Localized normalized API failure codes into consistent Indonesian messages.
-- Aligned paired personal-strength and evidence text areas by moving guidance
-  into their placeholders and giving both controls the same initial height.
-- Rejected Indonesian provider output that returns to informal reader pronouns,
-  speaks as the assistant using `kami`, or asserts unsupported training
-  graduation or certification.
-- Reduced Gemini output variation and added a candidate-specific training-status
-  boundary plus a final compliance pass to improve repeated live-analysis
-  stability without weakening response validation.
-- Verified the stabilized Gemini path with six successful live evaluations,
-  including three Frontend runs with one verdict and a two-point score spread.
-- Removed a synchronous loading-state update from a React effect and separated
-  verdict presentation helpers from the component module for reliable Fast
-  Refresh behavior.
-- Restored focus to the offline-demo action when keyboard users return from a
-  rendered result.
+### Diubah
 
-### Security
-- Added strict request and provider-response validation with bounded field,
-  list, and request-body sizes.
-- Added prompt boundaries that treat candidate profiles and job postings as
-  untrusted data.
-- Normalized public errors so raw provider output, prompts, credentials, stack
-  traces, and SDK details are not exposed to the frontend.
-- Kept API keys server-side and removed provider/model selection from the
-  frontend contract.
-- Removed the Express identity header and restricted framing, script, style,
-  connection, image, font, camera, location, and microphone capabilities.
-- Reduced the verified npm audit result to zero known vulnerabilities.
+- Navigasi Playwright kini memeriksa respons dokumen yang telah diterima dan
+  judul aplikasi eksplisit, bukan bergantung pada peristiwa siklus hidup peramban
+  yang dapat berhenti sesekali di Firefox.
+- Halaman awal repositori disusun ulang untuk menampilkan posisi produk,
+  bukti rekayasa, arsitektur, verifikasi, status rilis, dan navigasi langsung
+  menuju dokumentasi teknis.
+- Ringkasan arsitektur berbasis teks diganti dengan diagram sistem dan siklus
+  permintaan serta batas kepercayaan, data, dan kegagalan yang eksplisit.
+- Posisi proyek diperluas dari prototipe tantangan yang berfokus pada TI menjadi
+  asisten kesiapan kerja lintas bidang yang mengutamakan input manual bagi pelamar pemula
+  Indonesia.
+- Alasan input manual diperjelas sebagai cara menampilkan bukti yang sering
+  hilang dari CV tingkat pemula yang ringkas, sekaligus membedakan cakupan
+  tantangan Google AI Studio/Gemini dari sistem V2 netral terhadap penyedia.
+- Antarmuka dimigrasikan menuju kontrak permintaan dan respons V2 ternormalisasi.
+- Pemilihan penyedia dan kredensial dipindahkan sepenuhnya ke balik API server.
+- Tanggung jawab sisi server dipisahkan menjadi konfigurasi, penyedia, instruksi
+  model, penguraian, layanan, rute, dan modul kompatibilitas.
+- Tata letak bagian utama/formulir terpisah diganti dengan satu alur baca terurut,
+  sedangkan pasangan properti ringkas hanya dipertahankan pada lebar desktop.
+- Sistem visual diubah menjadi palet putih–abu-abu kebiruan yang tenang dengan aksen
+  indigo terbatas, batas formulir netral, dan jarak seluler lebih kuat.
+- Properti penyedia dan program pelatihan diubah menjadi masukan teks bebas tanpa
+  daftar saran peramban.
+- Setiap profil demo luring dilengkapi agar pemilihan skenario mengisi seluruh
+  formulir dan memberikan contoh menyeluruh yang konkret.
+- Setiap hasil demo luring diperluas agar mencerminkan kontrak analisis
+  langsung lengkap, termasuk alasan skor, bukti persyaratan, keluaran mingguan
+  terukur, instruksi perbaikan CV, dan panduan wawancara.
+- Redaksi hasil disempurnakan dengan suara penasihat yang lebih alami, pesan
+  lamaran profesional yang siap disunting, dan persiapan wawancara yang
+  distandardisasi menjadi tepat empat pertanyaan.
+- Status persyaratan dan penilaian wajib dikalibrasi, waktu melamar
+  diselaraskan dengan kesimpulan, dan ketidakpastian spesifik lowongan diwajibkan.
+- `README` disusun ulang berdasarkan perilaku produk, pengaturan lokal,
+  evaluasi Gemini langsung, batas privasi, dan gerbang rilis yang tersisa.
+- Tata letak responsif, struktur semantik, pelabelan formulir, navigasi papan ketik,
+  penanganan fokus, perilaku demo/pengaturan ulang, dan penampilan konten panjang
+  ditingkatkan.
+- Sistem visual diolah menjadi antarmuka karier vokasi yang lebih hangat dengan
+  hierarki lebih jelas, contoh terkelompok, dan bahasa yang tidak terlalu
+  berorientasi pengembang.
+- Panduan bukti khusus bidang diperluas dari empat belas menjadi dua puluh tujuh
+  rumpun karier, dengan mekanisme cadangan konservatif untuk kategori terbuka.
+- Dependensi kompatibel diperbarui dalam batas versi mayor yang sama dan
+  versi paket diselaraskan dengan `v2.0.0-dev`.
+- Adaptor permintaan dan respons V1 sementara dipertahankan selama migrasi.
+- Pemeriksaan tipe TypeScript dipisahkan dari ESLint agar setiap gerbang CI melaporkan
+  tanggung jawab sebenarnya.
+- Penyusunan aplikasi Express diekstrak dari titik masuk proses sehingga batas
+  perangkat perantara (*middleware*) dan rute HTTP lengkap dapat diuji tanpa
+  memulai Vite atau mengikat proses ke port produksi.
+- Narasi dokumentasi publik diterjemahkan ke bahasa Indonesia formal dan
+  profesional, sementara pengenal kode, perintah, nama teknologi, dan teks
+  resmi lisensi tetap dipertahankan.
+
+### Diperbaiki
+
+- Pemulihan terbatas ditambahkan untuk batas waktu navigasi dokumen awal
+  Playwright setelah server produksi terbukti sehat, sehingga hambatan
+  transport Firefox tidak menghabiskan seluruh percobaan ulang pengujian.
+- Kontras metadata demo, nomor skenario, pemisah bagian, dan penyebut skor
+  ditingkatkan agar status formulir/hasil yang diuji memenuhi pemeriksaan
+  kontras warna WCAG 2 AA oleh axe-core.
+- Konsistensi saat aplikasi berjalan antara rentang skor kecocokan dan pengenal kesimpulan stabil
+  ditegakkan.
+- Lima komponen skor diwajibkan berjumlah sama dengan skor akhir; setiap minggu
+  peta jalan harus memiliki beberapa tindakan; serta struktur persyaratan dan
+  wawancara harus lengkap sebelum hasil mencapai antarmuka.
+- Saran butir CV yang ambigu diganti dengan satu instruksi yang mempertahankan
+  fakta untuk digunakan bersama CV pengguna pada alat AI terpisah.
+- Respons penyedia yang rusak atau tidak lengkap ditolak sebelum mencapai
+  antarmuka.
+- Bagian hasil kosong, keadaan analisis tidak tersedia, galat jaringan, JSON
+  tidak valid, pengiriman ganda, dan pengatur waktu demo distabilkan.
+- Kode kegagalan API ternormalisasi diterjemahkan menjadi pesan bahasa Indonesia
+  yang konsisten.
+- Area teks kekuatan pribadi dan bukti disejajarkan dengan memindahkan panduan
+  ke placeholder dan memberikan tinggi awal yang sama.
+- Keluaran bahasa Indonesia yang kembali memakai sapaan informal, berbicara atas
+  nama asisten menggunakan `kami`, atau mengklaim kelulusan/sertifikasi tanpa
+  bukti profil ditolak.
+- Variasi keluaran Gemini dikurangi dan batas status pelatihan khusus kandidat
+  serta pemeriksaan kepatuhan akhir ditambahkan tanpa melemahkan validasi.
+- Jalur Gemini yang distabilkan diverifikasi melalui enam evaluasi langsung,
+  termasuk tiga proses pengembang antarmuka dengan satu kesimpulan dan rentang dua poin.
+- Pembaruan status pemuatan sinkron di dalam efek React dihapus dan fungsi bantu
+  presentasi kesimpulan dipisahkan dari modul komponen untuk perilaku Fast Refresh
+  yang andal.
+- Fokus dipulihkan menuju aksi demo luring ketika pengguna papan ketik kembali
+  dari hasil yang dirender.
+
+### Keamanan
+
+- Validasi permintaan dan respons penyedia yang ketat ditambahkan dengan batas
+  properti, daftar, dan badan permintaan.
+- Batas instruksi model ditambahkan agar profil kandidat dan teks lowongan diperlakukan
+  sebagai data tidak tepercaya.
+- Galat publik dinormalisasi agar keluaran mentah penyedia, instruksi model,
+  kredensial, jejak tumpukan galat, dan detail SDK tidak diekspos kepada antarmuka.
+- Kunci API dipertahankan pada server dan pemilihan penyedia/model dihapus dari
+  kontrak antarmuka.
+- Header identitas Express dihapus; pembingkaian, skrip, gaya, koneksi, gambar,
+  font, kamera, lokasi, dan mikrofon dibatasi.
+- Hasil audit npm yang diverifikasi dikurangi menjadi nol kerentanan yang
+  diketahui.
 
 ## [1.0.0] - 2026-06-11
-### Juara Vibe Coding Edition
 
-This is the official v1.0.0 release submitted as the challenge edition of LokerLens AI for the **Juara Vibe Coding** challenge or equivalent. It focuses on elevating candidate career-readiness by providing quick, robust analysis of entry-level candidates against a target job specification.
+### Edisi Juara Vibe Coding
 
-### Added Features
-- **Manual Candidate Profile Input**: Allows users to enter their profile fields (Target Role, Latar Belakang Pendidikan, Keahlian/Skills, Detail Proyek & Studi Kasus Unggulan, Pengalaman Kerja Praktik/Magang) separately rather than parsing static un-parseable files, reducing error margins.
-- **Job Posting Input**: Accepts raw job advertisements (copy-pasted texts) to align candidate skills dynamically with recruiter requirements.
-- **Gemini-Powered Analysis**: Uses server-side implementation of Gemini 3.5 Flash through Google's `@google/genai` modern SDK for fast, structured career evaluations.
-- **Prompt-Injection Guard**: Hardened system instructions in `server.ts` to block internal prompts from candidate or job description text injections, keeping the model securely on-task.
-- **Request Size Limits**: Enhanced server performance and safety by filtering out payload sizes over 1MB and limits job descriptions to a maximum of 12,000 characters.
-- **Match Score**: Renders a dynamic, visual score meter illustrating alignment with the targeted vacancy.
-- **Skill Gap**: Discovers missing/gap skills by comparing user-provided features with requested job highlights.
-- **Requirement Breakdown**: Clearly separates requirements into "Mesti Dimiliki (Must-Have)" and "Nilai Tambah (Nice-to-Have)".
-- **30-Day Action Roadmap**: Provides highly structured, step-by-step weekly guides for learning or modifying materials to close crucial skill gaps.
-- **CV Bullet Suggestions**: Suggests specific ATS-friendly impact bullets in English/Indonesian to be pasted straight into the candidate's CV/Resume.
-- **Application Message / Cover Pitch**: Drafts customized introduction messages for recruitment reach-outs via LinkedIn, email, or WhatsApp.
-- **Demo Scenarios / Quick Preview Sandbox Mode**:
-  - *Scenario 1*: SMK Graduate & Career Switcher (Junior Web Developer)
-  - *Scenario 2*: SMK RPL Graduate (Junior Backend Developer)
-  - *Scenario 3*: Self-Taught Career Switcher (Junior Python Backend - English)
-  - Full capability to utilize custom simulations via the "Coba Demo Cepat" fallback mode when `GEMINI_API_KEY` is not present in sever configuration.
+Rilis resmi `v1.0.0` dikirimkan sebagai edisi tantangan LokerLens AI untuk
+**Juara Vibe Coding** atau kegiatan setara. Rilis ini berfokus pada peningkatan
+kesiapan karier melalui analisis cepat kandidat pemula terhadap spesifikasi
+pekerjaan yang dituju.
+
+### Fitur yang Ditambahkan
+
+- **Masukan Profil Kandidat Manual**: pengguna memasukkan Peran Tujuan, Latar
+  Belakang Pendidikan, Keahlian, Detail Proyek dan Studi Kasus Unggulan, serta
+  Pengalaman Kerja Praktik/Magang secara terpisah daripada memproses berkas
+  statis yang tidak selalu dapat dibaca dengan andal.
+- **Masukan Lowongan**: menerima teks iklan pekerjaan yang ditempelkan untuk
+  menyelaraskan keterampilan kandidat dengan persyaratan perekrut.
+- **Analisis Gemini**: menggunakan Gemini 3.5 Flash pada server melalui SDK
+  modern `@google/genai` untuk evaluasi karier terstruktur.
+- **Perlindungan Injeksi Instruksi**: instruksi sistem diperketat agar
+  instruksi dari profil kandidat atau teks lowongan tidak mengalihkan model
+  dari tugas utama.
+- **Batas Ukuran Permintaan**: muatan di atas 1 MB ditolak dan deskripsi pekerjaan
+  dibatasi hingga 12.000 karakter.
+- **Skor Kecocokan**: menampilkan meter skor visual untuk menunjukkan keselarasan
+  terhadap lowongan tujuan.
+- **Kesenjangan Keterampilan**: menemukan kesenjangan keterampilan antara bukti pengguna dan
+  kebutuhan pekerjaan.
+- **Rincian Persyaratan**: memisahkan persyaratan menjadi wajib dan opsional.
+- **Rencana Tindakan 30 Hari**: memberikan panduan mingguan untuk mempelajari
+  atau memperbaiki materi agar kesenjangan utama berkurang.
+- **Saran Butir CV**: pada edisi historis, menghasilkan saran butir berorientasi
+  ATS dalam bahasa Indonesia/Inggris untuk disunting pengguna.
+- **Pesan Lamaran**: membuat draf pengantar untuk LinkedIn, email, atau
+  WhatsApp.
+- **Skenario Demo**:
+  - *Skenario 1*: Lulusan SMK dan peralihan karier (Pengembang Web Junior atau
+    `Junior Web Developer`);
+  - *Skenario 2*: Lulusan SMK RPL (Pengembang Sisi Server Junior atau
+    `Junior Backend Developer`);
+  - *Skenario 3*: Peralihan karier otodidak (Pengembang Sisi Server Python
+    Junior atau `Junior Python Backend`, bahasa
+    Inggris); serta
+  - mode demo cepat ketika `GEMINI_API_KEY` tidak tersedia pada konfigurasi
+    server.
 
 ---
-*Note: This repository does not implement authentication layers, payment interfaces, unrequested job scrapers, or persistent server database modules to remain compliant with the original minimalist project scope boundaries.*
+
+*Catatan: repositori ini tidak menerapkan autentikasi, pembayaran, pengambilan
+otomatis data lowongan, atau basis data server permanen agar tetap sesuai dengan batas minimal
+proyek awal.*
