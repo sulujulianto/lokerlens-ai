@@ -1,219 +1,242 @@
-# LokerLens AI V2 Architecture
+# Arsitektur LokerLens AI V2
 
-This document describes the architecture implemented on `main`. It is an
-implementation map, not a claim that the system is production-ready.
+Dokumen ini menjelaskan arsitektur yang diterapkan pada cabang `main`. Dokumen
+ini merupakan peta implementasi, bukan klaim bahwa sistem telah siap produksi.
 
-## System context
+## Konteks Sistem
 
 ```mermaid
 flowchart TD
-    U["Applicant"] --> W["React web application"]
-    W --> API["Express API"]
+    U["Pelamar"] --> W["Aplikasi web React"]
+    W --> API["API Express"]
     API --> S["JobReadinessService"]
-    S --> P["Selected AI provider"]
+    S --> P["Penyedia AI terpilih"]
     P --> S
     S --> API
     API --> W
 ```
 
-The application is stateless: it has no candidate account, database, or
-analysis history. The browser sends a manually entered profile and job posting
-to the server only when live analysis is requested. The configured AI provider
-then processes that data, so deployment and provider logging/retention policies
-remain part of the privacy boundary.
+Aplikasi tidak menyimpan keadaan pengguna: tidak memiliki akun kandidat, basis
+data, atau riwayat analisis. Peramban mengirim profil yang diisi secara manual dan teks
+lowongan ke server hanya ketika analisis langsung diminta. Penyedia AI yang
+dikonfigurasi kemudian memproses data tersebut sehingga kebijakan pencatatan
+log dan retensi pada platform penerapan maupun penyedia tetap menjadi bagian batas
+privasi.
 
-## Request lifecycle
+Input manual juga merupakan batas produk yang berasal dari masalah awal, bukan
+jalan pintas arsitektur. CV pelamar pemula sering tidak memuat pengalaman
+informal, proyek sekolah, konteks pelatihan, dan bukti karena dipadatkan menjadi
+satu halaman. LokerLens karena itu mengumpulkan properti terbatas sesuai tujuan,
+bukan mengunggah atau menguraikan dokumen lalu menyimpulkan fakta yang hilang.
+Sistem saat ini tidak memiliki batas unggah CV, OCR, pengurai CV, atau
+penyimpanan berkas. Lihat [`PRODUCT_CONTEXT.md`](PRODUCT_CONTEXT.md) untuk
+riwayat keputusan dan kompromi terkait.
+
+## Siklus Permintaan
 
 ```mermaid
 flowchart TD
-    A["Form values"] --> B["Shared request schema"]
+    A["Nilai formulir"] --> B["Skema permintaan bersama"]
     B --> C["POST /api/analyze"]
-    C --> D["Body limit + rate limit + request ID"]
-    D --> E["V2 validation or temporary V1 adapter"]
+    C --> D["Batas badan + pembatasan laju + ID permintaan"]
+    D --> E["Validasi V2 atau adaptor V1 sementara"]
     E --> F["JobReadinessService"]
-    F --> G["Gemini or OpenAI adapter"]
-    G --> H["Prompt + untrusted-data boundaries"]
-    H --> I["Provider response text"]
-    I --> J["JSON extraction + shared response schema"]
-    J --> K["Quality gates"]
-    K --> L["Frontend response validation"]
-    L --> M["Results dashboard"]
+    F --> G["Adaptor Gemini atau OpenAI"]
+    G --> H["Instruksi model + batas data tidak tepercaya"]
+    H --> I["Teks respons penyedia"]
+    I --> J["Ekstraksi JSON + skema respons bersama"]
+    J --> K["Gerbang kualitas"]
+    K --> L["Validasi respons pada antarmuka"]
+    L --> M["Dasbor hasil"]
 ```
 
-The browser and server import the same schemas from
-[`../shared/analysisSchemas.ts`](../shared/analysisSchemas.ts). This avoids
-maintaining separate frontend and backend definitions for the V2 contract.
+Peramban dan server mengimpor skema yang sama dari
+[`../shared/analysisSchemas.ts`](../shared/analysisSchemas.ts). Pendekatan ini
+mencegah pemeliharaan definisi kontrak antarmuka dan sisi server yang terpisah.
 
-## Components and responsibilities
+## Komponen dan Tanggung Jawab
 
-### Bootstrap and HTTP boundary
+### Inisialisasi dan Batas HTTP
 
-[`../server.ts`](../server.ts) owns environment loading, validated
-configuration, provider resolution, development or production hosting setup,
-and process startup. [`../server/app.ts`](../server/app.ts) assembles the
-testable Express application boundary: the 1 MB JSON body limit, security
-headers, production CSP, Permissions Policy, request IDs, analysis rate
-limiting, API routes, hosting hook, and normalized error handling.
+[`../server.ts`](../server.ts) menangani pemuatan variabel lingkungan, konfigurasi
+tervalidasi, resolusi penyedia, pengaturan hosting pengembangan atau produksi,
+serta proses awal. [`../server/app.ts`](../server/app.ts) menyusun batas
+aplikasi Express yang dapat diuji: batas badan JSON 1 MB, header keamanan, CSP
+produksi, Permissions Policy, ID permintaan, pembatasan laju analisis, rute API,
+kait hosting, dan penanganan galat ternormalisasi.
 
-The process may start without an API key. In that state `/api/health` remains
-available but returns `analysisAvailable: false`; offline demos still work and
-live analysis fails safely.
+Proses dapat dimulai tanpa kunci API. Dalam keadaan tersebut `/api/health` tetap
+tersedia tetapi mengembalikan `analysisAvailable: false`; demo luring tetap
+berfungsi dan analisis langsung gagal secara aman.
 
-### Configuration
+### Konfigurasi
 
-[`../server/config.ts`](../server/config.ts) validates:
+[`../server/config.ts`](../server/config.ts) memvalidasi:
 
-- `AI_PROVIDER`: `gemini` or `openai`;
-- provider API key and model name;
-- `PORT`, default `3000`;
-- `AI_REQUEST_TIMEOUT_MS`, default `45000` and bounded to 5–120 seconds;
-- `ANALYSIS_RATE_LIMIT_MAX`, default `10`;
-- `ANALYSIS_RATE_LIMIT_WINDOW_MS`, default `60000` and bounded to 10 seconds–1 hour.
+- `AI_PROVIDER`: `gemini` atau `openai`;
+- kunci API dan nama model penyedia;
+- `PORT`, dengan nilai bawaan `3000`;
+- `AI_REQUEST_TIMEOUT_MS`, dengan nilai bawaan `45000` dan batas 5–120 detik;
+- `ANALYSIS_RATE_LIMIT_MAX`, dengan nilai bawaan `10`; serta
+- `ANALYSIS_RATE_LIMIT_WINDOW_MS`, dengan nilai bawaan `60000` dan batas 10 detik–1
+  jam.
 
-The frontend receives only the generic availability flag; it does not learn
-the selected provider or model.
+Antarmuka hanya menerima penanda ketersediaan generik dan tidak mengetahui
+penyedia atau model yang dipilih.
 
-### Analyze route and compatibility boundary
+### Rute Analisis dan Batas Kompatibilitas
 
-[`../server/routes/analyze.ts`](../server/routes/analyze.ts) first validates the
-strict V2 request. If that fails, it attempts the temporary V1 request adapter.
-Both paths use the same V2 service. A V1 caller receives a mapped legacy
-response; a V2 caller receives the normalized V2 result.
+[`../server/routes/analyze.ts`](../server/routes/analyze.ts) terlebih dahulu
+memvalidasi permintaan V2 ketat. Jika validasi gagal, rute mencoba adaptor
+permintaan V1 sementara. Kedua jalur memakai layanan V2 yang sama. Klien V1
+menerima respons lama yang dipetakan, sedangkan klien V2 menerima hasil V2
+ternormalisasi.
 
-Each request gets an `AbortController`. Browser disconnects propagate through
-the service to the provider. The rate limiter executes before analysis to
-reduce accidental or abusive provider spend. Its default store is in-memory
-and process-local, so it is not a global quota in multi-instance deployments.
+Setiap permintaan memiliki `AbortController`. Terputusnya koneksi peramban
+diteruskan melalui layanan menuju penyedia. Pembatas laju dijalankan sebelum
+analisis untuk mengurangi pemakaian penyedia yang tidak disengaja atau
+penyalahgunaan. Penyimpanan bawaan berada di memori dan bersifat lokal pada satu
+proses sehingga bukan kuota global untuk penerapan dengan banyak instans.
 
-### Application service
+### Layanan Aplikasi
 
 [`../server/services/jobReadinessService.ts`](../server/services/jobReadinessService.ts)
-is independent of Express. It accepts a validated V2 request, calls the
-resolved provider with a cancellation signal, and validates the result before
-returning it.
+tidak bergantung pada Express. Layanan menerima permintaan V2 yang telah
+divalidasi, memanggil penyedia terpilih dengan sinyal pembatalan, dan
+memvalidasi hasil sebelum mengembalikannya.
 
-### Provider adapters
+### Adaptor Penyedia
 
-[`../server/ai/provider.ts`](../server/ai/provider.ts) defines the provider
-interface. The resolver creates exactly one configured implementation; there is
-no silent cross-provider fallback.
+[`../server/ai/provider.ts`](../server/ai/provider.ts) mendefinisikan antarmuka
+penyedia. Pemilih penyedia membuat tepat satu implementasi yang dikonfigurasi;
+tidak ada mekanisme cadangan lintas penyedia secara diam-diam.
 
-The Gemini adapter:
+Adaptor Gemini:
 
-- creates the SDK client only when needed;
-- requests structured JSON using system and user prompts;
-- applies the validated timeout and cancellation signal;
-- maps failures to normalized application errors;
-- passes response text to the common parser.
+- membuat klien SDK hanya ketika diperlukan;
+- meminta JSON terstruktur menggunakan instruksi sistem dan instruksi pengguna;
+- menerapkan batas waktu tervalidasi dan sinyal pembatalan;
+- memetakan kegagalan menjadi galat aplikasi ternormalisasi; serta
+- mengirim teks respons menuju pengurai bersama.
 
-The OpenAI adapter:
+Adaptor OpenAI:
 
-- uses the Responses API with Structured Outputs derived from the Zod schema;
-- sets `store: false`;
-- normalizes HTTP failure, refusal, incomplete response, and empty output;
-- uses the same timeout, cancellation, and parser path as Gemini.
+- menggunakan Responses API dengan Structured Outputs yang diturunkan dari
+  skema Zod;
+- menetapkan `store: false`;
+- menormalisasi kegagalan HTTP, penolakan, respons tidak lengkap, dan keluaran
+  kosong; serta
+- menggunakan jalur batas waktu, pembatalan, dan pengurai yang sama dengan Gemini.
 
-Adding a third provider requires a deliberate adapter and tests. Configuration
-alone is not enough.
+Penambahan penyedia ketiga memerlukan adaptor dan pengujian yang disengaja.
+Konfigurasi saja tidak cukup.
 
-### Prompt and domain guidance
+### Instruksi Model dan Panduan Domain
 
-[`../server/ai/promptBuilder.ts`](../server/ai/promptBuilder.ts) defines the
-scoring rubric, verdict policy, grounding constraints, must-have versus
-nice-to-have handling, roadmap and application-output rules, and explicit
-boundaries around candidate/vacancy text as untrusted data.
+[`../server/ai/promptBuilder.ts`](../server/ai/promptBuilder.ts) mendefinisikan
+rubrik penilaian, kebijakan kesimpulan, batas keterikatan pada bukti, penanganan
+persyaratan wajib dan
+opsional, aturan peta jalan dan keluaran lamaran, serta batas eksplisit yang
+memperlakukan teks kandidat/lowongan sebagai data tidak tepercaya.
 
-[`../shared/jobFieldCatalog.ts`](../shared/jobFieldCatalog.ts) is the shared
-source for 29 job families in seven UI groups.
-[`../server/ai/jobFieldGuidance.ts`](../server/ai/jobFieldGuidance.ts) adds
-specialized competencies, evidence examples, and cautions for 27 families; two
-open categories use a conservative fallback.
+[`../shared/jobFieldCatalog.ts`](../shared/jobFieldCatalog.ts) menjadi sumber
+bersama untuk 29 rumpun pekerjaan dalam tujuh kelompok antarmuka.
+[`../server/ai/jobFieldGuidance.ts`](../server/ai/jobFieldGuidance.ts)
+menambahkan kompetensi khusus, contoh bukti, dan peringatan untuk 27 rumpun;
+dua kategori terbuka memakai mekanisme cadangan konservatif.
 
-### Parsing and quality gates
+### Penguraian dan Gerbang Kualitas
 
-[`../server/ai/responseParser.ts`](../server/ai/responseParser.ts) removes an
-optional Markdown fence, parses JSON, and validates the complete result with
-the shared response schema. Invalid, missing, extra, oversized, or internally
-inconsistent fields are rejected.
+[`../server/ai/responseParser.ts`](../server/ai/responseParser.ts) menghapus
+pagar blok kode Markdown opsional, melakukan penguraian JSON, dan memvalidasi
+hasil lengkap dengan skema respons bersama. Properti yang tidak valid, hilang, berlebih, terlalu
+besar, atau tidak konsisten secara internal akan ditolak.
 
-The schema enforces, among other invariants:
+Skema antara lain menegakkan invarian berikut:
 
-- the five score components total the final score;
-- score ranges agree with stable verdict identifiers;
-- roadmap weeks contain multiple actions;
-- requirement matches contain status, evidence, and a recommendation;
-- the structured result contains the required interview preparation.
+- lima komponen skor harus berjumlah sama dengan skor akhir;
+- rentang skor harus sesuai dengan pengenal kesimpulan stabil;
+- setiap minggu pada peta jalan memiliki beberapa tindakan;
+- kecocokan persyaratan memuat status, bukti, dan rekomendasi; serta
+- hasil terstruktur memuat persiapan wawancara yang diwajibkan.
 
-Additional quality gates reject selected Indonesian-language violations, such
-as inconsistent reader address and unsupported training graduation or
-certification claims.
+Gerbang kualitas tambahan menolak pelanggaran bahasa Indonesia tertentu,
+seperti sapaan pembaca yang tidak konsisten serta klaim kelulusan pelatihan
+atau sertifikasi yang tidak didukung bukti.
 
-### Frontend
+### Antarmuka
 
-[`../src/api/analysisClient.ts`](../src/api/analysisClient.ts) validates a
-successful API response again before React components receive it. Components
-never intentionally render raw provider output.
+[`../src/api/analysisClient.ts`](../src/api/analysisClient.ts) memvalidasi ulang
+respons API yang berhasil sebelum diterima komponen React. Komponen tidak
+dimaksudkan untuk merender keluaran mentah penyedia.
 
-Offline scenarios in [`../src/demoScenarios.ts`](../src/demoScenarios.ts) use
-fictional requests and complete V2 results. They pass through the same schemas
-but do not call `/api/analyze` or an external provider.
+Skenario luring pada [`../src/demoScenarios.ts`](../src/demoScenarios.ts)
+menggunakan permintaan fiktif dan hasil V2 lengkap. Skenario melewati skema
+yang sama tetapi tidak memanggil `/api/analyze` atau penyedia eksternal.
 
-## Trust boundaries and data handling
+## Batas Kepercayaan dan Penanganan Data
 
-| Boundary | Control |
+| Batas | Kontrol |
 | --- | --- |
-| Browser → API | Shared request validation, field bounds, 1 MB body limit, and rate limiting |
-| User text → model prompt | Explicit untrusted-data delimiters and grounding rules |
-| Provider → application | JSON extraction, strict shared schema, cross-field invariants, and quality gates |
-| Server → browser | Stable public error codes/messages; no raw model output, prompt, key, SDK detail, or stack trace |
-| Configuration → runtime | Environment validation and server-side-only credentials |
+| Peramban → API | Validasi permintaan bersama, batas properti, batas badan 1 MB, dan pembatasan laju |
+| Teks pengguna → instruksi model | Pemisah data tidak tepercaya dan aturan keterikatan pada bukti yang eksplisit |
+| Penyedia → aplikasi | Ekstraksi JSON, skema bersama ketat, invarian lintas properti, dan gerbang kualitas |
+| Server → peramban | Kode/pesan galat publik stabil; tanpa keluaran mentah model, instruksi model, kunci API, detail SDK, atau jejak tumpukan galat |
+| Konfigurasi → aplikasi | Validasi variabel lingkungan dan kredensial hanya pada server |
 
-The codebase does not intentionally persist candidate data. That statement does
-not cover infrastructure access logs or provider retention; those must be
-verified for the selected deployment.
+Basis kode tidak menyimpan data kandidat. Pernyataan tersebut tidak
+mencakup log akses infrastruktur atau retensi penyedia; keduanya harus
+diverifikasi untuk platform penerapan yang dipilih.
 
-## Failure behavior
+## Perilaku Kegagalan
 
-- Missing provider credentials: server starts; health reports unavailable;
-  live analysis returns a normalized service-unavailable response.
-- Invalid request: rejected before provider invocation.
-- Provider timeout or browser disconnect: cancellation propagates to the
-  provider request.
-- Malformed or inconsistent model output: rejected before the frontend.
-- Rate limit exceeded: returns `429`; default counters reset with the process.
-- Unexpected server failure: returns a normalized public error without secret
-  or stack details.
+- Kredensial penyedia tidak tersedia: server tetap dimulai; endpoint kesehatan
+  melaporkan tidak tersedia; analisis langsung mengembalikan respons layanan tidak tersedia
+  yang ternormalisasi.
+- Permintaan tidak valid: ditolak sebelum penyedia dipanggil.
+- Batas waktu penyedia atau koneksi peramban terputus: sinyal pembatalan
+  diteruskan menuju permintaan penyedia.
+- Keluaran model rusak atau tidak konsisten: ditolak sebelum mencapai
+  antarmuka.
+- Batas pembatasan laju terlampaui: mengembalikan `429`; penghitung bawaan diatur ulang saat
+  proses dimulai ulang.
+- Kegagalan server tak terduga: mengembalikan galat publik ternormalisasi tanpa
+  nilai rahasia atau detail tumpukan panggilan.
 
-## Verification boundary
+## Batas Verifikasi
 
-Vitest, Testing Library, fake providers, mock fetch, jsdom, and ephemeral local
-HTTP servers cover schemas, backend modules, the complete Express middleware
-and route boundary, compatibility, client behavior, forms, demos,
-accessibility, interactions, and result rendering. A long bilingual request
-with explicit informal experience is preserved through schema validation,
-prompt construction, and the HTTP boundary. Controlled Gemini and OpenAI
-adapter tests exercise empty, malformed, refused, timed-out, and failed
-responses without external provider calls. CI enforces 75% global V8 coverage
-for statements, branches, functions, and lines. Playwright then runs
-nine scenarios on both Chromium and Firefox (18 project runs) against the
-production bundle. Three cover provider-unavailable startup, offline demo
-behavior, focus management, reset behavior, and a mobile viewport overflow
-check. Three more use axe-core on the initial form and offline result for WCAG
-A/AA rules and exercise keyboard-driven reset. Another scenario emulates
-reduced motion and verifies spinner, scrolling, and transition behavior. Two
-release-QA support scenarios check initial/result reflow across 360–768 CSS px
-and a keyboard-only offline-demo round trip with focus restoration before the
-production-dependency audit.
+Vitest, Testing Library, penyedia palsu, fetch tiruan, jsdom, dan server HTTP
+lokal sementara mencakup skema, modul sisi server, batas perangkat perantara
+(*middleware*) dan rute Express
+lengkap, kompatibilitas, perilaku klien, formulir, demo, hasil, aksesibilitas,
+interaksi, dan penampilan hasil. Permintaan panjang dwibahasa dengan pengalaman
+informal dipertahankan melalui validasi skema, pembuatan instruksi model, dan batas
+HTTP. Pengujian adaptor Gemini dan OpenAI terkontrol menjalankan respons kosong,
+rusak, ditolak, melewati batas waktu, serta kegagalan tanpa panggilan penyedia
+eksternal. CI menegakkan cakupan V8 global 75% untuk pernyataan, cabang, fungsi,
+dan baris.
 
-The production bundle has also been checked locally for health behavior, SPA
-fallback, security headers, unavailable-provider handling, and rate limiting.
-The recorded eight-request Gemini run provides live-integration evidence across
-six job families. It completed without automated warnings and includes culinary
-and bilingual electrical/refrigeration scenarios; see
+Playwright kemudian menjalankan sembilan skenario pada Chromium dan Firefox
+(18 eksekusi proyek) terhadap paket produksi. Tiga skenario mencakup proses awal tanpa
+penyedia, perilaku demo luring, pengelolaan fokus, pengaturan ulang, dan pemeriksaan
+luapan pada area tampilan seluler. Tiga skenario lain menggunakan axe-core untuk
+aturan WCAG A/AA pada formulir awal dan hasil luring serta menjalankan pengaturan ulang
+melalui papan ketik. Satu skenario mengemulasikan pengurangan gerakan dan
+memeriksa indikator pemuatan, pengguliran, serta transisi. Dua skenario pendukung QA rilis memeriksa
+penyesuaian tata letak formulir/hasil pada 360–768 CSS px dan perjalanan demo luring hanya
+dengan papan ketik beserta pemulihan fokus sebelum audit dependensi produksi.
+
+Paket produksi juga telah diperiksa secara lokal untuk perilaku kesehatan,
+mekanisme cadangan SPA, header keamanan, penanganan penyedia tidak tersedia, dan
+pembatasan laju. Evaluasi Gemini delapan permintaan yang tercatat memberikan bukti integrasi
+langsung pada enam rumpun pekerjaan. Evaluasi selesai tanpa peringatan otomatis
+dan mencakup skenario kuliner serta listrik/refrigerasi dwibahasa; lihat
 [`EVALUATION.md`](EVALUATION.md).
 
-These checks do **not** prove public deployment readiness. Broader manual
-cross-browser and cross-device QA, complete keyboard-only review, reduced-
-motion review beyond the spinner, 200% zoom review, shared rate limiting,
-deployment observability, production timeout behavior, OpenAI live integration,
-and deployment-specific privacy review remain open release gates.
+Pemeriksaan tersebut **tidak** membuktikan kesiapan penerapan publik. Pembatasan laju
+bersama, observabilitas penerapan, perilaku batas waktu produksi, integrasi langsung
+OpenAI, dan peninjauan privasi khusus penerapan tetap menjadi gerbang rilis yang
+terbuka. QA manual lintas peramban, perangkat, papan ketik, pengurangan gerakan,
+pembesaran 200%, dan luapan telah dicatat pada
+[`MANUAL_QA.md`](MANUAL_QA.md), tetapi perlu diulang jika penerapan atau
+perubahan antarmuka material menghasilkan perilaku berbeda.

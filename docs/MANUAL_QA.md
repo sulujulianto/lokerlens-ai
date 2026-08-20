@@ -1,31 +1,32 @@
-# Manual Release QA Runbook
+# Panduan QA Manual untuk Rilis
 
-This runbook covers the human checks that automated browser tests cannot prove
-on their own. It is intentionally separate from public deployment validation.
-Run it against the production bundle with provider credentials removed so the
-four fictional offline demos remain the only analysis path.
+Panduan ini mencakup pemeriksaan oleh manusia yang tidak dapat dibuktikan hanya
+melalui pengujian peramban otomatis. Pemeriksaan ini sengaja dipisahkan dari validasi
+penerapan publik. Jalankan terhadap paket produksi tanpa kredensial penyedia
+agar empat demo luring fiktif tetap menjadi satu-satunya jalur analisis.
 
-Completing the automated command below does **not** complete the manual release
-gate. A person must perform each applicable check, record the environment, and
-keep failed or blocked items open in [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md).
+Keberhasilan perintah otomatis di bawah **tidak** menyelesaikan gerbang QA
+manual. Seseorang harus menjalankan setiap pemeriksaan yang berlaku, mencatat
+lingkungan, dan membiarkan item gagal atau terhalang tetap terbuka pada
+[`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md).
 
-## Scope and non-claims
+## Cakupan dan Batas Klaim
 
-This runbook verifies:
+Panduan ini memverifikasi:
 
-- Chrome and Firefox desktop presentation;
-- reflow on 360–430 px mobile widths and a portrait tablet;
-- keyboard-only navigation and focus restoration;
-- reduced-motion behavior beyond the loading spinner;
-- browser zoom at 200%;
-- horizontal overflow, clipped controls, and unreadable content.
+- tampilan desktop pada Chrome dan Firefox;
+- penyesuaian tata letak pada lebar perangkat seluler 360–430 px dan tablet potret;
+- navigasi hanya dengan papan ketik dan pemulihan fokus;
+- perilaku pengurangan gerakan di luar indikator pemuatan;
+- pembesaran peramban 200%; serta
+- luapan horizontal, kontrol terpotong, dan konten yang tidak terbaca.
 
-It does not verify a public host, provider latency, production logging, shared
-rate limiting, or deployment-specific privacy behavior.
+Panduan ini tidak memverifikasi layanan hosting publik, latensi penyedia,
+pencatatan log produksi, pembatasan laju bersama, atau perilaku privasi khusus penerapan.
 
-## Prepare the local production build
+## Menyiapkan Paket Produksi Lokal
 
-Use a clean checkout and do not expose provider credentials:
+Gunakan salinan kerja bersih dan jangan mengekspos kredensial penyedia:
 
 ```bash
 npm ci
@@ -34,13 +35,13 @@ npx playwright install chromium firefox
 npm run test:e2e:release-qa
 ```
 
-The focused Playwright command provides repeatable support for the manual pass.
-It checks the initial form and complete offline result at 360, 390, 430, 640,
-and 768 CSS pixels on Chromium and Firefox. The 640 px case is a reflow proxy
-for a 1280 px desktop viewed at 200%; it is not a substitute for actual browser
-zoom testing.
+Perintah Playwright terfokus memberikan dukungan yang dapat diulang untuk
+pemeriksaan manual. Perintah tersebut memeriksa formulir awal dan hasil luring
+lengkap pada 360, 390, 430, 640, dan 768 piksel CSS di Chromium dan Firefox.
+Lebar 640 px merupakan proksi penyesuaian tata letak untuk desktop 1280 px pada
+pembesaran 200%, bukan pengganti pengujian pembesaran peramban yang sebenarnya.
 
-Start the production server for manual review:
+Jalankan server produksi untuk pemeriksaan manual:
 
 ```bash
 NODE_ENV=production \
@@ -50,143 +51,151 @@ OPENAI_API_KEY= \
 npm start
 ```
 
-Open `http://localhost:3000`. Confirm that the header reports that live
-analysis is not configured and that all four offline demos remain usable.
+Buka `http://localhost:3000`. Pastikan bagian kepala halaman melaporkan bahwa analisis langsung
+belum dikonfigurasi dan seluruh empat demo luring tetap dapat digunakan.
 
-## Record the environment
+## Mencatat Lingkungan
 
-Record this information with the final QA evidence:
+Catat informasi berikut bersama bukti QA akhir:
 
-| Field | Value |
+| Komponen | Nilai |
 | --- | --- |
-| Commit SHA | |
-| Date and timezone | |
-| Operating system | |
-| Chrome version | |
-| Firefox version | |
-| Screen resolution | |
-| Keyboard layout | |
+| SHA commit | |
+| Tanggal dan zona waktu | |
+| Sistem operasi | |
+| Versi Chrome | |
+| Versi Firefox | |
+| Resolusi layar | |
+| Tata letak papan ketik | |
 
-Use `PASS`, `FAIL`, or `BLOCKED` for every row. A blank row is not evidence.
+Gunakan `LULUS`, `GAGAL`, atau `TERHALANG` pada setiap baris. Baris kosong bukan
+bukti.
 
-## Desktop browser matrix
+## Matriks Peramban Desktop
 
-Run the initial form and one complete offline result in both browsers. Use at
-least 1280×720 and, when the display permits, 1440×900.
+Jalankan formulir awal dan satu hasil luring lengkap pada kedua peramban.
+Gunakan setidaknya 1280×720 dan, jika layar memungkinkan, 1440×900.
 
-| Check | Chrome | Firefox | Notes/evidence |
+| Pemeriksaan | Chrome | Firefox | Catatan/bukti |
 | --- | --- | --- | --- |
-| Header, hero, demo selector, and form remain readable | | | |
-| All fields, labels, counters, and buttons remain visible | | | |
-| Selected demo state is visually distinct without relying on color alone | | | |
-| Offline loading state and complete result render correctly | | | |
-| Result cards, long text, and copy buttons do not overlap | | | |
-| Returning to the form restores focus to the demo action | | | |
+| Kepala halaman, bagian utama, pemilih demo, dan formulir tetap terbaca | | | |
+| Seluruh elemen, label, penghitung, dan tombol tetap terlihat | | | |
+| Demo terpilih dapat dibedakan tanpa hanya mengandalkan warna | | | |
+| Status pemuatan luring dan hasil lengkap dirender dengan benar | | | |
+| Kartu hasil, teks panjang, dan tombol salin tidak tumpang tindih | | | |
+| Kembali ke formulir memulihkan fokus ke aksi demo | | | |
 
-## Mobile and tablet matrix
+## Matriks Perangkat Seluler dan Tablet
 
-Use each browser's responsive design mode. Do not count vertical scrolling as a
-failure; horizontal scrolling or clipped content is a failure.
+Gunakan mode desain responsif pada setiap peramban. Pengguliran vertikal bukan
+kegagalan; pengguliran horizontal atau konten terpotong merupakan kegagalan.
 
-| Viewport | Initial form | Offline result | Overflow/clipping | Notes/evidence |
+| Area tampilan | Formulir awal | Hasil luring | Luapan/terpotong | Catatan/bukti |
 | --- | --- | --- | --- | --- |
 | 360×800 | | | | |
 | 390×844 | | | | |
 | 430×932 | | | | |
 | 768×1024 | | | | |
 
-At every viewport, inspect the longest form labels, the demo selector, the job
-posting counter, score denominators, requirement evidence, four-week roadmap,
-CV prompt, application message, and interview-preparation cards.
+Pada setiap area tampilan, periksa label formulir terpanjang, pemilih demo,
+penghitung teks lowongan, penyebut skor, bukti persyaratan, rencana empat
+minggu, instruksi CV, pesan lamaran, dan kartu persiapan wawancara.
 
-## Keyboard-only flow
+## Alur Hanya dengan Papan Ketik
 
-Set the mouse aside before starting.
+Jangan gunakan tetikus selama pemeriksaan.
 
-1. Reload the page and press `Tab`. Focus must first reach **Form baru**.
-2. Continue with `Tab` through all four demo choices and every enabled form
-   control. Focus must remain visible and follow the visual reading order.
-3. Use `Enter` or `Space` to choose another demo. Its pressed state must update.
-4. Continue to **Tampilkan hasil demo terpilih** and activate it without a
-   pointer.
-5. Confirm that focus moves to **Hasil analisis kesiapan kerja**.
-6. Use `Shift+Tab` to reach **Kembali ke formulir**, activate it, and confirm
-   focus returns to the offline-demo action.
-7. Reset to a blank form and verify that focus moves to **Bidang pekerjaan**.
-8. Traverse the blank form once more. Confirm there is no focus trap, skipped
-   enabled control, invisible focus indicator, or unexpected page jump.
+1. Muat ulang halaman lalu tekan `Tab`. Fokus pertama harus menuju **Form
+   baru**.
+2. Lanjutkan menggunakan `Tab` melalui empat pilihan demo dan seluruh kontrol
+   formulir yang aktif. Fokus harus tetap terlihat dan mengikuti urutan baca
+   visual.
+3. Gunakan `Enter` atau `Space` untuk memilih demo lain. Status `pressed` harus
+   berubah.
+4. Lanjutkan ke **Tampilkan hasil demo terpilih** dan aktifkan tanpa penunjuk.
+5. Pastikan fokus berpindah ke **Hasil analisis kesiapan kerja**.
+6. Gunakan `Shift+Tab` untuk menuju **Kembali ke formulir**, aktifkan, dan
+   pastikan fokus kembali ke aksi demo luring.
+7. Atur ulang menjadi formulir kosong dan pastikan fokus berpindah ke **Bidang
+   pekerjaan**.
+8. Telusuri kembali formulir kosong. Pastikan tidak ada jebakan fokus, kontrol
+   aktif yang terlewati, indikator fokus yang tidak terlihat, atau lompatan
+   halaman yang tidak diharapkan.
 
-The live-analysis button is expected to remain disabled in this credential-free
-QA environment. This pass therefore proves the offline UI path, not a live
-provider submission.
+Tombol analisis langsung memang harus tetap dinonaktifkan dalam lingkungan QA
+tanpa kredensial. Pemeriksaan ini karena itu membuktikan jalur antarmuka luring,
+bukan pengiriman ke penyedia langsung.
 
-## Reduced motion
+## Pengurangan Gerakan
 
-Enable the operating system preference or browser emulation for
-`prefers-reduced-motion: reduce`, then reload.
+Aktifkan preferensi sistem operasi atau emulasi peramban untuk
+`prefers-reduced-motion: reduce`, kemudian muat ulang halaman.
 
-| Check | Result | Notes/evidence |
+| Pemeriksaan | Hasil | Catatan/bukti |
 | --- | --- | --- |
-| Loading spinner is static | | |
-| Focus and hover state changes are effectively immediate | | |
-| No automatic smooth scrolling occurs | | |
-| Result loading and focus restoration remain understandable | | |
+| Indikator pemuatan bersifat statis | | |
+| Perubahan status fokus dan sorotan penunjuk berlangsung efektif seketika | | |
+| Tidak terjadi pengguliran halus otomatis | | |
+| Pemuatan hasil dan pemulihan fokus tetap mudah dipahami | | |
 
-## Browser zoom at 200%
+## Pembesaran Peramban 200%
 
-Use the browser's actual zoom control, not CSS zoom or operating-system display
-scaling. Start from a desktop window at least 1280 px wide.
+Gunakan kontrol pembesaran peramban yang sebenarnya, bukan pembesaran CSS atau
+pengaturan skala tampilan sistem operasi. Mulai dari jendela desktop dengan
+lebar minimal 1280 px.
 
-| Check | Chrome | Firefox | Notes/evidence |
+| Pemeriksaan | Chrome | Firefox | Catatan/bukti |
 | --- | --- | --- | --- |
-| Initial page reflows without horizontal scrolling | | | |
-| Form controls and required labels remain fully available | | | |
-| Offline result reflows without clipped cards or text | | | |
-| Focused controls remain visible when tabbing | | | |
+| Halaman awal menyesuaikan tata letak tanpa pengguliran horizontal | | | |
+| Kontrol formulir dan label wajib tetap dapat diakses seluruhnya | | | |
+| Hasil luring menyesuaikan tata letak tanpa kartu atau teks terpotong | | | |
+| Kontrol yang fokus tetap terlihat saat menggunakan `Tab` | | | |
 
-## Recorded candidate evidence — 2026-08-17
+## Bukti Kandidat yang Tercatat — 2026-08-17
 
-The following manual pass was completed against the uncommitted candidate on
-branch `test/add-manual-release-qa`, based on commit
-`d57a1c0fb7bdf3831b9454788e07ea9bb6f28094`. The candidate commit SHA will be
-recorded by Git after these reviewed changes are committed.
+Pemeriksaan manual berikut diselesaikan terhadap kandidat yang belum di-commit
+pada cabang `test/add-manual-release-qa`, berdasarkan commit
+`d57a1c0fb7bdf3831b9454788e07ea9bb6f28094`. Commit SHA kandidat kemudian
+ditetapkan oleh Git setelah perubahan yang ditinjau di-commit.
 
-| Field | Recorded value |
+| Komponen | Nilai yang tercatat |
 | --- | --- |
-| Date and timezone | 2026-08-17 01:50:15 UTC+07:00 |
-| Operating system | Linux Mint 22.2 |
-| Chrome version | Google Chrome 151.0.7922.137 |
-| Firefox version | Playwright Firefox 153.0 |
-| Screen resolution | 1280×720 |
-| Keyboard layout | US, PC105 |
+| Tanggal dan zona waktu | 2026-08-17 01:50:15 UTC+07:00 |
+| Sistem operasi | Linux Mint 22.2 |
+| Versi Chrome | Google Chrome 151.0.7922.137 |
+| Versi Firefox | Playwright Firefox 153.0 |
+| Resolusi layar | 1280×720 |
+| Tata letak papan ketik | US, PC105 |
 
-| Manual check | Result | Evidence summary |
+| Pemeriksaan manual | Hasil | Ringkasan bukti |
 | --- | --- | --- |
-| Chrome desktop form and offline result | PASS | Complete form and result remained readable without overlap or clipping. |
-| Firefox desktop form and offline result | PASS | Playwright Firefox was opened interactively against the local production server. |
-| Keyboard-only flow in Chrome and Firefox | PASS | Demo selection, result entry, return action, reset, visible focus, and focus restoration completed without a trap. |
-| 360×800, 390×844, 430×932, and 768×1024 reflow | PASS | Initial form and offline result remained usable without horizontal scrolling. |
-| Actual browser zoom at 200% | PASS | Chrome and Firefox reflowed without unreachable controls, clipped text, or horizontal scrolling. |
-| Reduced-motion manual pass | PASS | Playwright Firefox with `reducedMotion: "reduce"` kept navigation, focus, and the offline-result flow understandable. |
-| Horizontal overflow and clipped content | PASS | None found in the reviewed desktop, mobile, tablet, result, keyboard, or zoom paths. |
+| Formulir dan hasil luring desktop Chrome | LULUS | Formulir dan hasil lengkap tetap terbaca tanpa tumpang tindih atau bagian terpotong. |
+| Formulir dan hasil luring desktop Firefox | LULUS | Playwright Firefox dibuka secara interaktif terhadap server produksi lokal. |
+| Alur hanya dengan papan ketik di Chrome dan Firefox | LULUS | Pemilihan demo, masuk ke hasil, kembali, pengaturan ulang, fokus terlihat, dan pemulihan fokus selesai tanpa jebakan. |
+| Penyesuaian tata letak 360×800, 390×844, 430×932, dan 768×1024 | LULUS | Formulir awal dan hasil luring tetap dapat digunakan tanpa pengguliran horizontal. |
+| Pembesaran peramban 200% sebenarnya | LULUS | Chrome dan Firefox menyesuaikan tata letak tanpa kontrol yang tidak dapat dijangkau, teks terpotong, atau pengguliran horizontal. |
+| Pemeriksaan manual pengurangan gerakan | LULUS | Playwright Firefox dengan `reducedMotion: "reduce"` mempertahankan navigasi, fokus, dan alur hasil luring yang mudah dipahami. |
+| Luapan horizontal dan konten terpotong | LULUS | Tidak ditemukan pada jalur desktop, seluler, tablet, hasil, papan ketik, maupun pembesaran yang ditinjau. |
 
-The required full Playwright run completed all 18 Chromium and Firefox project
-runs successfully. Repeated Firefox-only stress commands intermittently
-encountered local browser or web-server startup readiness failures before the
-product assertions ran. The final branch CI remains the authoritative clean-
-environment gate; this evidence does not reinterpret those startup failures as
-passing product assertions.
+Proses Playwright penuh yang diwajibkan menyelesaikan seluruh 18 eksekusi proyek
+Chromium dan Firefox. Perintah uji tekanan khusus Firefox secara terpisah sesekali
+menemui kegagalan kesiapan peramban atau proses awal server web lokal sebelum
+asersi produk berjalan. CI cabang akhir tetap menjadi gerbang lingkungan
+bersih yang otoritatif; bukti ini tidak menafsirkan kegagalan proses awal tersebut
+sebagai asersi produk yang lulus.
 
-## Failure handling and evidence
+## Penanganan Kegagalan dan Bukti
 
-- Capture only fictional offline-demo data; never include an API key or real
-  applicant information in screenshots or reports.
-- Record the exact browser, viewport, zoom, action, expected result, and actual
-  result for every failure.
-- Keep a failed release-checklist item unchecked until a focused fix, regression
-  test, and repeat of the affected manual case all pass.
-- Do not suppress overflow with clipping when content remains unreachable.
+- Gunakan hanya data demo luring fiktif; jangan sertakan kunci API atau informasi
+  pelamar sebenarnya pada tangkapan layar atau laporan.
+- Catat peramban, area tampilan, pembesaran, tindakan, hasil yang diharapkan, dan hasil
+  sebenarnya secara tepat untuk setiap kegagalan.
+- Biarkan item daftar periksa rilis yang gagal tetap tidak dicentang sampai
+  perbaikan terfokus, pengujian regresi, dan pengulangan pemeriksaan manual terkait
+  semuanya lulus.
+- Jangan menyembunyikan luapan dengan pemotongan visual apabila konten tetap tidak
+  dapat dijangkau.
 
-When every applicable row has evidence, update the release checklist in a
-separate focused commit. Deployment, privacy, and release-version gates remain
-open until a real platform is selected.
+Setelah setiap baris yang berlaku memiliki bukti, perbarui daftar periksa rilis
+dalam commit terfokus yang terpisah. Gerbang penerapan, privasi, dan versi rilis
+tetap terbuka sampai platform sebenarnya dipilih.

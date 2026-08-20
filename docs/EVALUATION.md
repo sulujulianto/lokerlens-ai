@@ -1,110 +1,114 @@
-# Live AI Evaluation Notes
+# Catatan Evaluasi AI Langsung
 
-This document separates live-provider evidence from deterministic automated
-tests. The evaluation uses real Gemini requests, consumes provider quota, and
-is not part of CI.
+Dokumen ini memisahkan bukti dari penyedia langsung dengan pengujian otomatis
+yang deterministik. Evaluasi menggunakan permintaan Gemini sebenarnya, memakai
+kuota penyedia, dan tidak menjadi bagian CI.
 
-Provider failure handling is verified separately with controlled adapter tests.
-They simulate empty and malformed structured output, refusal, timeout, and
-generic upstream failure for Gemini and OpenAI without consuming quota. Those
-tests prove local normalization behavior, not the latency or reliability of a
-specific provider deployment.
+Penanganan kegagalan penyedia diverifikasi secara terpisah melalui pengujian
+adaptor terkontrol. Pengujian tersebut menyimulasikan keluaran terstruktur
+kosong dan rusak, penolakan, batas waktu, serta kegagalan layanan hulu umum
+untuk Gemini dan
+OpenAI tanpa memakai kuota. Pengujian ini membuktikan perilaku normalisasi lokal,
+bukan latensi atau reliabilitas penerapan penyedia tertentu.
 
-## Scope
+## Cakupan
 
-`npm run eval:gemini` sends eight sequential requests:
+`npm run eval:gemini` mengirim delapan permintaan secara berurutan:
 
-- Junior Frontend Developer three times to inspect score and verdict spread;
-- Junior Administrative Staff once;
-- Entry-Level Customer Service once;
-- Warehouse Staff once;
-- Cook Helper once;
-- Junior AC Maintenance Helper once using a bilingual Indonesian/English job
-  posting.
+- Pengembang Antarmuka Junior (`Junior Frontend Developer`) sebanyak tiga kali
+  untuk memeriksa variasi skor dan kesimpulan;
+- Junior Administrative Staff sebanyak satu kali;
+- Entry-Level Customer Service sebanyak satu kali;
+- Warehouse Staff sebanyak satu kali;
+- Cook Helper sebanyak satu kali; dan
+- Junior AC Maintenance Helper sebanyak satu kali menggunakan teks lowongan
+  dwibahasa Indonesia/Inggris.
 
-The script records duration, score, verdict, and required-requirement statuses.
-It flags inconsistent reader address, unsupported training claims, verdict and
-application-timing disagreement, thin risk factors, and a Frontend score spread
-above ten points.
+Skrip mencatat durasi, skor, kesimpulan, dan status persyaratan wajib. Skrip
+memberikan tanda untuk sapaan pembaca yang tidak konsisten, klaim pelatihan
+tanpa bukti, ketidaksesuaian kesimpulan dan waktu melamar, faktor risiko yang
+terlalu dangkal, serta rentang skor pengembang antarmuka di atas sepuluh poin.
 
-## Observed runs
+## Hasil yang Diamati
 
-An expanded run on 13 August 2026 completed all eight requests without
-automated warnings:
+Evaluasi yang diperluas pada 13 Agustus 2026 menyelesaikan seluruh delapan
+permintaan tanpa peringatan otomatis:
 
-| Scenario | Score | Verdict | Duration |
+| Skenario | Skor | Kesimpulan | Durasi |
 | --- | ---: | --- | ---: |
-| Frontend #1 | 70 | `APPLY_WITH_IMPROVEMENTS` | 36.170 s |
-| Frontend #2 | 70 | `APPLY_WITH_IMPROVEMENTS` | 36.845 s |
-| Frontend #3 | 70 | `APPLY_WITH_IMPROVEMENTS` | 34.835 s |
-| Administration | 91 | `APPLY_NOW` | 29.206 s |
-| Customer Service | 62 | `APPLY_WITH_IMPROVEMENTS` | 24.448 s |
-| Warehouse | 72 | `APPLY_WITH_IMPROVEMENTS` | 28.263 s |
-| Culinary | 72 | `APPLY_WITH_IMPROVEMENTS` | 26.626 s |
-| AC Maintenance | 89 | `APPLY_NOW` | 26.417 s |
+| Pengembang Antarmuka #1 | 70 | `APPLY_WITH_IMPROVEMENTS` | 36,170 detik |
+| Pengembang Antarmuka #2 | 70 | `APPLY_WITH_IMPROVEMENTS` | 36,845 detik |
+| Pengembang Antarmuka #3 | 70 | `APPLY_WITH_IMPROVEMENTS` | 34,835 detik |
+| Administrasi | 91 | `APPLY_NOW` | 29,206 detik |
+| Layanan Pelanggan | 62 | `APPLY_WITH_IMPROVEMENTS` | 24,448 detik |
+| Gudang | 72 | `APPLY_WITH_IMPROVEMENTS` | 28,263 detik |
+| Kuliner | 72 | `APPLY_WITH_IMPROVEMENTS` | 26,626 detik |
+| Pemeliharaan AC | 89 | `APPLY_NOW` | 26,417 detik |
 
-The three Frontend results had a zero-point spread and one verdict. The
-culinary and bilingual electrical/refrigeration scenarios both completed the
-structured path. All eight requests finished inside the locally configured
-45-second provider timeout, with durations from 24.448 to 36.845 seconds.
+Ketiga hasil pengembang antarmuka memiliki rentang nol poin dan satu kesimpulan yang sama.
+Skenario kuliner serta listrik/refrigerasi dwibahasa sama-sama menyelesaikan
+alur terstruktur. Seluruh permintaan selesai dalam batas waktu penyedia lokal 45 detik,
+dengan durasi 24,448 hingga 36,845 detik.
 
-### Earlier stabilization run
+### Evaluasi stabilisasi sebelumnya
 
-The first Phase 5F run produced four schema-valid responses. Two Frontend
-responses were safely rejected by the quality gate rather than being shown to
-the user. After the prompt boundaries and stability checks were tightened, a
-repeat run on 11 August 2026 completed all six requests without automated
-warnings.
+Evaluasi tahap 5F pertama menghasilkan empat respons yang valid terhadap
+skema. Dua respons pengembang antarmuka ditolak secara aman oleh gerbang kualitas dan
+tidak ditampilkan kepada pengguna. Setelah batas instruksi model dan pemeriksaan
+stabilitas diperketat, evaluasi ulang pada 11 Agustus 2026 menyelesaikan seluruh
+enam permintaan tanpa peringatan otomatis.
 
-| Scenario | Score | Verdict | Duration |
+| Skenario | Skor | Kesimpulan | Durasi |
 | --- | ---: | --- | ---: |
-| Frontend #1 | 72 | `APPLY_WITH_IMPROVEMENTS` | 30.695 s |
-| Frontend #2 | 70 | `APPLY_WITH_IMPROVEMENTS` | 34.093 s |
-| Frontend #3 | 72 | `APPLY_WITH_IMPROVEMENTS` | 29.095 s |
-| Administration | 91 | `APPLY_NOW` | 27.890 s |
-| Customer Service | 62 | `APPLY_WITH_IMPROVEMENTS` | 24.501 s |
-| Warehouse | 73 | `APPLY_WITH_IMPROVEMENTS` | 21.086 s |
+| Pengembang Antarmuka #1 | 72 | `APPLY_WITH_IMPROVEMENTS` | 30,695 detik |
+| Pengembang Antarmuka #2 | 70 | `APPLY_WITH_IMPROVEMENTS` | 34,093 detik |
+| Pengembang Antarmuka #3 | 72 | `APPLY_WITH_IMPROVEMENTS` | 29,095 detik |
+| Administrasi | 91 | `APPLY_NOW` | 27,890 detik |
+| Layanan Pelanggan | 62 | `APPLY_WITH_IMPROVEMENTS` | 24,501 detik |
+| Gudang | 73 | `APPLY_WITH_IMPROVEMENTS` | 21,086 detik |
 
-The three Frontend results had a two-point spread, one verdict, and consistent
-`PARTIAL` treatment for REST API experience. All recorded requests completed
-inside the locally configured 45-second provider timeout.
+Ketiga hasil pengembang antarmuka memiliki rentang dua poin, satu kesimpulan yang sama, dan
+perlakuan `PARTIAL` yang konsisten untuk pengalaman REST API. Seluruh permintaan
+yang dicatat selesai dalam batas waktu penyedia lokal 45 detik.
 
-## What this evidence supports
+## Hal yang Didukung oleh Bukti Ini
 
-- The Gemini path can complete the current structured V2 contract end to end.
-- Invalid output can be rejected safely instead of being rendered.
-- The evaluated scenarios produced grounded, schema-valid results after
-  stabilization.
-- Repeated Frontend outputs were close in one observed session.
+- Alur Gemini dapat menyelesaikan kontrak V2 terstruktur saat ini dari awal
+  hingga akhir.
+- Keluaran tidak valid dapat ditolak dengan aman dan tidak ditampilkan.
+- Skenario yang dievaluasi menghasilkan keluaran yang sesuai dengan bukti dan valid terhadap
+  skema setelah stabilisasi.
+- Keluaran pengembang antarmuka berulang memiliki hasil yang berdekatan pada satu sesi yang
+  diamati.
 
-## What it does not prove
+## Hal yang Tidak Dibuktikan
 
-- Model output is deterministic. Temperature `0` and a fixed seed are
-  best-effort controls, not a guarantee.
-- The recorded latency generalizes to another account, region, network,
-  provider version, or hosting platform.
-- The recorded eight-scenario run establishes broad domain quality or absence
-  of bias. The expanded evaluator remains a small, curated sample.
-- OpenAI live integration has been verified.
-- The system is production-ready or that its score predicts hiring outcomes.
+- Keluaran model bersifat deterministik. Nilai `temperature` sebesar `0` dan
+  `seed` tetap merupakan kontrol berbasis upaya terbaik, bukan jaminan.
+- Latensi yang tercatat berlaku umum pada akun, wilayah, jaringan, versi
+  penyedia, atau platform hosting lain.
+- Evaluasi delapan skenario membuktikan kualitas lintas bidang atau ketiadaan
+  bias. Evaluator yang diperluas tetap merupakan sampel kecil yang dikurasi.
+- Integrasi langsung OpenAI telah diverifikasi.
+- Sistem siap produksi atau skor dapat memprediksi hasil rekrutmen.
 
-## Reproduce the evaluation
+## Menjalankan Ulang Evaluasi
 
-Configure a valid Gemini key locally, review the expected eight-request quota,
-then run:
+Konfigurasikan kunci API Gemini yang valid secara lokal, tinjau kebutuhan kuota
+untuk delapan permintaan, kemudian jalankan:
 
 ```bash
 npm run eval:gemini
 ```
 
-Do not commit or share `.env`. Review provider quota and cost before running the
-script. The automated flags are only a first pass; a human reviewer should
-still check:
+Jangan memasukkan `.env` ke commit atau membagikannya. Periksa kuota dan biaya penyedia
+sebelum menjalankan skrip. Tanda otomatis hanya merupakan pemeriksaan awal;
+peninjau manusia tetap perlu memeriksa:
 
-1. whether each requirement status follows the supplied profile evidence;
-2. whether must-have scoring follows those statuses;
-3. whether recommendations invent experience, results, certificates, or
-   employer policy;
-4. whether risk factors name concrete uncertainty;
-5. whether Indonesian address remains consistent and application copy uses the
-   candidate's point of view.
+1. apakah setiap status persyaratan mengikuti bukti profil yang diberikan;
+2. apakah penilaian persyaratan wajib sesuai dengan status tersebut;
+3. apakah rekomendasi mengarang pengalaman, hasil, sertifikat, atau kebijakan
+   perusahaan;
+4. apakah faktor risiko menyebut ketidakpastian yang konkret; dan
+5. apakah sapaan bahasa Indonesia konsisten serta pesan lamaran menggunakan
+   sudut pandang kandidat.
